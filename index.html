@@ -1686,8 +1686,8 @@ async function ghLoad() {
   const json = await res.json();
   GH_STATE.sha = json.sha;
   // Inhoud is base64-geëncodeerd
-  const decoded = decodeURIComponent(escape(atob(json.content.replace(/
-/g, ''))));
+  const decoded = decodeURIComponent(escape(atob(json.content.split('
+').join(''))));
   return JSON.parse(decoded);
 }
 
