@@ -314,7 +314,8 @@
     <button onclick="showView('kalender', this)" id="header-kal-btn" class="print-btn" style="margin-right:6px;">📅 Kalender</button>
     <button onclick="showView('team', this)" id="header-team-btn" class="print-btn" style="margin-right:6px;">👥 Teamopvolging</button>
     <button onclick="openTeamManager()" class="print-btn" style="margin-right:6px;">⚙️ Team beheren</button>
-    <button onclick="openPrintMenu()" class="print-btn">🖨️ Afdrukken</button>
+    <button onclick="openPrintMenu()" class="print-btn" style="margin-right:6px;">🖨️ Afdrukken</button>
+    <span id="gh-conn" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:#5a7a80;color:#fff;white-space:nowrap;cursor:default;" title="GitHub opslag status">⏳ Laden...</span>
   </div>
 </div>
 
@@ -1584,168 +1585,176 @@ renderOverview();
 </script>
 
 <script>
-/* ====== SharePoint opslag — configuratie (met autosave + ETag-locking) ====== */
-const SP_CONFIG = {
-  // Serverrelatief pad naar je data.json in dezelfde site
-  dataFileServerRelativeUrl: "/sites/TEAM-TWG-DIRECTIE/Shared Documents/Prioriteitenplan/data.json",
-  // Automatisch opslaan X ms na laatste wijziging
-  autosaveMs: 1500
+/* =====================================================================
+   WICO — GitHub opslag
+   Slaat data.json op in je GitHub-repository via de GitHub API.
+   Geen inloggen, geen Azure, geen server nodig.
+
+   STAP 1 — Vul deze 4 waarden in:
+   ===================================================================== */
+const GH_CONFIG = {
+  owner: "richardthijs-gif",
+  repo:  "wico-prioriteitenplan",
+  path:  "data.json",
+  // ⚠️ Vervang dit door je NIEUWE token na het intrekken van het oude!
+  token: "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"
 };
 
-// Huidige ETag bijhouden voor concurrentie-detectie
-const SP_STATE = { etag: null };
+/* =====================================================================
+   GitHub API helpers
+   ===================================================================== */
+const GH_STATE = { sha: null };   // SHA van het huidige data.json — nodig voor updates
 
-/* ====== SharePoint helpers ====== */
-async function spGetDigest() {
-  const res = await fetch('/_api/contextinfo', {
-    method: 'POST',
-    headers: { 'Accept': 'application/json;odata=nometadata' }
+function ghSetStatus(tekst, kleur) {
+  const el = document.getElementById('gh-conn');
+  if (el) { el.textContent = tekst; el.style.background = kleur; }
+}
+
+// Laad data.json van GitHub
+async function ghLoad() {
+  const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}`;
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': 'Bearer ' + GH_CONFIG.token,
+      'Accept': 'application/vnd.github+json'
+    }
   });
-  if (!res.ok) throw new Error('Kan X-RequestDigest niet ophalen.');
-  const j = await res.json();
-  return j.FormDigestValue;
+
+  if (res.status === 404) {
+    // Bestand bestaat nog niet — begin met lege state, eerste save maakt het aan
+    GH_STATE.sha = null;
+    return null;
+  }
+  if (!res.ok) throw new Error(`GitHub laden mislukt (${res.status})`);
+
+  const json = await res.json();
+  GH_STATE.sha = json.sha;
+  // Inhoud is base64-geëncodeerd
+  const decoded = decodeURIComponent(escape(atob(json.content.replace(/
+/g, ''))));
+  return JSON.parse(decoded);
 }
 
-async function spGetEtag(serverRelUrl) {
-  // Vraag list item metadata op; ETag zit in response header
-  const endpoint = `/_api/web/GetFileByServerRelativePath(DecodedUrl='${encodeURIComponent(serverRelUrl)}')/ListItemAllFields`;
-  const res = await fetch(endpoint, { headers: { 'Accept': 'application/json;odata=nometadata' }});
-  if (!res.ok) return null;
-  return res.headers.get('ETag');
-}
+// Sla data.json op naar GitHub
+async function ghSave(payload) {
+  const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
-async function spPutFileValue(serverRelUrl, content, contentType='application/json; charset=utf-8', ifMatchEtag='*') {
-  // Probeer update via PUT op $value met ETag-locking
-  const endpoint = `/_api/web/GetFileByServerRelativePath(DecodedUrl='${encodeURIComponent(serverRelUrl)}')/$value`;
-  const digest = await spGetDigest();
-  let r = await fetch(endpoint, {
+  const body = {
+    message: 'Dashboard update ' + new Date().toLocaleString('nl-BE'),
+    content: content,
+    ...(GH_STATE.sha ? { sha: GH_STATE.sha } : {})  // sha verplicht bij update
+  };
+
+  const res = await fetch(url, {
     method: 'PUT',
     headers: {
-      'Accept': 'application/json;odata=nometadata',
-      'X-RequestDigest': digest,
-      'IF-MATCH': ifMatchEtag || '*',
-      'Content-Type': contentType
+      'Authorization': 'Bearer ' + GH_CONFIG.token,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
     },
-    body: content
+    body: JSON.stringify(body)
   });
-  if (r.status === 412) {
-    const err = new Error('CONFLICT_412');
-    err.code = 412;
-    throw err;
-  }
-  if (r.status === 404) {
-    // File bestaat nog niet: maak aan via Files/Add op de map
-    const folder = serverRelUrl.substring(0, serverRelUrl.lastIndexOf('/'));
-    const fileName = serverRelUrl.split('/').pop();
-    const addUrl = `/_api/web/GetFolderByServerRelativePath(DecodedUrl='${encodeURIComponent(folder)}')/Files/Add(url='${encodeURIComponent(fileName)}',overwrite=true)`;
-    r = await fetch(addUrl, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json;odata=nometadata',
-        'X-RequestDigest': digest,
-        'Content-Type': contentType
-      },
-      body: content
-    });
-  }
-  if (!r.ok) {
-    const t = await r.text().catch(()=> '');
-    throw new Error('SharePoint opslaan mislukt: ' + (t || r.status));
-  }
-}
 
-async function spLoadJson(serverRelUrl) {
-  const res = await fetch(serverRelUrl, { headers: { 'Accept': 'application/json' }});
   if (!res.ok) {
-    throw new Error(`Laden mislukt (${res.status}). Controleer het pad naar data.json of maak het bestand aan.`);
+    const err = await res.json().catch(() => ({}));
+    throw new Error('GitHub opslaan mislukt: ' + (err.message || res.status));
   }
-  const txt = await res.text();
-  try { return JSON.parse(txt); }
-  catch (e) { throw new Error('Ongeldige JSON in data.json'); }
+
+  const result = await res.json();
+  // Bijwerken SHA voor volgende save
+  GH_STATE.sha = result.content?.sha || GH_STATE.sha;
 }
 
-/* ====== Integratie met jouw app ====== */
-async function saveToSharePoint() {
-  const payload = JSON.stringify({ data, teamleden }, null, 2);
-  try {
-    await spPutFileValue(
-      SP_CONFIG.dataFileServerRelativeUrl,
-      payload,
-      'application/json; charset=utf-8',
-      SP_STATE.etag // enforce locking als we een ETag hebben
-    );
-  } catch (err) {
-    if (err && err.code === 412) { const sc=document.getElementById('sp-conn'); if(sc){ sc.textContent='🟡 Conflict'; sc.style.background='#e09a20'; sc.style.color='#000'; }
-      if (confirm('Dit document is intussen gewijzigd door iemand anders.\n\nKlik “OK” om de nieuwste versie te laden (je niet-opgeslagen wijzigingen op dit toestel gaan verloren).')) {
-        await reloadFromSharePoint();
-      }
-      throw err;
-    }
-    throw err;
-  }
-  // Bij succes: local cache + nieuwe ETag ophalen
-  localStorage.setItem('prioriteitenplan', JSON.stringify(data));
-  localStorage.setItem('wico_team', JSON.stringify(teamleden));
-  SP_STATE.etag = await spGetEtag(SP_CONFIG.dataFileServerRelativeUrl);
-  const bar = document.getElementById('save-bar-msg');
-  if (bar) {
-    bar.textContent = '✅ Opgeslagen op SharePoint om ' + new Date().toLocaleTimeString('nl-BE');
-    setTimeout(() => bar.textContent = 'Wijzigingen worden lokaal bijgehouden. Exporteer voor SharePoint opslaan.', 5000);
-  }
-  const sc = document.getElementById('sp-conn'); if(sc){ sc.textContent = '🟢 Verbonden'; sc.style.background = '#2a9a5a'; sc.style.color = '#fff'; }
-}
-
-// Vervang saveAll()
+/* =====================================================================
+   Opslaan — overschrijft de standaard saveAll()
+   ===================================================================== */
 window.saveAll = async function () {
   const btns = document.querySelectorAll('.save-btn');
   btns.forEach(b => b.disabled = true);
-  try { await saveToSharePoint(); }
-  catch (err) { if (err && err.code !== 412) alert(err.message); }
-  finally { btns.forEach(b => b.disabled = false); }
+  ghSetStatus('⏳ Opslaan...', '#2a8a96');
+
+  try {
+    await ghSave({ data, teamleden });
+    // Ook lokaal cachen
+    localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+    localStorage.setItem('wico_team', JSON.stringify(teamleden));
+    ghSetStatus('🟢 Opgeslagen', '#2a9a5a');
+    const bar = document.getElementById('save-bar-msg');
+    if (bar) {
+      bar.textContent = '✅ Opgeslagen op GitHub om ' + new Date().toLocaleTimeString('nl-BE');
+      setTimeout(() => bar.textContent = 'Automatisch opgeslagen op GitHub.', 4000);
+    }
+  } catch (err) {
+    ghSetStatus('🔴 Fout', '#c0392b');
+    const bar = document.getElementById('save-bar-msg');
+    if (bar) bar.textContent = '❌ ' + err.message;
+    // Lokaal opslaan als fallback
+    localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+    localStorage.setItem('wico_team', JSON.stringify(teamleden));
+  } finally {
+    btns.forEach(b => b.disabled = false);
+  }
 };
 
-async function reloadFromSharePoint() {
-  const bar = document.getElementById('save-bar-msg');
-  const sp = await spLoadJson(SP_CONFIG.dataFileServerRelativeUrl);
-  if (Array.isArray(sp)) {
-    data = migrateData(sp);
-  } else if (sp && typeof sp === 'object') {
-    if (sp.data) data = migrateData(sp.data);
-    if (sp.teamleden) teamleden = sp.teamleden;
-  }
-  localStorage.setItem('prioriteitenplan', JSON.stringify(data));
-  localStorage.setItem('wico_team', JSON.stringify(teamleden));
-  SP_STATE.etag = await spGetEtag(SP_CONFIG.dataFileServerRelativeUrl);
-  if (bar) bar.textContent = '🔄 Vernieuwd vanaf SharePoint'; const sc=document.getElementById('sp-conn'); if(sc){ sc.textContent='🟢 Verbonden'; sc.style.background='#2a9a5a'; sc.style.color='#fff'; }
-  try { renderOverview(); } catch {}
+/* =====================================================================
+   Autosave — na elke wijziging in het dashboard
+   ===================================================================== */
+let ghAutosaveTimer = null;
+function queueAutosave() {
+  clearTimeout(ghAutosaveTimer);
+  ghAutosaveTimer = setTimeout(() => window.saveAll().catch(() => {}), GH_CONFIG.autosaveMs || 2000);
+}
+if (GH_CONFIG.autosaveMs !== 0) {
+  document.addEventListener('change', e => { if (e.target.closest('.main')) queueAutosave(); });
+  document.addEventListener('input',  e => { if (e.target.closest('.main')) queueAutosave(); });
 }
 
-// Bootstrap: eerst laden + ETag ophalen (fallback op lokale data)
-(async function bootstrapSharePoint() {
-  const bar = document.getElementById('save-bar-msg');
+/* =====================================================================
+   Opstart — laad eerst van GitHub, val terug op lokale cache
+   ===================================================================== */
+(async function bootstrap() {
+  ghSetStatus('⏳ Laden...', '#2a8a96');
   try {
-    await reloadFromSharePoint();
-    if (bar) bar.textContent = '🔄 Gegevens geladen van SharePoint'; const sc=document.getElementById('sp-conn'); if(sc){ sc.textContent='🟢 Verbonden'; sc.style.background='#2a9a5a'; sc.style.color='#fff'; }
-  } catch (e) {
-    if (bar) bar.textContent = 'ℹ️ Werk voorlopig lokaal (SharePoint laden faalde). ' + e.message; const sc=document.getElementById('sp-conn'); if(sc){ sc.textContent='🔴 Lokaal'; sc.style.background='#c0392b'; sc.style.color='#fff'; }
-    try { renderOverview(); } catch {}
+    const remote = await ghLoad();
+    if (remote) {
+      if (remote.data)      data      = migrateData(remote.data);
+      if (remote.teamleden) teamleden = remote.teamleden;
+      localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+      localStorage.setItem('wico_team', JSON.stringify(teamleden));
+    }
+    ghSetStatus('🟢 Verbonden', '#2a9a5a');
+    const bar = document.getElementById('save-bar-msg');
+    if (bar) bar.textContent = remote
+      ? '🔄 Gegevens geladen van GitHub'
+      : '✨ Nieuwe repository — sla op om te beginnen';
+  } catch (err) {
+    ghSetStatus('🔴 Lokaal', '#c0392b');
+    const bar = document.getElementById('save-bar-msg');
+    if (bar) bar.textContent = 'ℹ️ GitHub niet bereikbaar — werk lokaal. (' + err.message + ')';
   }
+  // Render altijd, ook bij fout
+  try { renderOverview(); } catch {}
 })();
 
-// AUTOSAVE: throttle op wijzigingen in de main UI
-if (SP_CONFIG.autosaveMs && SP_CONFIG.autosaveMs > 0) {
-  let autosaveTimer = null;
-  const queueAutosave = () => {
-    clearTimeout(autosaveTimer);
-    autosaveTimer = setTimeout(() => saveToSharePoint().catch(()=>{}), SP_CONFIG.autosaveMs);
-  };
-  document.addEventListener('change', (e) => {
-    if (e.target.closest('.main')) queueAutosave();
-  });
-  document.addEventListener('input', (e) => {
-    if (e.target.closest('.main')) queueAutosave();
-  });
-}
+/* =====================================================================
+   HOE MAAK JE EEN GITHUB TOKEN AAN?
+
+   1. Ga naar github.com en log in
+   2. Klik rechtsboven op je profielfoto → "Settings"
+   3. Scroll naar beneden → klik "Developer settings"
+   4. Klik "Personal access tokens" → "Fine-grained tokens"
+   5. Klik "Generate new token"
+   6. Geef een naam: "WICO Dashboard"
+   7. Expiration: kies "No expiration" of 1 jaar
+   8. Under "Repository access": kies "Only select repositories"
+      → Selecteer "wico-prioriteitenplan"
+   9. Under "Permissions" → "Repository permissions":
+      → "Contents" → zet op "Read and write"
+   10. Klik "Generate token"
+   11. KOPIEER het token meteen! Je ziet het maar één keer.
+   12. Plak het als waarde van GH_CONFIG.token hierboven.
+   ===================================================================== */
 </script>
 </body>
 </html>
