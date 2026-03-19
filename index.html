@@ -218,6 +218,26 @@
   .person-opt input[type="checkbox"] { accent-color:var(--wico-teal); width:15px; height:15px; flex-shrink:0; }
   .person-opt.checked { font-weight:600; color:var(--wico-petrol); }
 
+
+  /* ── Setup modal ── */
+  .setup-overlay { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.8); z-index:3000; align-items:center; justify-content:center; }
+  .setup-overlay.open { display:flex !important; }
+  .setup-modal { background:#fff; border-radius:14px; width:460px; max-width:95vw; overflow:hidden; box-shadow:0 16px 56px rgba(0,0,0,0.35); }
+  .setup-hdr { background:#1a4a52; padding:20px 24px; }
+  .setup-hdr h2 { font-size:16px; font-weight:700; color:white; margin-bottom:3px; }
+  .setup-hdr p { font-size:12px; color:rgba(255,255,255,0.6); }
+  .setup-body { padding:22px 24px; }
+  .setup-veld { margin-bottom:16px; }
+  .setup-veld label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#5a7a80; display:block; margin-bottom:6px; }
+  .setup-veld input { width:100%; border:1.5px solid #e2eaec; border-radius:8px; padding:10px 14px; font-size:14px; font-family:inherit; background:#eaf6f8; transition:border 0.15s; }
+  .setup-veld input:focus { outline:none; border-color:#2a8a96; background:white; }
+  .setup-hint { font-size:11px; color:#5a7a80; margin-top:5px; line-height:1.5; }
+  .setup-hint a { color:#2a8a96; }
+  .setup-ftr { padding:14px 24px; border-top:1px solid #e2eaec; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .setup-btn-start { background:#c0392b; color:white; border:none; border-radius:7px; padding:11px 26px; font-size:14px; font-weight:700; cursor:pointer; }
+  .setup-btn-start:hover { background:#a93226; }
+  .setup-btn-skip { background:none; border:1px solid #e2eaec; border-radius:7px; padding:10px 16px; font-size:12px; color:#5a7a80; cursor:pointer; }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -397,6 +417,36 @@
     </div>
     <div class="team-modal-footer">
       <button onclick="closeTeamManager()" class="save-btn">Klaar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Setup modal -->
+<div class="setup-overlay" id="setup-overlay">
+  <div class="setup-modal">
+    <div class="setup-hdr">
+      <h2>Welkom bij het WICO Prioriteitenplan</h2>
+      <p>Vul je naam en GitHub-token in om te beginnen.</p>
+    </div>
+    <div class="setup-body">
+      <div class="setup-veld">
+        <label>Jouw naam</label>
+        <input type="text" id="setup-naam" placeholder="bv. Richard, Elke, Directie..." autocomplete="name"/>
+        <p class="setup-hint">Verschijnt bij elke opslag in de versiegeschiedenis.</p>
+      </div>
+      <div class="setup-veld">
+        <label>GitHub Token</label>
+        <input type="password" id="setup-token" placeholder="github_pat_..." autocomplete="off"/>
+        <p class="setup-hint">
+          Aanmaken via <a href="https://github.com/settings/tokens?type=beta" target="_blank">github.com → Settings → Developer settings → Fine-grained tokens</a>.<br>
+          Selecteer repository <strong>wico-prioriteitenplan</strong>, zet Contents op <strong>Read and write</strong>.
+        </p>
+      </div>
+    </div>
+    <div class="setup-ftr">
+      <button class="setup-btn-skip" onclick="setupOverslaan()">Alleen lokaal werken</button>
+      <button class="setup-btn-start" onclick="setupOpslaan()">Opslaan &amp; starten ›</button>
     </div>
   </div>
 </div>
@@ -1600,20 +1650,6 @@ const GH_CONFIG = {
   autosaveMs: 2000
 };
 
-// Vraag token op als het nog niet is ingesteld
-if (!GH_CONFIG.token) {
-  const t = prompt(
-    'GitHub token vereist voor opslaan.\n\n' +
-    'Maak aan via github.com → Settings → Developer settings\n' +
-    '→ Fine-grained tokens → Generate new token\n' +
-    '(Repository: wico-prioriteitenplan, Contents: Read and write)\n\n' +
-    'Plak je token hier:'
-  );
-  if (t && t.trim()) {
-    GH_CONFIG.token = t.trim();
-    localStorage.setItem('wico_gh_token', GH_CONFIG.token);
-  }
-}
 
 /* =====================================================================
    GitHub API helpers
@@ -1624,41 +1660,62 @@ const GH_STATE = { sha: null };   // SHA van het huidige data.json — nodig voo
 let ghGebruiker = localStorage.getItem('wico_gebruiker') || '';
 
 function toonGebruikerWelkom() {
-  if (!ghGebruiker) {
-    const naam = prompt('Welkom bij het WICO Prioriteitenplan!\n\nVul jouw naam in zodat bijgehouden wordt wie aanpassingen maakt:', '');
-    if (naam && naam.trim()) {
-      ghGebruiker = naam.trim();
-      localStorage.setItem('wico_gebruiker', ghGebruiker);
-    }
+  const heeftToken = !!GH_CONFIG.token;
+  const heeftNaam  = !!ghGebruiker;
+  if (!heeftToken || !heeftNaam) {
+    // Vul vooraf in wat al gekend is
+    const ni = document.getElementById('setup-naam');
+    const ti = document.getElementById('setup-token');
+    if (ni && heeftNaam)  ni.value = ghGebruiker;
+    if (ti && heeftToken) ti.value = GH_CONFIG.token;
+    document.getElementById('setup-overlay').classList.add('open');
+    setTimeout(() => {
+      const focus = !heeftNaam ? document.getElementById('setup-naam') : document.getElementById('setup-token');
+      if (focus) focus.focus();
+    }, 150);
+  } else {
+    updateNaamLabel();
   }
+}
+
+function setupOpslaan() {
+  const naam  = (document.getElementById('setup-naam').value || '').trim();
+  const token = (document.getElementById('setup-token').value || '').trim();
+  if (!naam)  { document.getElementById('setup-naam').focus();  return; }
+  if (!token) { document.getElementById('setup-token').focus(); return; }
+  ghGebruiker     = naam;
+  GH_CONFIG.token = token;
+  localStorage.setItem('wico_gebruiker',  naam);
+  localStorage.setItem('wico_gh_token', token);
+  updateNaamLabel();
+  document.getElementById('setup-overlay').classList.remove('open');
+  ghSetStatus('🔄 Verbinden...', '#2a8a96');
+  ghBootstrap();
+}
+
+function setupOverslaan() {
+  const naam = (document.getElementById('setup-naam').value || '').trim();
+  if (naam) {
+    ghGebruiker = naam;
+    localStorage.setItem('wico_gebruiker', naam);
+    updateNaamLabel();
+  }
+  document.getElementById('setup-overlay').classList.remove('open');
+  try { renderOverview(); } catch {}
+}
+
+function updateNaamLabel() {
   const el = document.getElementById('save-gebruiker');
   if (el) el.textContent = ghGebruiker ? '👤 ' + ghGebruiker : '';
 }
 
 function wisselGebruiker() {
-  const keuze = prompt(
-    'Wat wil je doen?\n\n' +
-    '1 — Gebruikersnaam aanpassen (huidig: ' + (ghGebruiker||'niet ingesteld') + ')\n' +
-    '2 — GitHub token opnieuw instellen\n\n' +
-    'Typ 1 of 2:'
-  );
-  if (keuze === '1' || keuze === null) {
-    const naam = prompt('Nieuwe gebruikersnaam:', ghGebruiker || '');
-    if (naam !== null && naam.trim()) {
-      ghGebruiker = naam.trim();
-      localStorage.setItem('wico_gebruiker', ghGebruiker);
-      const el = document.getElementById('save-gebruiker');
-      if (el) el.textContent = '👤 ' + ghGebruiker;
-    }
-  } else if (keuze === '2') {
-    const t = prompt('Plak je nieuwe GitHub token:');
-    if (t && t.trim()) {
-      GH_CONFIG.token = t.trim();
-      localStorage.setItem('wico_gh_token', GH_CONFIG.token);
-      ghSetStatus('🔄 Token bijgewerkt — even testen...', '#2a8a96');
-      window.saveAll();
-    }
-  }
+  const ni = document.getElementById('setup-naam');
+  const ti = document.getElementById('setup-token');
+  if (ni) ni.value = ghGebruiker || '';
+  if (ti) ti.value = GH_CONFIG.token || '';
+  document.getElementById('setup-overlay').classList.add('open');
+  setTimeout(() => { if (ni) ni.focus(); }, 150);
 }
 
 function ghSetStatus(tekst, kleur) {
@@ -1781,7 +1838,7 @@ if (GH_CONFIG.autosaveMs !== 0) {
 /* =====================================================================
    Opstart — laad eerst van GitHub, val terug op lokale cache
    ===================================================================== */
-(async function bootstrap() {
+async function ghBootstrap() {
   ghSetStatus('⏳ Laden...', '#2a8a96');
   try {
     const remote = await ghLoad();
@@ -1804,7 +1861,15 @@ if (GH_CONFIG.autosaveMs !== 0) {
   // Render altijd, ook bij fout
   toonGebruikerWelkom();
   try { renderOverview(); } catch {}
-})();
+}
+
+ghBootstrap();
+
+// Enter-toets in setup modal
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('setup-naam').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('setup-token').focus(); });
+  document.getElementById('setup-token').addEventListener('keydown', e => { if (e.key === 'Enter') setupOpslaan(); });
+});
 
 /* =====================================================================
    HOE MAAK JE EEN GITHUB TOKEN AAN?
