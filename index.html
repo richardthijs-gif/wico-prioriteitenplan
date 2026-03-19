@@ -1660,22 +1660,9 @@ const GH_STATE = { sha: null };   // SHA van het huidige data.json — nodig voo
 let ghGebruiker = localStorage.getItem('wico_gebruiker') || '';
 
 function toonGebruikerWelkom() {
-  const heeftToken = !!GH_CONFIG.token;
-  const heeftNaam  = !!ghGebruiker;
-  if (!heeftToken || !heeftNaam) {
-    // Vul vooraf in wat al gekend is
-    const ni = document.getElementById('setup-naam');
-    const ti = document.getElementById('setup-token');
-    if (ni && heeftNaam)  ni.value = ghGebruiker;
-    if (ti && heeftToken) ti.value = GH_CONFIG.token;
-    document.getElementById('setup-overlay').classList.add('open');
-    setTimeout(() => {
-      const focus = !heeftNaam ? document.getElementById('setup-naam') : document.getElementById('setup-token');
-      if (focus) focus.focus();
-    }, 150);
-  } else {
-    updateNaamLabel();
-  }
+  // Modal wordt nu direct bij laden getoond als nodig (zie checkSetupNodig).
+  // Deze functie enkel nog voor label update.
+  updateNaamLabel();
 }
 
 function setupOpslaan() {
@@ -1685,10 +1672,13 @@ function setupOpslaan() {
   if (!token) { document.getElementById('setup-token').focus(); return; }
   ghGebruiker     = naam;
   GH_CONFIG.token = token;
-  localStorage.setItem('wico_gebruiker',  naam);
+  localStorage.setItem('wico_gebruiker', naam);
   localStorage.setItem('wico_gh_token', token);
   updateNaamLabel();
-  document.getElementById('setup-overlay').classList.remove('open');
+  // Verberg modal
+  const overlay = document.getElementById('setup-overlay');
+  overlay.classList.remove('open');
+  overlay.style.display = '';
   ghSetStatus('🔄 Verbinden...', '#2a8a96');
   ghBootstrap();
 }
@@ -1700,8 +1690,8 @@ function setupOverslaan() {
     localStorage.setItem('wico_gebruiker', naam);
     updateNaamLabel();
   }
-  document.getElementById('setup-overlay').classList.remove('open');
-  try { renderOverview(); } catch {}
+  const ov = document.getElementById('setup-overlay'); ov.classList.remove('open'); ov.style.display = '';
+  ghBootstrap();
 }
 
 function updateNaamLabel() {
@@ -1863,12 +1853,40 @@ async function ghBootstrap() {
   try { renderOverview(); } catch {}
 }
 
-ghBootstrap();
+// ── Toon setup-modal onmiddellijk als token of naam ontbreekt ──
+// Dit gebeurt synchroon, voor elke async operatie
+(function checkSetupNodig() {
+  const heeftToken = !!(localStorage.getItem('wico_gh_token') || '').trim();
+  const heeftNaam  = !!(localStorage.getItem('wico_gebruiker') || '').trim();
+  if (!heeftToken || !heeftNaam) {
+    const overlay = document.getElementById('setup-overlay');
+    if (overlay) {
+      overlay.style.display = 'flex';  // forceer zichtbaar
+      overlay.classList.add('open');
+      // Vul in wat al geweten is
+      const ni = document.getElementById('setup-naam');
+      const ti = document.getElementById('setup-token');
+      const bestaandeNaam  = localStorage.getItem('wico_gebruiker') || '';
+      const bestaandeToken = localStorage.getItem('wico_gh_token') || '';
+      if (ni && bestaandeNaam)  ni.value = bestaandeNaam;
+      if (ti && bestaandeToken) ti.value = bestaandeToken;
+      setTimeout(() => {
+        if (ni && !bestaandeNaam)  { ni.focus(); return; }
+        if (ti && !bestaandeToken) { ti.focus(); }
+      }, 100);
+    }
+  } else {
+    // Alles aanwezig — laad data van GitHub
+    ghBootstrap();
+  }
+})();
 
 // Enter-toets in setup modal
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('setup-naam').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('setup-token').focus(); });
-  document.getElementById('setup-token').addEventListener('keydown', e => { if (e.key === 'Enter') setupOpslaan(); });
+document.getElementById('setup-naam').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('setup-token').focus();
+});
+document.getElementById('setup-token').addEventListener('keydown', e => {
+  if (e.key === 'Enter') setupOpslaan();
 });
 
 /* =====================================================================
