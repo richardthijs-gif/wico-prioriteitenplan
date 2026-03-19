@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prioriteitenplan Dashboard</title>
+<style>
+  /* WICO kleurenpalet */
+  :root {
+    --wico-petrol:     #1a4a52;
+    --wico-petrol-mid: #1e5f6b;
+    --wico-teal:       #2a8a96;
+    --wico-teal-light: #d4eef1;
+    --wico-teal-xlight:#eaf6f8;
+    --wico-red:        #c0392b;
+    --wico-red-light:  #f9e8e7;
+    --wico-white:      #ffffff;
+    --wico-offwhite:   #f5f8f9;
+    --wico-gray:       #e2eaec;
+    --wico-text:       #1a2e31;
+    --wico-muted:      #5a7a80;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--wico-offwhite); color: var(--wico-text); font-size: 15px; }
+
+  /* Header */
+  .header { background: var(--wico-petrol); padding: 0 24px; display: flex; align-items: stretch; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .header-left { display: flex; align-items: center; gap: 14px; padding: 14px 0; }
+  .compass-icon { width: 36px; height: 36px; flex-shrink: 0; }
+  .header h1 { font-size: 17px; font-weight: 700; color: var(--wico-white); letter-spacing: 0.2px; }
+  .header .meta { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+  .header-right { display: flex; align-items: center; gap: 10px; padding: 14px 0; }
+
+  /* Nav tabs */
+  .nav-tabs { background: var(--wico-petrol-mid); display: flex; gap: 0; padding: 0 24px; overflow-x: auto; border-bottom: 2px solid var(--wico-teal); }
+  .nav-tabs::-webkit-scrollbar { height: 3px; }
+  .nav-tabs::-webkit-scrollbar-thumb { background: var(--wico-teal); border-radius: 2px; }
+  .nav-tab { padding: 11px 16px; font-size: 12px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: rgba(255,255,255,0.65); white-space: nowrap; transition: all 0.15s; }
+  .nav-tab:hover { color: var(--wico-white); }
+  .nav-tab.active { color: var(--wico-white); border-bottom-color: var(--wico-red); background: rgba(255,255,255,0.06); }
+
+  .main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+  /* Overzicht sectietitel */
+  .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--wico-teal); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--wico-gray); }
+
+  /* Priority cards */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .priority-card { background: var(--wico-white); border-radius: 10px; border: 1px solid var(--wico-gray); border-left: 4px solid var(--wico-teal); padding: 16px 18px; cursor: pointer; transition: all 0.15s; }
+  .priority-card:hover { border-color: var(--wico-teal); border-left-color: var(--wico-red); box-shadow: 0 3px 10px rgba(26,74,82,0.10); transform: translateY(-1px); }
+  .priority-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 3px 8px; border-radius: 3px; display: inline-block; margin-bottom: 8px; }
+  .tag-gok         { background: var(--wico-teal-light); color: var(--wico-petrol); }
+  .tag-executief   { background: #e8edf5; color: #2c3e6b; }
+  .tag-organisatie { background: var(--wico-teal-light); color: var(--wico-petrol); }
+  .tag-eigenaarschap { background: #fef3e2; color: #7a4a0a; }
+  .tag-taal        { background: var(--wico-red-light); color: var(--wico-red); }
+  .tag-participatie { background: #e8f5ec; color: #1e6b38; }
+  .tag-ervaringsgericht { background: #f0ebe8; color: #6b3a1e; }
+  .tag-begeleiding { background: #edf0f0; color: #3a5558; }
+  .priority-card h3 { font-size: 13px; font-weight: 600; line-height: 1.45; margin-bottom: 10px; color: var(--wico-text); }
+  .priority-card .verantw { font-size: 12px; color: var(--wico-muted); }
+  .progress-bar { height: 3px; background: var(--wico-gray); border-radius: 2px; margin-top: 12px; }
+  .progress-fill { height: 100%; border-radius: 2px; background: var(--wico-teal); transition: width 0.3s; }
+  .status-dots { display: flex; gap: 4px; margin-top: 10px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--wico-gray); }
+  .dot.done { background: #2a9a5a; }
+  .dot.inprogress { background: #e09a20; }
+  .dot.open { background: var(--wico-gray); }
+
+  /* Detail panel */
+  .detail-panel { background: var(--wico-white); border-radius: 10px; border: 1px solid var(--wico-gray); padding: 0; margin-bottom: 24px; overflow: hidden; }
+  .detail-header { background: var(--wico-petrol); padding: 22px 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .detail-header h2 { font-size: 15px; font-weight: 600; color: var(--wico-white); line-height: 1.5; flex: 1; margin-right: 16px; }
+  .tijdspad-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 3px; font-weight: 600; }
+  .badge-initieer { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); }
+  .badge-verderzet { background: rgba(42,138,150,0.35); color: #d4eef1; }
+  .badge-borg { background: rgba(192,57,43,0.35); color: #ffd5d2; }
+
+  /* Section tabs */
+  .section-tabs { display: flex; border-bottom: 1px solid var(--wico-gray); padding: 0 24px; background: #f8fbfc; }
+  .sec-tab { padding: 10px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; color: var(--wico-muted); transition: all 0.15s; }
+  .sec-tab:hover { color: var(--wico-petrol); }
+  .sec-tab.active { color: var(--wico-petrol); border-bottom-color: var(--wico-red); font-weight: 600; }
+
+  .section-body { padding: 20px 24px; }
+
+  /* OD blokken */
+  .od-block { margin-bottom: 14px; border: 1px solid var(--wico-gray); border-radius: 8px; overflow: hidden; }
+  .od-header { background: var(--wico-teal-xlight); border-left: 3px solid var(--wico-teal); padding: 11px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.15s; }
+  .od-header:hover { background: var(--wico-teal-light); }
+  .od-header h4 { font-size: 13px; font-weight: 600; color: var(--wico-petrol); flex: 1; }
+  .od-toggle { font-size: 18px; color: var(--wico-teal); transition: transform 0.2s; }
+  .od-toggle.open { transform: rotate(90deg); }
+  .od-body { padding: 16px; display: none; background: var(--wico-white); }
+  .od-body.open { display: block; }
+
+  .effecten-box { background: var(--wico-teal-xlight); border-left: 3px solid var(--wico-teal); border-radius: 0 6px 6px 0; padding: 12px 14px; margin-bottom: 4px; font-size: 13px; line-height: 1.6; color: var(--wico-petrol); }
+  .effecten-box h5 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--wico-teal); margin-bottom: 6px; }
+
+  /* Acties tabel */
+  .actions-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .actions-table th { text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--wico-muted); padding: 6px 8px; border-bottom: 2px solid var(--wico-teal-light); background: var(--wico-teal-xlight); }
+  .actions-table td { padding: 8px 8px; border-bottom: 1px solid var(--wico-gray); vertical-align: top; }
+  .actions-table tr:last-child td { border-bottom: none; }
+  .actions-table tr:hover td { background: var(--wico-teal-xlight); }
+  .actions-table td:first-child { font-weight: 500; }
+  .actions-table input[type="text"] { width: 100%; border: none; background: transparent; font-size: 13px; font-family: inherit; color: var(--wico-text); padding: 2px 4px; border-radius: 4px; }
+  .actions-table input[type="text"]:focus { background: var(--wico-teal-xlight); outline: 1px solid var(--wico-teal); }
+  .actions-table select { border: none; background: transparent; font-size: 12px; font-family: inherit; color: var(--wico-muted); cursor: pointer; }
+  .status-open  { font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 600; background: #edf0f0; color: var(--wico-muted); }
+  .status-loopt { font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 600; background: #fef3e2; color: #7a4a0a; }
+  .status-klaar { font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 600; background: #e8f5ec; color: #1e6b38; }
+
+  .add-btn { font-size: 12px; color: var(--wico-teal); cursor: pointer; padding: 6px 12px; border: 1px dashed var(--wico-teal); border-radius: 6px; display: inline-block; margin-top: 10px; background: none; font-weight: 500; transition: all 0.15s; }
+  .add-btn:hover { background: var(--wico-teal-xlight); border-style: solid; }
+
+  .indicatoren-textarea { width: 100%; border: 1px solid var(--wico-gray); border-radius: 6px; padding: 10px 12px; font-size: 13px; font-family: inherit; line-height: 1.6; min-height: 80px; resize: vertical; color: var(--wico-text); background: var(--wico-teal-xlight); }
+  .indicatoren-textarea:focus { outline: 1px solid var(--wico-teal); background: var(--wico-white); }
+
+  /* Evaluatie */
+  .evaluatie-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .eval-col { border-radius: 8px; padding: 14px 16px; font-size: 13px; }
+  .eval-borgen  { background: #e8f5ec; color: #1a4a28; border-left: 3px solid #2a9a5a; }
+  .eval-bannen  { background: var(--wico-red-light); color: #6b1a14; border-left: 3px solid var(--wico-red); }
+  .eval-bijsturen { background: #fef3e2; color: #5a3608; border-left: 3px solid #e09a20; }
+  .eval-col h5 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+  .eval-col textarea { width: 100%; border: none; background: transparent; font-size: 13px; font-family: inherit; color: inherit; min-height: 80px; resize: vertical; }
+  .eval-col textarea:focus { outline: none; }
+  .eval-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .meta-field label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--wico-muted); display: block; margin-bottom: 4px; }
+  .meta-field input { width: 100%; border: 1px solid var(--wico-gray); border-radius: 6px; padding: 7px 10px; font-size: 13px; font-family: inherit; background: var(--wico-teal-xlight); color: var(--wico-text); }
+  .meta-field input:focus { outline: 1px solid var(--wico-teal); background: var(--wico-white); }
+
+  .streefdoel-area { background: var(--wico-teal-xlight); border-left: 3px solid var(--wico-teal); border-radius: 0 6px 6px 0; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; line-height: 1.7; color: var(--wico-text); }
+  .streefdoel-area strong { font-weight: 700; color: var(--wico-petrol); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+
+  /* Save bar */
+  .save-bar { background: var(--wico-petrol); color: var(--wico-white); font-size: 13px; font-weight: 500; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .save-btn { background: var(--wico-red); color: var(--wico-white); border: none; border-radius: 5px; padding: 7px 18px; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+  .save-btn:hover { background: #a93226; }
+  .print-btn { background: none; border: 1px solid rgba(255,255,255,0.4); color: var(--wico-white); border-radius: 5px; padding: 6px 14px; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .print-btn:hover { background: rgba(255,255,255,0.1); }
+
+  /* Editable */
+  .editable-text { cursor: pointer; border-radius: 4px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s; position: relative; }
+  .editable-text:hover { background: rgba(42,138,150,0.10); }
+  .editable-text:hover::after { content: ' ✎'; font-size: 11px; color: var(--wico-teal); opacity: 0.8; }
+  .editable-textarea { width: 100%; border: 1.5px solid var(--wico-teal); border-radius: 6px; padding: 8px 10px; font-size: 13px; font-family: inherit; line-height: 1.6; resize: vertical; background: var(--wico-white); color: var(--wico-text); outline: none; }
+  .editable-input { width: 100%; border: 1.5px solid var(--wico-teal); border-radius: 6px; padding: 6px 10px; font-size: inherit; font-family: inherit; font-weight: inherit; background: var(--wico-white); color: inherit; outline: none; }
+  .edit-hint { font-size: 11px; color: var(--wico-teal); margin-top: 4px; display: none; }
+
+  /* Team opvolging view */
+  .team-view-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+  .team-card { background: var(--wico-white); border-radius: 10px; border: 1px solid var(--wico-gray); border-top: 4px solid var(--wico-teal); overflow: hidden; }
+  .team-card-header { padding: 14px 18px 10px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--wico-gray); }
+  .team-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--wico-petrol); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .team-card-name { font-size: 14px; font-weight: 700; color: var(--wico-petrol); }
+  .team-card-stats { font-size: 11px; color: var(--wico-muted); margin-top: 2px; }
+  .team-progress-wrap { padding: 10px 18px 4px; }
+  .team-progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--wico-muted); margin-bottom: 4px; }
+  .team-progress-track { height: 6px; background: var(--wico-gray); border-radius: 3px; overflow: hidden; }
+  .team-progress-fill { height: 100%; border-radius: 3px; background: var(--wico-teal); transition: width 0.4s; }
+  .team-progress-fill.full { background: #2a9a5a; }
+  .team-actie-list { padding: 8px 0 12px; }
+  .team-actie-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 18px; border-bottom: 0.5px solid var(--wico-gray); font-size: 12px; }
+  .team-actie-item:last-child { border-bottom: none; }
+  .team-actie-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .team-actie-dot.open   { background: var(--wico-gray); border: 1.5px solid #aaa; }
+  .team-actie-dot.loopt  { background: #e09a20; }
+  .team-actie-dot.klaar  { background: #2a9a5a; }
+  .team-actie-text { flex: 1; line-height: 1.4; color: var(--wico-text); }
+  .team-actie-text.klaar { text-decoration: line-through; color: var(--wico-muted); }
+  .team-actie-meta { font-size: 10px; color: var(--wico-muted); margin-top: 2px; }
+  .team-actie-prioriteit { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: var(--wico-teal-xlight); color: var(--wico-petrol); white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+  .team-empty { text-align: center; padding: 40px 20px; color: var(--wico-muted); font-size: 13px; }
+  .team-filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+  .team-filter-btn { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--wico-gray); background: var(--wico-white); color: var(--wico-muted); cursor: pointer; transition: all 0.15s; }
+  .team-filter-btn:hover { border-color: var(--wico-teal); color: var(--wico-teal); }
+  .team-filter-btn.active { background: var(--wico-petrol); color: white; border-color: var(--wico-petrol); }
+  .team-legend { display: flex; gap: 14px; margin-left: auto; align-items: center; }
+  .team-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--wico-muted); }
+  .team-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Team manager overlay */
+  .team-overlay { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.55); z-index:500; align-items:center; justify-content:center; }
+  .team-overlay.open { display:flex; }
+  .team-modal { background:var(--wico-white); border-radius:12px; width:380px; max-width:95vw; max-height:80vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.25); }
+  .team-modal-header { background:var(--wico-petrol); color:white; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; }
+  .team-modal-header h3 { font-size:15px; font-weight:700; }
+  .team-modal-body { padding:16px 20px; overflow-y:auto; flex:1; }
+  .team-member-row { display:flex; align-items:center; justify-content:space-between; padding:7px 10px; border-radius:6px; margin-bottom:4px; border:1px solid var(--wico-gray); background:var(--wico-offwhite); font-size:13px; }
+  .team-member-row:hover { background:var(--wico-teal-xlight); }
+  .team-member-name { font-weight:500; color:var(--wico-petrol); flex:1; }
+  .team-member-del { background:none; border:none; color:var(--wico-red); cursor:pointer; font-size:16px; padding:0 4px; line-height:1; }
+  .team-add-row { display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--wico-gray); }
+  .team-add-row input { flex:1; border:1px solid var(--wico-gray); border-radius:6px; padding:8px 10px; font-size:13px; font-family:inherit; background:var(--wico-teal-xlight); }
+  .team-add-row input:focus { outline:1px solid var(--wico-teal); background:white; }
+  .team-add-btn { background:var(--wico-teal); color:white; border:none; border-radius:6px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; }
+  .team-add-btn:hover { background:var(--wico-petrol); }
+  .team-modal-footer { padding:12px 20px; border-top:1px solid var(--wico-gray); display:flex; justify-content:flex-end; }
+
+  /* Multi-select person dropdown */
+  .person-select-wrap { position:relative; display:inline-block; min-width:160px; }
+  .person-select-btn { display:flex; align-items:center; gap:4px; flex-wrap:wrap; border:1px solid rgba(255,255,255,0.3); border-radius:5px; padding:5px 8px; background:rgba(255,255,255,0.12); cursor:pointer; min-height:32px; }
+  .person-select-btn.light { border:1px solid var(--wico-gray); background:var(--wico-teal-xlight); border-radius:5px; padding:4px 6px; }
+  .person-tag { font-size:11px; font-weight:700; padding:2px 7px; border-radius:3px; background:rgba(255,255,255,0.2); color:white; white-space:nowrap; }
+  .person-tag.light { background:var(--wico-teal-light); color:var(--wico-petrol); }
+  .person-placeholder { font-size:12px; color:rgba(255,255,255,0.5); font-style:italic; }
+  .person-placeholder.light { color:var(--wico-muted); }
+  .person-dropdown { display:none; position:absolute; top:calc(100% + 4px); right:0; background:white; border:1px solid var(--wico-gray); border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.15); z-index:200; min-width:200px; max-height:260px; overflow-y:auto; padding:6px; }
+  .person-dropdown.open { display:block; }
+  .person-dropdown.drop-up { top:auto; bottom:calc(100% + 4px); }
+  .person-opt { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:5px; cursor:pointer; font-size:13px; color:var(--wico-text); transition:background 0.1s; }
+  .person-opt:hover { background:var(--wico-teal-xlight); }
+  .person-opt input[type="checkbox"] { accent-color:var(--wico-teal); width:15px; height:15px; flex-shrink:0; }
+  .person-opt.checked { font-weight:600; color:var(--wico-petrol); }
+
+
+  /* ── Setup modal ── */
+  .setup-overlay { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.8); z-index:3000; align-items:center; justify-content:center; }
+  .setup-overlay.open { display:flex !important; }
+  .setup-modal { background:#fff; border-radius:14px; width:460px; max-width:95vw; overflow:hidden; box-shadow:0 16px 56px rgba(0,0,0,0.35); }
+  .setup-hdr { background:#1a4a52; padding:20px 24px; }
+  .setup-hdr h2 { font-size:16px; font-weight:700; color:white; margin-bottom:3px; }
+  .setup-hdr p { font-size:12px; color:rgba(255,255,255,0.6); }
+  .setup-body { padding:22px 24px; }
+  .setup-veld { margin-bottom:16px; }
+  .setup-veld label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#5a7a80; display:block; margin-bottom:6px; }
+  .setup-veld input { width:100%; border:1.5px solid #e2eaec; border-radius:8px; padding:10px 14px; font-size:14px; font-family:inherit; background:#eaf6f8; transition:border 0.15s; }
+  .setup-veld input:focus { outline:none; border-color:#2a8a96; background:white; }
+  .setup-hint { font-size:11px; color:#5a7a80; margin-top:5px; line-height:1.5; }
+  .setup-hint a { color:#2a8a96; }
+  .setup-ftr { padding:14px 24px; border-top:1px solid #e2eaec; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .setup-btn-start { background:#c0392b; color:white; border:none; border-radius:7px; padding:11px 26px; font-size:14px; font-weight:700; cursor:pointer; }
+  .setup-btn-start:hover { background:#a93226; }
+  .setup-btn-skip { background:none; border:1px solid #e2eaec; border-radius:7px; padding:10px 16px; font-size:12px; color:#5a7a80; cursor:pointer; }
+
+  @media (max-width: 600px) {
+    .evaluatie-grid { grid-template-columns: 1fr; }
+    .eval-meta { grid-template-columns: 1fr; }
+    .main { padding: 12px; }
+    .detail-header h2 { max-width: 100%; }
+  }
+  @media print {
+    .nav-tabs, .save-bar, .add-btn, .header, .print-btn { display: none !important; }
+    .od-body { display: block !important; }
+    .main { padding: 0; max-width: 100%; }
+    .detail-panel { border: none; }
+    body { background: white; font-size: 12px; }
+  }
+
+  /* ── Kalender ── */
+  .kal-nav { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .kal-nav-btn { background:var(--wico-white); border:1px solid var(--wico-gray); border-radius:6px; padding:6px 14px; font-size:13px; font-weight:600; color:var(--wico-petrol); cursor:pointer; transition:all 0.15s; }
+  .kal-nav-btn:hover { background:var(--wico-teal-xlight); border-color:var(--wico-teal); }
+  .kal-nav-title { font-size:16px; font-weight:700; color:var(--wico-petrol); flex:1; text-align:center; }
+  .kal-view-toggle { display:flex; gap:0; border:1px solid var(--wico-gray); border-radius:6px; overflow:hidden; margin-left:auto; }
+  .kal-view-btn { background:var(--wico-white); border:none; padding:6px 14px; font-size:12px; font-weight:600; color:var(--wico-muted); cursor:pointer; }
+  .kal-view-btn.active { background:var(--wico-petrol); color:white; }
+  .kal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--wico-gray); border:1px solid var(--wico-gray); border-radius:8px; overflow:hidden; }
+  .kal-dag-hdr { background:var(--wico-petrol); color:white; font-size:11px; font-weight:700; text-align:center; padding:8px 4px; text-transform:uppercase; letter-spacing:0.5px; }
+  .kal-dag { background:var(--wico-white); min-height:90px; padding:6px; vertical-align:top; }
+  .kal-dag.ander-maand { background:#f8fbfc; }
+  .kal-dag.vandaag .kal-dag-nr { background:var(--wico-red); color:white; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; }
+  .kal-dag-nr { font-size:12px; font-weight:600; color:var(--wico-muted); margin-bottom:4px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; }
+  .kal-actie-chip { font-size:10px; font-weight:600; padding:2px 6px; border-radius:3px; margin-bottom:2px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; display:block; transition:opacity 0.15s; line-height:1.4; }
+  .kal-actie-chip:hover { opacity:0.75; }
+  .kal-actie-chip.open   { background:var(--wico-teal-xlight); color:var(--wico-petrol); }
+  .kal-actie-chip.loopt  { background:#fef3e2; color:#7a4a0a; }
+  .kal-actie-chip.klaar  { background:#e8f5ec; color:#1e6b38; text-decoration:line-through; opacity:0.7; }
+  .kal-meer { font-size:10px; color:var(--wico-teal); font-weight:600; cursor:pointer; padding:1px 4px; }
+  /* Tijdlijn-weergave */
+  .kal-timeline { display:flex; flex-direction:column; gap:16px; }
+  .kal-maand-blok { background:var(--wico-white); border-radius:10px; border:1px solid var(--wico-gray); overflow:hidden; }
+  .kal-maand-hdr { background:var(--wico-petrol); padding:10px 18px; display:flex; align-items:center; gap:10px; }
+  .kal-maand-naam { font-size:14px; font-weight:700; color:white; }
+  .kal-maand-count { font-size:11px; padding:2px 8px; border-radius:10px; background:rgba(255,255,255,0.2); color:white; }
+  .kal-maand-body { padding:8px 0; }
+  .kal-tl-item { display:flex; align-items:flex-start; gap:14px; padding:9px 18px; border-bottom:0.5px solid var(--wico-gray); cursor:pointer; transition:background 0.1s; }
+  .kal-tl-item:last-child { border-bottom:none; }
+  .kal-tl-item:hover { background:var(--wico-teal-xlight); }
+  .kal-tl-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+  .kal-tl-dot.open  { background:var(--wico-gray); border:2px solid #aaa; }
+  .kal-tl-dot.loopt { background:#e09a20; }
+  .kal-tl-dot.klaar { background:#2a9a5a; }
+  .kal-tl-actie { font-size:13px; font-weight:500; color:var(--wico-text); flex:1; line-height:1.4; }
+  .kal-tl-actie.klaar { text-decoration:line-through; color:var(--wico-muted); }
+  .kal-tl-meta { font-size:11px; color:var(--wico-muted); margin-top:2px; }
+  .kal-tl-tag { font-size:10px; font-weight:700; padding:2px 7px; border-radius:3px; background:var(--wico-teal-xlight); color:var(--wico-petrol); white-space:nowrap; flex-shrink:0; }
+  .kal-ongedateerd { background:var(--wico-white); border-radius:10px; border:1px dashed var(--wico-gray); margin-top:8px; }
+  .kal-legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:16px; align-items:center; }
+  .kal-legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--wico-muted); }
+  .kal-legend-dot { width:10px; height:10px; border-radius:50%; }
+
+  /* ── Afdrukpopup ── */
+  .print-overlay { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.6); z-index:600; align-items:center; justify-content:center; }
+  .print-overlay.open { display:flex; }
+  .print-modal { background:white; border-radius:14px; width:560px; max-width:96vw; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 12px 48px rgba(0,0,0,0.25); }
+  .print-modal-hdr { background:var(--wico-petrol); padding:16px 22px; display:flex; align-items:center; justify-content:space-between; }
+  .print-modal-hdr h3 { font-size:15px; font-weight:700; color:white; }
+  .print-modal-body { padding:20px 22px; overflow-y:auto; flex:1; }
+  .print-sjabloon { display:flex; align-items:flex-start; gap:14px; padding:14px; border:1.5px solid var(--wico-gray); border-radius:8px; margin-bottom:10px; cursor:pointer; transition:all 0.15s; }
+  .print-sjabloon:hover { border-color:var(--wico-teal); background:var(--wico-teal-xlight); }
+  .print-sjabloon.selected { border-color:var(--wico-teal); border-width:2px; background:var(--wico-teal-xlight); }
+  .print-sjabloon-icoon { font-size:26px; flex-shrink:0; margin-top:2px; }
+  .print-sjabloon h4 { font-size:13px; font-weight:700; color:var(--wico-petrol); margin-bottom:3px; }
+  .print-sjabloon p { font-size:12px; color:var(--wico-muted); line-height:1.4; }
+  .print-modal-ftr { padding:14px 22px; border-top:1px solid var(--wico-gray); display:flex; gap:10px; justify-content:flex-end; }
+  .print-selectie { margin-top:10px; padding:12px 14px; background:var(--wico-offwhite); border-radius:6px; border:1px solid var(--wico-gray); }
+  .print-selectie label { font-size:12px; display:flex; align-items:center; gap:8px; padding:4px 0; cursor:pointer; }
+  .print-selectie label input { accent-color:var(--wico-teal); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <svg class="compass-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="18" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+      <circle cx="20" cy="20" r="12" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <circle cx="20" cy="20" r="3" fill="white"/>
+      <polygon points="20,5 17,20 20,18 23,20" fill="white" opacity="0.95"/>
+      <polygon points="20,35 23,20 20,22 17,20" fill="#c0392b" opacity="0.9"/>
+    </svg>
+    <div>
+      <h1>WICO — Prioriteitenplan 2025–2028</h1>
+      <div class="meta">Beleidsteam · Meerjarenplan secundair onderwijs</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button onclick="showView('kalender', this)" id="header-kal-btn" class="print-btn" style="margin-right:6px;">📅 Kalender</button>
+    <button onclick="showView('team', this)" id="header-team-btn" class="print-btn" style="margin-right:6px;">👥 Teamopvolging</button>
+    <button onclick="openTeamManager()" class="print-btn" style="margin-right:6px;">⚙️ Team beheren</button>
+    <button onclick="openPrintMenu()" class="print-btn" style="margin-right:6px;">🖨️ Afdrukken</button>
+    <span id="gh-conn" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:#5a7a80;color:#fff;white-space:nowrap;cursor:default;" title="GitHub opslag status">⏳ Laden...</span>
+  </div>
+</div>
+
+<!-- Print popup -->
+<div class="print-overlay" id="print-overlay" onclick="if(event.target===this)closePrintMenu()">
+  <div class="print-modal">
+    <div class="print-modal-hdr">
+      <h3>🖨️ Afdrukken — kies een sjabloon</h3>
+      <button onclick="closePrintMenu()" style="background:none;border:none;color:white;font-size:22px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="print-modal-body">
+      <div class="print-sjabloon" id="ps-volledig" onclick="selectSjabloon('volledig')">
+        <div class="print-sjabloon-icoon">📋</div>
+        <div>
+          <h4>Volledig prioriteitenplan</h4>
+          <p>Alle strategische doelen, operationele doelen, acties en evaluatiemomenten. Ideaal voor archivering of bestuursvergadering.</p>
+        </div>
+      </div>
+      <div class="print-sjabloon" id="ps-acties" onclick="selectSjabloon('acties')">
+        <div class="print-sjabloon-icoon">✅</div>
+        <div>
+          <h4>Actieoverzicht</h4>
+          <p>Alle acties per prioriteit met status, verantwoordelijke en deadline. Compact overzicht voor werkvergaderingen.</p>
+        </div>
+      </div>
+      <div class="print-sjabloon" id="ps-prioriteit" onclick="selectSjabloon('prioriteit')">
+        <div class="print-sjabloon-icoon">🎯</div>
+        <div>
+          <h4>Eén prioriteit in detail</h4>
+          <p>Gedetailleerde weergave van één strategisch doel met alle OD's, acties en evaluatie.</p>
+          <div class="print-selectie" id="ps-prioriteit-keuze" style="display:none;">
+            <div id="ps-prioriteit-lijst"></div>
+          </div>
+        </div>
+      </div>
+      <div class="print-sjabloon" id="ps-team" onclick="selectSjabloon('team')">
+        <div class="print-sjabloon-icoon">👥</div>
+        <div>
+          <h4>Teamopvolging</h4>
+          <p>Overzicht van alle acties per teamlid of groep met voortgangsstatus.</p>
+        </div>
+      </div>
+      <div class="print-sjabloon" id="ps-kalender" onclick="selectSjabloon('kalender')">
+        <div class="print-sjabloon-icoon">📅</div>
+        <div>
+          <h4>Kalenderoverzicht</h4>
+          <p>Alle acties gerangschikt per maand, geschikt als jaarplanning of agendabijlage.</p>
+        </div>
+      </div>
+      <div class="print-sjabloon" id="ps-evaluatie" onclick="selectSjabloon('evaluatie')">
+        <div class="print-sjabloon-icoon">🔄</div>
+        <div>
+          <h4>Evaluatierapport</h4>
+          <p>Borgen · Bannen · Bijsturen per operationeel doel. Voor evaluatie- en reflectievergaderingen.</p>
+        </div>
+      </div>
+    </div>
+    <div class="print-modal-ftr">
+      <button onclick="closePrintMenu()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:8px 18px;font-size:13px;cursor:pointer;color:var(--wico-muted);">Annuleren</button>
+      <button onclick="uitvoerenAfdruk()" class="save-btn" id="print-start-btn" disabled style="opacity:0.5;">Afdrukken</button>
+    </div>
+  </div>
+</div>
+
+<!-- Team manager overlay -->
+<div class="team-overlay" id="team-overlay" onclick="if(event.target===this)closeTeamManager()">
+  <div class="team-modal">
+    <div class="team-modal-header">
+      <h3>Team beheren</h3>
+      <button onclick="closeTeamManager()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="team-modal-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--wico-muted);margin-bottom:10px;">Leden &amp; groepen</div>
+      <div id="team-list"></div>
+      <div class="team-add-row">
+        <input type="text" id="team-new-input" placeholder="Naam of groep toevoegen..." onkeydown="if(event.key==='Enter')addTeamMember()"/>
+        <button class="team-add-btn" onclick="addTeamMember()">+ Toevoegen</button>
+      </div>
+    </div>
+    <div class="team-modal-footer">
+      <button onclick="closeTeamManager()" class="save-btn">Klaar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Setup modal -->
+<div class="setup-overlay" id="setup-overlay">
+  <div class="setup-modal">
+    <div class="setup-hdr">
+      <h2>Welkom bij het WICO Prioriteitenplan</h2>
+      <p>Vul je naam en GitHub-token in om te beginnen.</p>
+    </div>
+    <div class="setup-body">
+      <div class="setup-veld">
+        <label>Jouw naam</label>
+        <input type="text" id="setup-naam" placeholder="bv. Richard, Elke, Directie..." autocomplete="name"/>
+        <p class="setup-hint">Verschijnt bij elke opslag in de versiegeschiedenis.</p>
+      </div>
+      <div class="setup-veld">
+        <label>GitHub Token</label>
+        <input type="password" id="setup-token" placeholder="github_pat_..." autocomplete="off"/>
+        <p class="setup-hint">
+          Aanmaken via <a href="https://github.com/settings/tokens?type=beta" target="_blank">github.com → Settings → Developer settings → Fine-grained tokens</a>.<br>
+          Selecteer repository <strong>wico-prioriteitenplan</strong>, zet Contents op <strong>Read and write</strong>.
+        </p>
+      </div>
+    </div>
+    <div class="setup-ftr">
+      <button class="setup-btn-skip" onclick="setupOverslaan()">Alleen lokaal werken</button>
+      <button class="setup-btn-start" onclick="setupOpslaan()">Opslaan &amp; starten ›</button>
+    </div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showView('overview', this)">Overzicht</div>
+  <div class="nav-tab" onclick="showView('detail-0', this)">GOK & Taalbeleid</div>
+  <div class="nav-tab" onclick="showView('detail-1', this)">Exec. functies & Routines</div>
+  <div class="nav-tab" onclick="showView('detail-2', this)">Organisatiebeleid (K2)</div>
+  <div class="nav-tab" onclick="showView('detail-3', this)">Eigenaarschap leerlingen</div>
+  <div class="nav-tab" onclick="showView('detail-4', this)">Taalvaardigheid</div>
+  <div class="nav-tab" onclick="showView('detail-5', this)">Participatief beleid</div>
+  <div class="nav-tab" onclick="showView('detail-6', this)">Ervaringsgericht leren</div>
+  <div class="nav-tab" onclick="showView('detail-7', this)">Leerlingbegeleiding</div>
+</div>
+
+<div class="main">
+
+  <!-- OVERVIEW -->
+  <div id="view-overview">
+    <div class="section-title">Strategische prioriteiten</div>
+    <div class="overview-grid" id="priority-overview"></div>
+  </div>
+
+  <!-- KALENDER VIEW -->
+  <div id="view-kalender" style="display:none;">
+    <div class="section-title">Kalender — acties per deadline</div>
+    <div id="kalender-content"></div>
+  </div>
+
+  <!-- TEAM VIEW -->
+  <div id="view-team" style="display:none;">
+    <div class="section-title">Teamopvolging</div>
+    <div id="team-view-content"></div>
+  </div>
+
+  <!-- DETAIL VIEWS -->
+  <div id="view-detail-0" style="display:none;"></div>
+  <div id="view-detail-1" style="display:none;"></div>
+  <div id="view-detail-2" style="display:none;"></div>
+  <div id="view-detail-3" style="display:none;"></div>
+  <div id="view-detail-4" style="display:none;"></div>
+  <div id="view-detail-5" style="display:none;"></div>
+  <div id="view-detail-6" style="display:none;"></div>
+  <div id="view-detail-7" style="display:none;"></div>
+
+</div>
+
+<div class="save-bar">
+  <span id="save-bar-msg">⏳ Gegevens laden van GitHub...</span>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <span id="save-gebruiker" style="font-size:12px;color:rgba(255,255,255,0.7);"></span>
+    <button class="print-btn" onclick="wisselGebruiker()" title="Andere gebruiker kiezen">👤 Wissel</button>
+    <button class="save-btn" onclick="saveAll()">Opslaan</button>
+  </div>
+</div>
+
+<script>
+/* ── helpers ── */
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ── data ── */
+const PRIORITEITEN = [
+  { id:0, tag:'GOK & Taalbeleid', tagClass:'tag-gok', verantwoordelijke:['Elke Boes'],
+    streefdoel:'Nog in te vullen — strategisch doel rond gelijke onderwijskansen en talenbeleid.',
+    operationeleDelen:[
+      {titel:'Operationeel doel 1',omschrijving:'Nog in te vullen',effecten:'Nog in te vullen'},
+      {titel:'Operationeel doel 2',omschrijving:'Vakoverstijgende uitwisseling faciliteren.',effecten:'Idem als OD1, maar dan vakoverstijgend.'},
+      {titel:'Operationeel doel 3',omschrijving:'Nog in te vullen',effecten:''}],
+    acties:[
+      {actie:'Nog invullen',wanneer:'',wie:[],status:'open',od:[]},
+      {actie:'Nog invullen',wanneer:'',wie:[],status:'open',od:[]}],
+    indicatorenPerOD:{0:'',1:'',2:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  },
+  { id:1, tag:'Executieve functies', tagClass:'tag-executief', verantwoordelijke:[],
+    streefdoel:'Begeleiding volgens het zorgcontinuüm: focus op onderwijsbehoeften op school en groepsniveau — Executieve functies en routines en structuren.',
+    operationeleDelen:[
+      {titel:'Operationeel doel 1',omschrijving:'Nog in te vullen',effecten:'Nog in te vullen'},
+      {titel:'Operationeel doel 2',omschrijving:'Vakoverstijgende uitwisseling faciliteren.',effecten:'Idem als OD1 maar vakoverstijgend.'},
+      {titel:'Operationeel doel 3',omschrijving:'Nog in te vullen',effecten:''}],
+    acties:[{actie:'Nog invullen',wanneer:'',wie:[],status:'open',od:[]}],
+    indicatorenPerOD:{0:'',1:'',2:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  },
+  { id:2, tag:'Organisatiebeleid K2', tagClass:'tag-organisatie', verantwoordelijke:[],
+    streefdoel:'De school bouwt een sterke professionele leergemeenschap uit waarin systematische en planmatige expertisedeling tussen alle teamleden leidt tot voortdurende verbetering van de onderwijskwaliteit.',
+    operationeleDelen:[
+      {titel:'OD1 — Common ground in aanpak en afspraken',omschrijving:'Tegen juni 2026 beschikt het volledige schoolteam over een afgesproken en gedocumenteerde set van criteria en structuren voor expertisedeling (bv. formats, werkvormen, overlegstructuur), die in alle vakgroepen en teams wordt toegepast.',effecten:'In juni 2026 blijkt uit verslag van 80% van de vakgroepen dat er inhoudelijke expertise werd gedeeld. In april 2026 geeft meer dan de helft aan iets bijgeleerd te hebben van een vakcollega.'},
+      {titel:'OD2 — Structurele tijd en werkvormen voor expertisedeling',omschrijving:'Vanaf september 2025 plant elke vakgroep minstens 6 momenten per schooljaar waarin leraren gericht expertise delen volgens de afgesproken structuur.',effecten:'Idem als OD1, maar vakoverstijgend.'},
+      {titel:'OD3 — Waarneembare impact op lespraktijk',omschrijving:'Tegen juni 2027 past minstens 75% van de leraren twee of meer gedeelde praktijken/strategieën aantoonbaar toe in hun lesvoering.',effecten:'Tegen juni 2027 rapporteert minstens 80% van de teamleden dat expertisedeling bijdraagt aan hun professionele groei en de kwaliteit van hun lespraktijk.'},
+      {titel:'OD4 — Expertise wordt gedeeld over teams heen',omschrijving:'Tegen juni 2026 wordt expertise die in één vakgroep wordt ontwikkeld minstens tweemaal per jaar schoolbreed gedeeld via studiedagen, intervisies of leerateliers.',effecten:''}],
+    acties:[
+      {actie:'SD/OD opnemen in schoolwerkplan',wanneer:'',wie:[],status:'loopt',od:[{pidx:2,oi:0}]},
+      {actie:'Werkvorm vakgroepvergadering bedenken en verdelen',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:0}]},
+      {actie:'Vakgroepverslag sjabloon herbekijken, verbeteren en delen',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:0}]},
+      {actie:'Elke vakgroep gebruikt VAK in Smartschool voor vakverslagen',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:0}]},
+      {actie:'Toelichting SD en OD tijdens PV',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:0}]},
+      {actie:'Expertisedeling als vast onderdeel in agenda vakgroepoverleg',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:0}]},
+      {actie:'Kwalitatieve evaluatie door enquête',wanneer:'Voor paasvakantie',wie:[],status:'open',od:[{pidx:2,oi:0}]},
+      {actie:'Check van de vakverslagen',wanneer:'Voor juni 2026',wie:[],status:'open',od:[{pidx:2,oi:0}]},
+      {actie:'Collegiale visitatie / Flitsbezoeken / Kijken over de muur van je buur',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:1}]},
+      {actie:'Vakgroepcoördinatoren samen vrij roosteren voor overleg',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:1}]},
+      {actie:'In schoolkalender minstens 2 momenten per schooljaar inplannen voor vakoverstijgende uitwisseling',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:1}]},
+      {actie:'Werkvorm uitwerken voor vakoverstijgende expertisedeling',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:1}]},
+      {actie:'Fichebak per vakgroep met gedeelde praktijken',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:2}]},
+      {actie:'Ruimte voorzien in APV',wanneer:'',wie:[],status:'open',od:[{pidx:2,oi:3}]}],
+    indicatorenPerOD:{0:'- Alle leerkrachten schalen zichzelf hoger in op de schalen van het GROEI-kompas\n- Er is meetbare leerwinst bij leerlingen\n- Minstens 60% van de leraren geven aan vaardiger te worden\n- 80% van het schoolteam ziet zichzelf als een lerende organisatie',1:'',2:'',3:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},3:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  },
+  { id:3, tag:'Eigenaarschap leerlingen', tagClass:'tag-eigenaarschap', verantwoordelijke:[],
+    streefdoel:'De school versterkt het eigenaarschap van leerlingen door hen inzicht te geven in hun leerproces, zodat zij doelgericht kunnen werken aan hun eigen vooruitgang.',
+    operationeleDelen:[
+      {titel:'OD1 — Effectieve feedback in het leerproces',omschrijving:'Het lerarenteam past effectieve feedback toe in het leerproces van de leerling.',effecten:'Op het einde van schooljaar 25/26 weten alle leerkrachten waarom effectieve feedback belangrijk is. Leerkrachten begrijpen het verschil tussen feedback, feedup en feedforward en passen dit gericht toe vanaf januari 2027.'},
+      {titel:'OD2 — Doelgerichte, transparante en objectieve evaluaties',omschrijving:'De evaluaties zijn doelgericht, transparant, objectief en gericht op verbetering.',effecten:'1. Aantal beroepsprocedures verloren op basis van resultaten daalt met 100%.\n2. Aantal B en C-attesten daalt over de helft tov 24/25.'},
+      {titel:'OD3 — Leerling kan werkpunten en sterktes aangeven',omschrijving:'De leerling kan aangeven waar werkpunten, kansen, mogelijkheden en sterke punten liggen en weet hoe hiermee om te gaan.',effecten:'De leerling leert efficiënter en haalt daardoor betere punten.'},
+      {titel:'OD4 — Gesprekken over leren worden structureel verankerd',omschrijving:'Vanaf schooljaar 2026–2027 voert elke klastitularis minstens twee keer per jaar een leerprogressiegesprek.',effecten:''},
+      {titel:'OD5 — Formatieve evaluatie wordt zichtbaar in de klaspraktijk',omschrijving:'Tegen juni 2026 past minstens 70% van de leraren drie afgesproken formatieve praktijken toe (bv. succescriteria, peer feedback, exit tickets).',effecten:''}],
+    acties:[
+      {actie:'Nascholing: wat is feedback (feedback, feedup en feedforward)',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:0}]},
+      {actie:'Kader ontwikkelen welke feedback op welk moment',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:0}]},
+      {actie:'Feedback in de mededeling in de focusplaatsen',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:0}]},
+      {actie:'De vakgroep screent de evaluaties aan de hand van een algemene kijkwijzer',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:1}]},
+      {actie:'De vakgroep ontwikkelt een eigen kijkwijzer',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:1}]},
+      {actie:'Brainstormen op welke manier een leerling zichzelf kan leren inschatten',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:2}]},
+      {actie:'Leerstrategieën aanleren',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:2}]},
+      {actie:'Leerlingen bereiden een oudercontact voor',wanneer:'',wie:[],status:'open',od:[{pidx:3,oi:3}]}],
+    indicatorenPerOD:{0:'- Er is meetbare leerwinst bij 80% van de leerlingen\n- Alle leerlingen kunnen aangeven op welke manier ze leerwinst kunnen boeken',1:'',2:'',3:'',4:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},3:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},4:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  },
+  { id:4, tag:'Taalvaardigheid', tagClass:'tag-taal', verantwoordelijke:[],
+    streefdoel:'De school versterkt doelgericht de taalvaardigheid van alle leerlingen — van dagelijkse taal tot schooltaal en vaktaal — om hun leerprestaties te verbeteren en ongelijkheden te verkleinen.',
+    operationeleDelen:[
+      {titel:'OD1 — Consequent taalstimulerende klaspraktijk',omschrijving:'Tegen juni 2026 past minstens 80% van de leraren drie afgesproken taalstimulerende didactische praktijken toe.',effecten:''},
+      {titel:'OD2 — Schoolbreed beleid voor woordenschat',omschrijving:'Tegen december 2025 ontwikkelt en implementeert de school een samenhangend beleid voor woordenschatonderwijs.',effecten:''},
+      {titel:'OD3 — Doelgerichte ondersteuning voor leerlingen met verhoogd taalrisico',omschrijving:'Tegen juni 2027 krijgt elke leerling met een vastgestelde taalachterstand een gepersonaliseerd taaltraject.',effecten:''},
+      {titel:'OD4 — Data-gestuurde monitoring van prestatiekloof',omschrijving:'Vanaf schooljaar 2026–2027 monitort de school systematisch leerresultaten van verschillende leerlingengroepen.',effecten:''},
+      {titel:'OD5 — Rijke, taalrijke leeromgeving in alle vakken',omschrijving:'Tegen juni 2027 is in minimaal 75% van de vaklokalen zichtbaar een taalrijke leeromgeving aanwezig.',effecten:''},
+      {titel:'OD6 — Betrekken van ouders bij taalontwikkeling',omschrijving:'Tegen juni 2026 biedt de school minstens drie laagdrempelige initiatieven aan om ouders te ondersteunen in de taalontwikkeling.',effecten:''}],
+    acties:[
+      {actie:'Nog in te vullen',wanneer:'',wie:[],status:'open',od:[]},
+      {actie:'Nog in te vullen',wanneer:'',wie:[],status:'open',od:[]}],
+    indicatorenPerOD:{0:'',1:'',2:'',3:'',4:'',5:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},3:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},4:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},5:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  },
+  { id:5, tag:'Participatief beleid', tagClass:'tag-participatie', verantwoordelijke:[],
+    streefdoel:'De school versterkt haar werking door een participatief beleid waarin interne en externe partners actief betrokken worden bij beleidsvorming, besluitvorming en kwaliteitsontwikkeling.',
+    operationeleDelen:[
+      {titel:'OD1 — Duidelijke participatiestructuur',omschrijving:'Tegen december 2025 ontwikkelt de school een werkdocument waarin rollen, overlegvormen en beslissingsbevoegdheden helder zijn vastgelegd.',effecten:''},
+      {titel:'OD2 — Systematische betrokkenheid van leerlingen en ouders',omschrijving:'Vanaf schooljaar 2026–2027 worden leerlingen en ouders minstens vier keer per jaar structureel betrokken bij beleidsvoorbereiding.',effecten:''},
+      {titel:'OD3 — Versterkte samenwerking met externe partners',omschrijving:'Tegen juni 2027 sluit de school doelgerichte samenwerkingen af met minstens vijf externe partners.',effecten:''}],
+    acties:[
+      {actie:'Visie uitschrijven',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:0}]},
+      {actie:'De adviesorganen/participatieve organen in kaart brengen',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:0}]},
+      {actie:'De participatieve organen worden gericht mee opgenomen in de communicatie',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:0}]},
+      {actie:'Nieuwsbrief voor bedrijven',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:2}]},
+      {actie:'Opening sporthal?',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:2}]},
+      {actie:'Expertisegroepen? (wetenschap, sport, Eco, STEM,...)',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:2}]},
+      {actie:'Participatiematrix uitwerken (wie wat waar wanneer)',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:0}]},
+      {actie:'Infodag duaal leren',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:1}]},
+      {actie:'Netwerkmoment projectdag',wanneer:'',wie:[],status:'open',od:[{pidx:5,oi:1}]}],
+    indicatorenPerOD:{0:'- Nieuwsbrief voor bedrijven\n- Netwerkdag per afdeling?\n- Nog in te vullen',1:'',2:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  },
+  { id:6, tag:'Ervaringsgericht leren', tagClass:'tag-ervaringsgericht', verantwoordelijke:[],
+    streefdoel:'De school ontwikkelt en organiseert kwaliteitsvol ervaringsgericht leren, in samenwerking met leerlingen, leraren, ouders en externe partners.',
+    operationeleDelen:[
+      {titel:'OD1 — Kwaliteitskader voor ervaringsgericht leren',omschrijving:'Tegen juni 2026 ontwikkelt de school een kwaliteitskader met criteria, rollen, veiligheidsafspraken en leerdoelen.',effecten:''},
+      {titel:'OD2 — Structurele samenwerking met bedrijven en externe partners',omschrijving:'Vanaf schooljaar 2026–2027 werkt de school jaarlijks samen met minstens vijf relevante externe partners.',effecten:''},
+      {titel:'OD3 — Elke leerling neemt deel aan meerdere ervaringen',omschrijving:'Vanaf 2026 neemt elke leerling jaarlijks deel aan minstens twee vormende ervaringsgerichte activiteiten.',effecten:''},
+      {titel:'OD4 — Professionalisering van betrokken leraren',omschrijving:'Tegen juni 2027 heeft minstens 70% van de betrokken leraren een vorming gevolgd.',effecten:''},
+      {titel:'OD5 — Betrokkenheid van ouders versterken',omschrijving:'Tegen juni 2026 organiseert de school minstens drie initiatieven waarbij ouders betrokken worden.',effecten:''},
+      {titel:'OD6 — Kwaliteitsbewaking via systematische evaluatie',omschrijving:'Vanaf 2027 evalueert de school jaarlijks alle ervaringsgerichte leeractiviteiten.',effecten:''}],
+    acties:[
+      {actie:'Visie uitschrijven',wanneer:'',wie:[],status:'open',od:[{pidx:6,oi:0}]},
+      {actie:'Quickstage optimaliseren/controleren en bijwerken',wanneer:'',wie:[],status:'open',od:[{pidx:6,oi:2}]},
+      {actie:'Uitwerken van een volledig project binnen WPL',wanneer:'',wie:[],status:'open',od:[{pidx:6,oi:1}]},
+      {actie:'Voorbeeldfuncties afhankelijk van de activiteitenlijsten uit BK',wanneer:'',wie:[],status:'open',od:[{pidx:6,oi:2}]}],
+    indicatorenPerOD:{0:'- Activiteitenlijsten (BK\'s)\n- Stagebedrijven\n- Rolmodellen\n- Afspraken rond bedrijfsbezoeken met lln',1:'',2:'',3:'',4:'',5:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},3:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},4:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},5:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  },
+  { id:7, tag:'Leerlingbegeleiding', tagClass:'tag-begeleiding', verantwoordelijke:[],
+    streefdoel:'De school versterkt haar leerlingbegeleiding door een team dat verantwoordelijkheid opneemt in alle vier begeleidingsdomeinen — onderwijsloopbaan, leren en studeren, psychosociaal welzijn en preventieve gezondheidszorg.',
+    operationeleDelen:[
+      {titel:'OD1 — Duidelijke structuur en taakverdeling leerlingbegeleiding',omschrijving:'Tegen december 2025 beschikt de school over een helder, schoolbreed kader.',effecten:''},
+      {titel:'OD2 — Krachtige basiszorg door alle leraren',omschrijving:'Tegen juni 2027 past minstens 80% van het team de afgesproken basiszorgpraktijken toe in alle vier domeinen.',effecten:''},
+      {titel:'OD3 — Professionalisering in alle vier domeinen',omschrijving:'Tegen juni 2026 heeft minstens 70% van de leraren een vorming gevolgd binnen minstens twee van de vier domeinen.',effecten:''},
+      {titel:'OD4 — Systematische opvolging van kwetsbare leerlingen',omschrijving:'Vanaf schooljaar 2026–2027 volgt de school kwetsbare leerlingen systematisch op via een digitaal volgsysteem.',effecten:''},
+      {titel:'OD5 — Actieve betrokkenheid van ouders',omschrijving:'Tegen juni 2026 betrekt de school ouders structureel bij het begeleidingstraject.',effecten:''},
+      {titel:'OD6 — Gezondheidseducatie en welzijnsbevordering',omschrijving:'Vanaf 2026 integreert de school in elke graad minstens drie acties per jaar rond preventieve gezondheidszorg en psychosociaal welzijn.',effecten:''}],
+    acties:[
+      {actie:'Visie uitschrijven',wanneer:'',wie:[],status:'open',od:[{pidx:7,oi:0}]},
+      {actie:'Nog in te vullen',wanneer:'',wie:[],status:'open',od:[]}],
+    indicatorenPerOD:{0:'',1:'',2:'',3:'',4:'',5:''},
+    evaluatiePerOD:{0:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},1:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},2:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},3:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},4:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''},5:{wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''}}
+  }
+];
+
+function migrateData(raw) {
+  raw.forEach(p => {
+    if (!Array.isArray(p.verantwoordelijke)) p.verantwoordelijke = p.verantwoordelijke ? [p.verantwoordelijke] : [];
+    p.acties = (p.acties||[]).map(a => ({od:[],wie:[],...a, wie: Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]) }));
+    if (!p.indicatorenPerOD) p.indicatorenPerOD = {};
+    if (!p.evaluatiePerOD)  p.evaluatiePerOD  = {};
+    p.operationeleDelen.forEach((_,oi) => {
+      if (p.indicatorenPerOD[oi] === undefined) p.indicatorenPerOD[oi] = '';
+      if (!p.evaluatiePerOD[oi]) p.evaluatiePerOD[oi] = {wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''};
+    });
+  });
+  return raw;
+}
+
+let data = migrateData(
+  JSON.parse(localStorage.getItem('prioriteitenplan') || 'null') ||
+  JSON.parse(JSON.stringify(PRIORITEITEN))
+);
+
+/* ── team ── */
+const DEFAULT_TEAM = ['Pedagogische raad','Directie','Coördinatoren',"TA's",'Vakcoördinatoren'];
+let teamleden = JSON.parse(localStorage.getItem('wico_team') || 'null') || [...DEFAULT_TEAM];
+function saveTeam() { localStorage.setItem('wico_team', JSON.stringify(teamleden)); }
+
+function renderTeamList() {
+  document.getElementById('team-list').innerHTML = teamleden.map((naam,i) => `
+    <div class="team-member-row">
+      <span class="team-member-name">${esc(naam)}</span>
+      <button class="team-member-del" onclick="removeTeamMember(${i})">×</button>
+    </div>`).join('');
+}
+function openTeamManager()  { renderTeamList(); document.getElementById('team-overlay').classList.add('open'); document.getElementById('team-new-input').focus(); }
+function closeTeamManager() { document.getElementById('team-overlay').classList.remove('open'); }
+function addTeamMember() {
+  const inp = document.getElementById('team-new-input');
+  const naam = inp.value.trim();
+  if (!naam || teamleden.includes(naam)) { inp.focus(); return; }
+  teamleden.push(naam); saveTeam(); renderTeamList(); inp.value=''; inp.focus();
+}
+function removeTeamMember(i) {
+  if (!confirm('"'+teamleden[i]+'" verwijderen?')) return;
+  teamleden.splice(i,1); saveTeam(); renderTeamList();
+}
+
+/* ── person-select widget ── */
+function personSelectHTML(selectedArr, cbName, isLight, dropUp) {
+  const id = 'ps_' + Math.random().toString(36).slice(2,8);
+  const tags = selectedArr.length
+    ? selectedArr.map(n=>`<span class="person-tag ${isLight?'light':''}">${esc(n)}</span>`).join('')
+    : `<span class="person-placeholder ${isLight?'light':''}">— kies —</span>`;
+  const opts = teamleden.map(naam => {
+    const chk = selectedArr.includes(naam);
+    return `<div class="person-opt ${chk?'checked':''}" onclick="togglePerson('${id}',this,'${naam.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}','${cbName}')">
+      <input type="checkbox" ${chk?'checked':''} onclick="event.stopPropagation()"> ${esc(naam)}
+    </div>`;
+  }).join('');
+  return `<div class="person-select-wrap" id="${id}">
+    <div class="person-select-btn ${isLight?'light':''}" onclick="togglePersonDD('${id}')">${tags}</div>
+    <div class="person-dropdown ${dropUp?'drop-up':''}" id="${id}_dd">${opts}</div>
+  </div>`;
+}
+function togglePersonDD(id) {
+  const dd = document.getElementById(id+'_dd');
+  const open = dd.classList.contains('open');
+  document.querySelectorAll('.person-dropdown').forEach(d=>d.classList.remove('open'));
+  if (!open) dd.classList.add('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.person-select-wrap')) document.querySelectorAll('.person-dropdown').forEach(d=>d.classList.remove('open'));
+});
+function togglePerson(wrapId, optEl, naam, cbName) {
+  const chk = optEl.querySelector('input');
+  chk.checked = !chk.checked;
+  optEl.classList.toggle('checked', chk.checked);
+  if (typeof window[cbName]==='function') window[cbName](naam, chk.checked);
+  const wrap = document.getElementById(wrapId);
+  const btn  = wrap.querySelector('.person-select-btn');
+  const light = btn.classList.contains('light');
+  const names = [...wrap.querySelectorAll('.person-opt.checked')].map(o => o.lastChild.textContent.trim());
+  btn.innerHTML = names.length
+    ? names.map(n=>`<span class="person-tag ${light?'light':''}">${esc(n)}</span>`).join('')
+    : `<span class="person-placeholder ${light?'light':''}">— kies —</span>`;
+}
+
+/* ── persist ── */
+function saveAll() {
+  localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+  localStorage.setItem('wico_team', JSON.stringify(teamleden));
+  const bar = document.getElementById('save-bar-msg');
+  bar.textContent = 'Opgeslagen op ' + new Date().toLocaleTimeString('nl-BE');
+  setTimeout(()=> bar.textContent='Automatisch opgeslagen op GitHub.',3000);
+}
+
+function exportData() {
+  const payload = { data, teamleden };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'prioriteitenplan_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+function importFromFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      // Ondersteun beide formaten: {data, teamleden} of gewoon een array
+      if (Array.isArray(parsed)) {
+        data = migrateData(parsed);
+      } else if (parsed.data) {
+        data = migrateData(parsed.data);
+        if (parsed.teamleden) teamleden = parsed.teamleden;
+      } else {
+        alert('Ongeldig JSON-bestand. Gebruik een bestand geëxporteerd vanuit dit dashboard.');
+        return;
+      }
+      localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+      localStorage.setItem('wico_team', JSON.stringify(teamleden));
+      showView('overview', null);
+      const bar = document.getElementById('save-bar-msg');
+      bar.textContent = '✅ Bestand succesvol ingeladen: ' + file.name;
+      setTimeout(()=> bar.textContent='Automatisch opgeslagen op GitHub.',4000);
+    } catch(err) {
+      alert('Fout bij inladen: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* ── overview ── */
+function renderOverview() {
+  const grid = document.getElementById('priority-overview');
+  grid.innerHTML = data.map(p => {
+    const klaar = p.acties.filter(a=>a.status==='klaar').length;
+    const pct   = p.acties.length ? Math.round((klaar/p.acties.length)*100) : 0;
+    const dots  = p.acties.slice(0,8).map(a=>`<div class="dot ${a.status==='klaar'?'done':a.status==='loopt'?'inprogress':'open'}"></div>`).join('');
+    const verArr= Array.isArray(p.verantwoordelijke)?p.verantwoordelijke:(p.verantwoordelijke?[p.verantwoordelijke]:[]);
+    return `<div class="priority-card" onclick="showView('detail-${p.id}',null)">
+      <span class="priority-tag ${p.tagClass}">${esc(p.tag)}</span>
+      <h3>${esc(p.streefdoel.substring(0,120))}${p.streefdoel.length>120?'…':''}</h3>
+      <div class="verantw">Verantwoordelijke: <strong>${verArr.length?esc(verArr.join(', ')):'—'}</strong></div>
+      <div class="status-dots">${dots}</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div style="font-size:11px;color:var(--wico-muted);margin-top:4px;">${klaar} van ${p.acties.length} acties afgerond</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── editable ── */
+function makeEditable(el, getV, setV, multi) {
+  if (!el) return;
+  el.classList.add('editable-text');
+  el.title = 'Klik om te bewerken';
+  el.onclick = function(e) {
+    e.stopPropagation();
+    const cur = getV();
+    if (multi) {
+      const ta = document.createElement('textarea');
+      ta.className='editable-textarea'; ta.value=cur; ta.rows=Math.max(3,cur.split('\n').length+1);
+      el.replaceWith(ta); ta.focus();
+      ta.onblur = ()=>{ setV(ta.value); el.innerHTML=ta.value.replace(/\n/g,'<br>'); ta.replaceWith(el); };
+    } else {
+      const inp = document.createElement('input');
+      inp.type='text'; inp.className='editable-input'; inp.value=cur;
+      inp.style.fontSize=getComputedStyle(el).fontSize;
+      inp.style.fontWeight=getComputedStyle(el).fontWeight;
+      inp.style.color=getComputedStyle(el).color;
+      el.replaceWith(inp); inp.focus(); inp.select();
+      const done=()=>{ setV(inp.value); el.textContent=inp.value; inp.replaceWith(el); renderOverview(); };
+      inp.onblur=done;
+      inp.onkeydown=e=>{ if(e.key==='Enter') inp.blur(); if(e.key==='Escape'){inp.value=cur;inp.blur();} };
+    }
+  };
+}
+
+/* ── OD management ── */
+function addOD(idx) {
+  data[idx].operationeleDelen.push({titel:'Nieuw operationeel doel',omschrijving:'Omschrijving toevoegen...',effecten:''});
+  const oi = data[idx].operationeleDelen.length-1;
+  data[idx].indicatorenPerOD[oi]='';
+  data[idx].evaluatiePerOD[oi]={wanneer:'',wie:'',borgen:'',bannen:'',bijsturen:''};
+  renderDetail(idx);
+}
+function removeOD(idx,oi) {
+  if(!confirm('Operationeel doel verwijderen?')) return;
+  data[idx].operationeleDelen.splice(oi,1);
+  renderDetail(idx);
+}
+function toggleOD(idx,oi) {
+  document.getElementById(`od-${idx}-${oi}`).classList.toggle('open');
+  document.getElementById(`toggle-${idx}-${oi}`).classList.toggle('open');
+}
+
+/* ── koppelingen ── */
+function koppelLabel(idx,ai) {
+  const kops = data[idx].acties[ai].od||[];
+  if (!kops.length) return '<span style="font-size:11px;color:var(--wico-muted);font-style:italic;">geen</span>';
+  return kops.map(k=>{
+    const pidx=k.pidx!==undefined?k.pidx:idx, oi=k.oi!==undefined?k.oi:k;
+    const p2=data[pidx], od=p2&&p2.operationeleDelen[oi];
+    if(!od) return '';
+    const ext=pidx!==idx;
+    return `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;background:${ext?'var(--wico-red-light)':'var(--wico-teal-xlight)'};color:${ext?'var(--wico-red)':'var(--wico-teal)'};margin-right:3px;white-space:nowrap;">${ext?esc(p2.tag)+' › OD'+(oi+1):'OD'+(oi+1)}</span>`;
+  }).join('');
+}
+function toggleKoppelPanel(idx,ai) {
+  const panel=document.getElementById(`koppel-panel-${idx}-${ai}`);
+  const open=panel.style.display!=='none';
+  document.querySelectorAll('[id^="koppel-panel-"]').forEach(p=>p.style.display='none');
+  if(!open) panel.style.display='block';
+}
+function toggleKoppeling(idx,ai,pidx,oi) {
+  const a=data[idx].acties[ai];
+  if(!Array.isArray(a.od)) a.od=[];
+  const ex=a.od.findIndex(k=>{
+    const kp=k.pidx!==undefined?k.pidx:idx, ko=k.oi!==undefined?k.oi:k;
+    return kp===pidx&&ko===oi;
+  });
+  if(ex>=0) a.od.splice(ex,1); else a.od.push({pidx,oi});
+  const lbl=document.getElementById(`koppel-lbl-${idx}-${ai}`);
+  if(lbl) lbl.innerHTML=koppelLabel(idx,ai);
+}
+function koppelPanel(idx,ai) {
+  const a=data[idx].acties[ai];
+  const eigen=data[idx].operationeleDelen.map((od,oi)=>{
+    const chk=(a.od||[]).some(k=>(k.pidx!==undefined?k.pidx:idx)===idx&&(k.oi!==undefined?k.oi:k)===oi);
+    return `<label style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;cursor:pointer;font-size:13px;border-bottom:0.5px solid var(--wico-gray);">
+      <input type="checkbox" ${chk?'checked':''} onchange="toggleKoppeling(${idx},${ai},${idx},${oi})" style="margin-top:2px;accent-color:var(--wico-teal);">
+      <span><b style="font-size:10px;color:var(--wico-teal);margin-right:4px;">OD${oi+1}</b>${esc(od.titel)}</span></label>`;
+  }).join('');
+  const extern=data.filter((_,pi)=>pi!==idx).map(p2=>{
+    const p2idx=data.indexOf(p2);
+    const ods=p2.operationeleDelen.map((od2,oi2)=>{
+      const chk=(a.od||[]).some(k=>(k.pidx!==undefined?k.pidx:idx)===p2idx&&(k.oi!==undefined?k.oi:k)===oi2);
+      return `<label style="display:flex;align-items:flex-start;gap:8px;padding:4px 0 4px 12px;cursor:pointer;font-size:12px;border-bottom:0.5px solid var(--wico-gray);">
+        <input type="checkbox" ${chk?'checked':''} onchange="toggleKoppeling(${idx},${ai},${p2idx},${oi2})" style="margin-top:2px;accent-color:var(--wico-red);">
+        <span><b style="font-size:10px;color:var(--wico-red);margin-right:4px;">OD${oi2+1}</b>${esc(od2.titel)}</span></label>`;
+    }).join('');
+    return `<details style="margin-bottom:4px;"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--wico-petrol);padding:6px 8px;background:var(--wico-teal-xlight);border-radius:4px;list-style:none;">
+      <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--wico-red-light);color:var(--wico-red);margin-right:6px;">${esc(p2.tag)}</span>${esc(p2.streefdoel.substring(0,60))}…</summary>
+      <div>${ods}</div></details>`;
+  }).join('');
+  return `<tr id="koppel-panel-${idx}-${ai}" style="display:none;"><td colspan="6" style="padding:0;background:var(--wico-offwhite);border-bottom:2px solid var(--wico-teal);">
+    <div style="padding:14px 16px;max-width:700px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--wico-teal);margin-bottom:8px;">Eigen operationele doelen</div>
+      ${eigen}
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--wico-red);margin:14px 0 8px;">Uitbreiding — andere strategische doelen</div>
+      ${extern}
+      <div style="margin-top:12px;text-align:right;"><button onclick="toggleKoppelPanel(${idx},${ai})" style="background:var(--wico-teal);color:white;border:none;border-radius:5px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;">Sluiten</button></div>
+    </div></td></tr>`;
+}
+
+/* ── actie rows ── */
+function actieRow(idx,ai,p) {
+  const a=p.acties[ai];
+  const wieArr=Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]);
+  return `<tr style="vertical-align:middle;">
+    <td><input type="text" value="${esc(a.actie)}" onchange="data[${idx}].acties[${ai}].actie=this.value" placeholder="Actie..."/></td>
+    <td><input type="text" value="${esc(a.wanneer)}" onchange="data[${idx}].acties[${ai}].wanneer=this.value" placeholder="Wanneer?" style="width:90px;"/></td>
+    <td>${personSelectHTML(wieArr,'setWie_'+idx+'_'+ai,true,false)}</td>
+    <td><select onchange="data[${idx}].acties[${ai}].status=this.value;renderOverview();">
+      <option value="open" ${a.status==='open'?'selected':''}>Open</option>
+      <option value="loopt" ${a.status==='loopt'?'selected':''}>Loopt</option>
+      <option value="klaar" ${a.status==='klaar'?'selected':''}>Klaar</option>
+    </select></td>
+    <td style="min-width:120px;"><span id="koppel-lbl-${idx}-${ai}">${koppelLabel(idx,ai)}</span>
+      <span onclick="toggleKoppelPanel(${idx},${ai})" title="Koppelingen beheren" style="cursor:pointer;font-size:14px;margin-left:4px;color:var(--wico-teal);">🔗</span></td>
+    <td style="cursor:pointer;color:var(--wico-red);text-align:center;" onclick="removeActie(${idx},${ai})">✕</td>
+  </tr>${koppelPanel(idx,ai)}`;
+}
+function addActie(idx,oi) {
+  const od=oi!==null?[{pidx:idx,oi}]:[];
+  data[idx].acties.push({actie:'',wanneer:'',wie:[],status:'open',od});
+  renderDetail(idx); showSecTab(idx,'acties',null);
+}
+function removeActie(idx,ai) {
+  if(!confirm('Actie verwijderen?')) return;
+  data[idx].acties.splice(ai,1); renderDetail(idx); showSecTab(idx,'acties',null);
+}
+
+/* ── renderDetail ── */
+function renderDetail(idx) {
+  const p=data[idx];
+  const container=document.getElementById('view-detail-'+idx);
+
+  const odsHtml=p.operationeleDelen.map((od,oi)=>`
+    <div class="od-block">
+      <div class="od-header" onclick="toggleOD(${idx},${oi})">
+        <h4 id="od-titel-${idx}-${oi}" style="flex:1;">${esc(od.titel)}</h4>
+        <span style="font-size:11px;color:var(--wico-red);cursor:pointer;margin-right:10px;" onclick="event.stopPropagation();removeOD(${idx},${oi})">✕</span>
+        <span class="od-toggle" id="toggle-${idx}-${oi}">›</span>
+      </div>
+      <div class="od-body" id="od-${idx}-${oi}">
+        <div class="streefdoel-area"><strong>Omschrijving</strong>
+          <span id="od-omschr-${idx}-${oi}" style="display:block;line-height:1.6;">${esc(od.omschrijving)}</span></div>
+        <div class="effecten-box"><h5>Gewenste effecten (meetbaar)</h5>
+          <textarea rows="3" style="width:100%;border:none;background:transparent;font-size:13px;font-family:inherit;color:var(--wico-petrol);resize:vertical;"
+            onchange="data[${idx}].operationeleDelen[${oi}].effecten=this.value" placeholder="Noteer hier de meetbare effecten...">${esc(od.effecten)}</textarea>
+        </div>
+      </div></div>`).join('');
+
+  const actiesTabHtml=p.operationeleDelen.map((od,oi)=>{
+    const rows=p.acties.map((a,ai)=>({...a,ai})).filter(a=>(a.od||[]).some(k=>{
+      const kp=k.pidx!==undefined?k.pidx:idx, ko=k.oi!==undefined?k.oi:k;
+      return kp===idx&&ko===oi;
+    })).map(a=>actieRow(idx,a.ai,p)).join('');
+    return `<div style="margin-bottom:18px;">
+      <div style="background:var(--wico-teal-xlight);border-left:3px solid var(--wico-teal);padding:8px 14px;border-radius:0 6px 0 0;">
+        <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);">OD${oi+1} — ${esc(od.titel)}</span></div>
+      <div style="overflow-x:auto;border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;">
+        <table class="actions-table"><thead><tr>
+          <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
+          <th style="min-width:130px;">Wie</th><th style="min-width:75px;">Status</th>
+          <th style="min-width:120px;">Koppelingen</th><th style="width:28px;"></th>
+        </tr></thead><tbody>${rows}</tbody></table></div>
+      <button class="add-btn" onclick="addActie(${idx},${oi})">+ Actie toevoegen aan OD${oi+1}</button></div>`;
+  }).join('') + `<div style="margin-bottom:18px;">
+    <div style="background:#f0ebe8;border-left:3px solid #b0a090;padding:8px 14px;border-radius:0 6px 0 0;">
+      <span style="font-size:12px;font-weight:700;color:#5a3a2a;">Acties zonder OD-koppeling</span></div>
+    <div style="overflow-x:auto;border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;">
+      <table class="actions-table"><thead><tr>
+        <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
+        <th style="min-width:130px;">Wie</th><th style="min-width:75px;">Status</th>
+        <th style="min-width:120px;">Koppelingen</th><th style="width:28px;"></th>
+      </tr></thead><tbody>${p.acties.map((a,ai)=>!(a.od||[]).length?actieRow(idx,ai,p):'').join('')}</tbody></table></div>
+    <button class="add-btn" onclick="addActie(${idx},null)">+ Actie toevoegen (ontkoppeld)</button></div>`;
+
+  const indicHtml=p.operationeleDelen.map((od,oi)=>`
+    <div style="margin-bottom:18px;">
+      <div style="background:var(--wico-teal-xlight);border-left:3px solid var(--wico-teal);padding:8px 14px;border-radius:0 6px 0 0;">
+        <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);">OD${oi+1} — ${esc(od.titel)}</span></div>
+      <div style="border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;padding:12px;">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--wico-muted);display:block;margin-bottom:6px;">Wat verandert er als dit doel bereikt is?</label>
+        <textarea class="indicatoren-textarea" rows="4" onchange="data[${idx}].indicatorenPerOD[${oi}]=this.value"
+          placeholder="Noteer meetbare indicatoren...">${esc(p.indicatorenPerOD?.[oi]||'')}</textarea>
+      </div></div>`).join('');
+
+  const evalHtml=p.operationeleDelen.map((od,oi)=>{
+    const ev=p.evaluatiePerOD?.[oi]||{};
+    return `<div style="margin-bottom:24px;">
+      <div style="background:var(--wico-teal-xlight);border-left:3px solid var(--wico-teal);padding:8px 14px;border-radius:0 6px 0 0;">
+        <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);">OD${oi+1} — ${esc(od.titel)}</span></div>
+      <div style="border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;padding:14px;">
+        <div class="eval-meta" style="margin-bottom:12px;">
+          <div class="meta-field"><label>Wanneer</label><input type="text" value="${esc(ev.wanneer||'')}" onchange="data[${idx}].evaluatiePerOD[${oi}].wanneer=this.value" placeholder="bv. juni 2026..."/></div>
+          <div class="meta-field"><label>Wie (actoren)</label><input type="text" value="${esc(ev.wie||'')}" onchange="data[${idx}].evaluatiePerOD[${oi}].wie=this.value" placeholder="bv. beleidsteam..."/></div>
+        </div>
+        <div class="evaluatie-grid">
+          <div class="eval-col eval-borgen"><h5>Borgen</h5><p style="font-size:11px;margin-bottom:6px;">Wat werkt? Wat behouden?</p>
+            <textarea onchange="data[${idx}].evaluatiePerOD[${oi}].borgen=this.value" placeholder="Noteer hier...">${esc(ev.borgen||'')}</textarea></div>
+          <div class="eval-col eval-bannen"><h5>Bannen</h5><p style="font-size:11px;margin-bottom:6px;">Wat werkt niet? Stoppen?</p>
+            <textarea onchange="data[${idx}].evaluatiePerOD[${oi}].bannen=this.value" placeholder="Noteer hier...">${esc(ev.bannen||'')}</textarea></div>
+          <div class="eval-col eval-bijsturen"><h5>Bijsturen</h5><p style="font-size:11px;margin-bottom:6px;">Wat aanpassen?</p>
+            <textarea onchange="data[${idx}].evaluatiePerOD[${oi}].bijsturen=this.value" placeholder="Noteer hier...">${esc(ev.bijsturen||'')}</textarea></div>
+        </div></div></div>`;
+  }).join('');
+
+  const verArr=Array.isArray(p.verantwoordelijke)?p.verantwoordelijke:(p.verantwoordelijke?[p.verantwoordelijke]:[]);
+
+  container.innerHTML=`
+    <div style="background:var(--wico-teal-xlight);border-bottom:1px solid var(--wico-gray);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:13px;color:var(--wico-muted);">← <span style="cursor:pointer;color:var(--wico-teal);font-weight:600;" onclick="showView('overview',null)">Terug naar overzicht</span></span>
+      <span style="font-size:11px;color:var(--wico-teal);opacity:0.8;">Klik op tekst om te bewerken ✎</span>
+    </div>
+    <div class="detail-panel">
+      <div class="detail-header">
+        <div style="flex:1;margin-right:16px;">
+          <span class="priority-tag ${p.tagClass}" id="tag-label-${idx}" style="cursor:pointer;">${esc(p.tag)}</span>
+          <h2 id="streefdoel-${idx}" style="margin-top:6px;cursor:pointer;">${esc(p.streefdoel)}</h2>
+          <div class="tijdspad-badges" style="margin-top:10px;">
+            <span class="badge badge-initieer">25-26: Initiëren</span>
+            <span class="badge badge-verderzet">26-27: Verderzetten na evaluatie</span>
+            <span class="badge badge-borg">27-28: Borgen</span>
+          </div>
+        </div>
+        <div style="text-align:right;min-width:180px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">Verantwoordelijke</div>
+          ${personSelectHTML(verArr,'setVerantw_'+idx,false,true)}
+        </div>
+      </div>
+      <div class="section-tabs">
+        <div class="sec-tab active" onclick="showSecTab(${idx},'doelen',this)">Doelen & Effecten</div>
+        <div class="sec-tab" onclick="showSecTab(${idx},'acties',this)">Acties</div>
+        <div class="sec-tab" onclick="showSecTab(${idx},'indicatoren',this)">Indicatoren</div>
+        <div class="sec-tab" onclick="showSecTab(${idx},'evaluatie',this)">Evaluatiemomenten</div>
+      </div>
+      <div class="section-body" id="sectab-${idx}-doelen">
+        ${odsHtml}
+        <button class="add-btn" onclick="addOD(${idx})" style="margin-top:4px;">+ Operationeel doel toevoegen</button>
+      </div>
+      <div class="section-body" id="sectab-${idx}-acties" style="display:none;">${actiesTabHtml}</div>
+      <div class="section-body" id="sectab-${idx}-indicatoren" style="display:none;">${indicHtml}</div>
+      <div class="section-body" id="sectab-${idx}-evaluatie" style="display:none;">${evalHtml}</div>
+    </div>`;
+
+  makeEditable(document.getElementById('streefdoel-'+idx), ()=>data[idx].streefdoel, v=>{ data[idx].streefdoel=v; }, true);
+  makeEditable(document.getElementById('tag-label-'+idx), ()=>data[idx].tag, v=>{ data[idx].tag=v; }, false);
+  p.operationeleDelen.forEach((_,oi)=>{
+    makeEditable(document.getElementById('od-titel-'+idx+'-'+oi), ()=>data[idx].operationeleDelen[oi].titel, v=>{ data[idx].operationeleDelen[oi].titel=v; }, false);
+    makeEditable(document.getElementById('od-omschr-'+idx+'-'+oi), ()=>data[idx].operationeleDelen[oi].omschrijving, v=>{ data[idx].operationeleDelen[oi].omschrijving=v; }, true);
+  });
+
+  window['setVerantw_'+idx] = function(naam,chk) {
+    const arr=data[idx].verantwoordelijke;
+    if(chk){ if(!arr.includes(naam)) arr.push(naam); } else { data[idx].verantwoordelijke=arr.filter(n=>n!==naam); }
+    renderOverview();
+  };
+  p.acties.forEach((_,ai)=>{
+    window['setWie_'+idx+'_'+ai] = function(naam,chk) {
+      if(!Array.isArray(data[idx].acties[ai].wie)) data[idx].acties[ai].wie=[];
+      const arr=data[idx].acties[ai].wie;
+      if(chk){ if(!arr.includes(naam)) arr.push(naam); } else { data[idx].acties[ai].wie=arr.filter(n=>n!==naam); }
+    };
+  });
+}
+
+/* ── team opvolging view ── */
+let teamFilter = 'alle';
+
+function renderTeamView() {
+  const container = document.getElementById('team-view-content');
+
+  // Verzamel alle acties per teamlid
+  const perPersoon = {};
+  teamleden.forEach(naam => { perPersoon[naam] = []; });
+  perPersoon['(geen verantwoordelijke)'] = [];
+
+  data.forEach((p, pidx) => {
+    p.acties.forEach((a, ai) => {
+      const wie = Array.isArray(a.wie) ? a.wie : (a.wie ? [a.wie] : []);
+      const entry = { actie: a.actie, wanneer: a.wanneer, status: a.status, prioriteit: p.tag, pidx, ai };
+      if (wie.length === 0) {
+        perPersoon['(geen verantwoordelijke)'].push(entry);
+      } else {
+        wie.forEach(naam => {
+          if (!perPersoon[naam]) perPersoon[naam] = [];
+          perPersoon[naam].push(entry);
+        });
+      }
+    });
+  });
+
+  // Filteropties
+  const statusOpties = ['alle','open','loopt','klaar'];
+  const filterBar = `
+    <div class="team-filter-bar">
+      <span style="font-size:11px;font-weight:700;color:var(--wico-muted);text-transform:uppercase;letter-spacing:0.5px;">Filter:</span>
+      ${statusOpties.map(s => `<button class="team-filter-btn ${teamFilter===s?'active':''}" onclick="teamFilter='${s}';renderTeamView()">
+        ${s==='alle'?'Alle acties':s.charAt(0).toUpperCase()+s.slice(1)}
+      </button>`).join('')}
+      <div class="team-legend">
+        <div class="team-legend-item"><div class="team-legend-dot" style="background:var(--wico-gray);border:1.5px solid #aaa;"></div>Open</div>
+        <div class="team-legend-item"><div class="team-legend-dot" style="background:#e09a20;"></div>Loopt</div>
+        <div class="team-legend-item"><div class="team-legend-dot" style="background:#2a9a5a;"></div>Klaar</div>
+      </div>
+    </div>`;
+
+  // Kaarten per persoon
+  const kaarten = Object.entries(perPersoon).map(([naam, acties]) => {
+    const gefilterd = teamFilter === 'alle' ? acties : acties.filter(a => a.status === teamFilter);
+    if (gefilterd.length === 0 && naam !== '(geen verantwoordelijke)') return '';
+
+    const totaal  = acties.length;
+    const klaar   = acties.filter(a => a.status === 'klaar').length;
+    const loopt   = acties.filter(a => a.status === 'loopt').length;
+    const open    = acties.filter(a => a.status === 'open').length;
+    const pct     = totaal ? Math.round((klaar / totaal) * 100) : 0;
+    const initials= naam.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2) || '?';
+    const isLeeg  = naam === '(geen verantwoordelijke)';
+
+    const actieLijst = gefilterd.length
+      ? gefilterd.map(a => `
+          <div class="team-actie-item">
+            <div class="team-actie-dot ${a.status}"></div>
+            <div style="flex:1;min-width:0;">
+              <div class="team-actie-text ${a.status==='klaar'?'klaar':''}">${esc(a.actie||'(leeg)')}</div>
+              <div class="team-actie-meta">
+                ${a.wanneer ? `<span style="margin-right:8px;">📅 ${esc(a.wanneer)}</span>` : ''}
+              </div>
+            </div>
+            <span class="team-actie-prioriteit">${esc(a.prioriteit)}</span>
+          </div>`).join('')
+      : `<div class="team-empty" style="padding:16px;">Geen acties voor dit filter.</div>`;
+
+    const avatarColor = isLeeg ? '#b0a090' : '';
+    const borderColor = pct === 100 ? '#2a9a5a' : pct > 0 ? 'var(--wico-teal)' : 'var(--wico-gray)';
+
+    return `<div class="team-card" style="border-top-color:${borderColor};">
+      <div class="team-card-header">
+        <div class="team-avatar" style="${avatarColor?'background:'+avatarColor:''}">${isLeeg?'?':initials}</div>
+        <div>
+          <div class="team-card-name">${esc(naam)}</div>
+          <div class="team-card-stats">
+            ${totaal} acties totaal &nbsp;·&nbsp;
+            <span style="color:#2a9a5a;font-weight:600;">${klaar} klaar</span> &nbsp;·&nbsp;
+            <span style="color:#e09a20;font-weight:600;">${loopt} loopt</span> &nbsp;·&nbsp;
+            <span style="color:var(--wico-muted);">${open} open</span>
+          </div>
+        </div>
+      </div>
+      <div class="team-progress-wrap">
+        <div class="team-progress-label">
+          <span>Voortgang</span>
+          <span style="font-weight:700;color:${pct===100?'#2a9a5a':'var(--wico-petrol)'};">${pct}%</span>
+        </div>
+        <div class="team-progress-track">
+          <div class="team-progress-fill ${pct===100?'full':''}" style="width:${pct}%;"></div>
+        </div>
+      </div>
+      <div class="team-actie-list">${actieLijst}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+
+  container.innerHTML = filterBar + `<div class="team-view-grid">${kaarten || '<div class="team-empty">Geen acties gevonden voor dit filter.</div>'}</div>`;
+}
+
+/* ── kalender ── */
+let kalView = 'tijdlijn'; // 'tijdlijn' of 'maand'
+let kalJaar = new Date().getFullYear();
+let kalMaand = new Date().getMonth(); // 0-based
+
+const MAANDEN = ['Januari','Februari','Maart','April','Mei','Juni',
+                 'Juli','Augustus','September','Oktober','November','December'];
+const MAANDEN_SHORT = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+const DAGEN = ['Ma','Di','Wo','Do','Vr','Za','Zo'];
+
+// Probeer datum te parsen uit tekstveld "wanneer"
+function parseerDatum(tekst) {
+  if (!tekst) return null;
+  const t = tekst.toLowerCase().trim();
+  // "voor juni 2026" / "juni 2026" / "december 2025"
+  for (let mi = 0; mi < MAANDEN.length; mi++) {
+    const mn = MAANDEN[mi].toLowerCase();
+    const ms = MAANDEN_SHORT[mi];
+    const regex = new RegExp(`(${mn}|${ms})[\\s\\-]*([0-9]{4})`,'i');
+    const m = t.match(regex);
+    if (m) return new Date(parseInt(m[2]), mi, 15);
+  }
+  // "paasvakantie" → april
+  if (t.includes('paas')) return new Date(kalJaar, 3, 1);
+  if (t.includes('kerst')) return new Date(kalJaar, 11, 20);
+  if (t.includes('zomer')) return new Date(kalJaar, 6, 1);
+  // ISO of dd/mm/yyyy
+  const iso = t.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return new Date(parseInt(iso[1]), parseInt(iso[2])-1, parseInt(iso[3]));
+  const dmy = t.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if (dmy) return new Date(parseInt(dmy[3]), parseInt(dmy[2])-1, parseInt(dmy[1]));
+  // enkel jaar
+  const yr = t.match(/\b(202[3-9]|203[0-9])\b/);
+  if (yr) return new Date(parseInt(yr[1]), 5, 15);
+  return null;
+}
+
+function alleActiesMetDatum() {
+  const result = [];
+  data.forEach((p, pidx) => {
+    p.acties.forEach((a, ai) => {
+      const datum = parseerDatum(a.wanneer);
+      // primaire OD vinden
+      const kops = a.od || [];
+      let odTitel = '', odIdx = -1;
+      if (kops.length) {
+        const k = kops[0];
+        const kpidx = k.pidx !== undefined ? k.pidx : pidx;
+        const koi   = k.oi   !== undefined ? k.oi   : k;
+        if (data[kpidx] && data[kpidx].operationeleDelen[koi]) {
+          odTitel = data[kpidx].operationeleDelen[koi].titel;
+          odIdx   = koi;
+        }
+      }
+      result.push({ actie: a.actie, wanneer: a.wanneer, status: a.status,
+                    datum, pidx, ai, odTitel, odIdx,
+                    tag: p.tag, tagClass: p.tagClass });
+    });
+  });
+  return result;
+}
+
+function renderKalender() {
+  const container = document.getElementById('kalender-content');
+  const acties = alleActiesMetDatum();
+  const metDatum   = acties.filter(a => a.datum);
+  const zonderDatum= acties.filter(a => !a.datum);
+
+  const toggleHtml = `
+    <div class="kal-nav">
+      <div class="kal-legend">
+        <div class="kal-legend-item"><div class="kal-legend-dot" style="background:var(--wico-gray);border:2px solid #aaa;"></div>Open</div>
+        <div class="kal-legend-item"><div class="kal-legend-dot" style="background:#e09a20;"></div>Loopt</div>
+        <div class="kal-legend-item"><div class="kal-legend-dot" style="background:#2a9a5a;"></div>Klaar</div>
+      </div>
+      <div class="kal-view-toggle">
+        <button class="kal-view-btn ${kalView==='tijdlijn'?'active':''}" onclick="kalView='tijdlijn';renderKalender()">Tijdlijn</button>
+        <button class="kal-view-btn ${kalView==='maand'?'active':''}" onclick="kalView='maand';renderKalender()">Maand</button>
+      </div>
+    </div>`;
+
+  if (kalView === 'tijdlijn') {
+    // Groepeer per jaar-maand
+    const groepen = {};
+    metDatum.forEach(a => {
+      const key = a.datum.getFullYear() + '-' + String(a.datum.getMonth()).padStart(2,'0');
+      if (!groepen[key]) groepen[key] = [];
+      groepen[key].push(a);
+    });
+    const gesorteerd = Object.keys(groepen).sort();
+
+    const maandBlokken = gesorteerd.map(key => {
+      const [jaar, maand] = key.split('-');
+      const items = groepen[key];
+      const rows = items.map(a => `
+        <div class="kal-tl-item" onclick="navigeerNaarActie(${a.pidx},${a.odIdx >= 0 ? a.odIdx : 0})">
+          <div class="kal-tl-dot ${a.status}"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="kal-tl-actie ${a.status==='klaar'?'klaar':''}">${esc(a.actie||'(leeg)')}</div>
+            <div class="kal-tl-meta">${a.wanneer ? esc(a.wanneer) : ''}</div>
+          </div>
+          <span class="kal-tl-tag">${esc(a.tag)}</span>
+        </div>`).join('');
+      return `<div class="kal-maand-blok">
+        <div class="kal-maand-hdr">
+          <span class="kal-maand-naam">${MAANDEN[parseInt(maand)]} ${jaar}</span>
+          <span class="kal-maand-count">${items.length} actie${items.length!==1?'s':''}</span>
+        </div>
+        <div class="kal-maand-body">${rows}</div>
+      </div>`;
+    }).join('');
+
+    // Ongedateerde acties
+    const ongedateerd = zonderDatum.length ? `
+      <div class="kal-ongedateerd">
+        <div class="kal-maand-hdr" style="background:var(--wico-muted);">
+          <span class="kal-maand-naam">Zonder deadline</span>
+          <span class="kal-maand-count">${zonderDatum.length} acties</span>
+        </div>
+        <div class="kal-maand-body">
+          ${zonderDatum.map(a => `
+            <div class="kal-tl-item" onclick="navigeerNaarActie(${a.pidx},${a.odIdx >= 0 ? a.odIdx : 0})">
+              <div class="kal-tl-dot ${a.status}"></div>
+              <div style="flex:1;min-width:0;">
+                <div class="kal-tl-actie ${a.status==='klaar'?'klaar':''}">${esc(a.actie||'(leeg)')}</div>
+              </div>
+              <span class="kal-tl-tag">${esc(a.tag)}</span>
+            </div>`).join('')}
+        </div>
+      </div>` : '';
+
+    container.innerHTML = toggleHtml + `<div class="kal-timeline">${maandBlokken || '<p style="color:var(--wico-muted);padding:20px;font-size:13px;">Geen acties met herkende deadline gevonden. Voeg datums toe in het "Wanneer"-veld van acties (bv. "Juni 2026").</p>'}${ongedateerd}</div>`;
+
+  } else {
+    // Maandweergave
+    const eersteVdMaand = new Date(kalJaar, kalMaand, 1);
+    const dagVdWeek = (eersteVdMaand.getDay() + 6) % 7; // Ma=0
+    const aantalDagen = new Date(kalJaar, kalMaand+1, 0).getDate();
+    const vandaag = new Date();
+
+    const navHtml = `
+      <div class="kal-nav">
+        <button class="kal-nav-btn" onclick="kalMaand--;if(kalMaand<0){kalMaand=11;kalJaar--;}renderKalender()">‹</button>
+        <span class="kal-nav-title">${MAANDEN[kalMaand]} ${kalJaar}</span>
+        <button class="kal-nav-btn" onclick="kalMaand++;if(kalMaand>11){kalMaand=0;kalJaar++;}renderKalender()">›</button>
+        <div class="kal-view-toggle">
+          <button class="kal-view-btn" onclick="kalView='tijdlijn';renderKalender()">Tijdlijn</button>
+          <button class="kal-view-btn active">Maand</button>
+        </div>
+      </div>`;
+
+    // Acties van deze maand
+    const actieDezeMaand = metDatum.filter(a =>
+      a.datum.getFullYear() === kalJaar && a.datum.getMonth() === kalMaand
+    );
+
+    // Bouw dag-map
+    const dagMap = {};
+    actieDezeMaand.forEach(a => {
+      const d = a.datum.getDate();
+      if (!dagMap[d]) dagMap[d] = [];
+      dagMap[d].push(a);
+    });
+
+    const dagHeaders = DAGEN.map(d => `<div class="kal-dag-hdr">${d}</div>`).join('');
+    let dagCellen = '';
+    // Lege cellen voor de eerste week
+    for (let i = 0; i < dagVdWeek; i++) {
+      dagCellen += `<div class="kal-dag ander-maand"></div>`;
+    }
+    for (let dag = 1; dag <= aantalDagen; dag++) {
+      const isVandaag = dag===vandaag.getDate() && kalMaand===vandaag.getMonth() && kalJaar===vandaag.getFullYear();
+      const actiesToday = dagMap[dag] || [];
+      const toon = actiesToday.slice(0, 3);
+      const meer = actiesToday.length - 3;
+      const chips = toon.map(a =>
+        `<span class="kal-actie-chip ${a.status}" title="${esc(a.actie)}" onclick="navigeerNaarActie(${a.pidx},${a.odIdx>=0?a.odIdx:0})">${esc(a.actie||'(leeg)').substring(0,28)}</span>`
+      ).join('');
+      const meerSpan = meer > 0 ? `<span class="kal-meer">+${meer} meer</span>` : '';
+      dagCellen += `<div class="kal-dag${isVandaag?' vandaag':''}"><div class="kal-dag-nr">${dag}</div>${chips}${meerSpan}</div>`;
+    }
+    // Afsluitende lege cellen
+    const totaalCellen = dagVdWeek + aantalDagen;
+    const restCellen = (7 - (totaalCellen % 7)) % 7;
+    for (let i = 0; i < restCellen; i++) dagCellen += `<div class="kal-dag ander-maand"></div>`;
+
+    container.innerHTML = navHtml + `<div class="kal-grid">${dagHeaders}${dagCellen}</div>`;
+  }
+}
+
+function navigeerNaarActie(pidx, odIdx) {
+  showView('detail-' + pidx, null);
+  // Scroll naar en open het juiste OD
+  setTimeout(() => {
+    const odEl = document.getElementById(`od-${pidx}-${odIdx}`);
+    if (odEl && !odEl.classList.contains('open')) {
+      toggleOD(pidx, odIdx);
+    }
+    if (odEl) odEl.scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 150);
+}
+
+/* ── afdrukken ── */
+let gekozenSjabloon = null;
+let gekozenPrioriteitIdx = null;
+
+function openPrintMenu() {
+  gekozenSjabloon = null;
+  gekozenPrioriteitIdx = null;
+  document.querySelectorAll('.print-sjabloon').forEach(el => el.classList.remove('selected'));
+  document.getElementById('print-start-btn').disabled = true;
+  document.getElementById('print-start-btn').style.opacity = '0.5';
+  document.getElementById('ps-prioriteit-keuze').style.display = 'none';
+  // Vul prioriteitenlijst in
+  const lijst = document.getElementById('ps-prioriteit-lijst');
+  lijst.innerHTML = data.map((p, i) => `
+    <label onclick="event.stopPropagation()">
+      <input type="radio" name="print-prioriteit" value="${i}" onchange="gekozenPrioriteitIdx=${i};document.getElementById('print-start-btn').disabled=false;document.getElementById('print-start-btn').style.opacity='1';">
+      ${esc(p.tag)}
+    </label>`).join('');
+  document.getElementById('print-overlay').classList.add('open');
+}
+
+function closePrintMenu() {
+  document.getElementById('print-overlay').classList.remove('open');
+}
+
+function selectSjabloon(sjabloon) {
+  gekozenSjabloon = sjabloon;
+  document.querySelectorAll('.print-sjabloon').forEach(el => el.classList.remove('selected'));
+  document.getElementById('ps-' + sjabloon).classList.add('selected');
+  document.getElementById('ps-prioriteit-keuze').style.display =
+    sjabloon === 'prioriteit' ? 'block' : 'none';
+  if (sjabloon !== 'prioriteit') {
+    document.getElementById('print-start-btn').disabled = false;
+    document.getElementById('print-start-btn').style.opacity = '1';
+  } else {
+    // Wacht op keuze van prioriteit
+    if (gekozenPrioriteitIdx === null) {
+      document.getElementById('print-start-btn').disabled = true;
+      document.getElementById('print-start-btn').style.opacity = '0.5';
+    }
+  }
+}
+
+function uitvoerenAfdruk() {
+  if (!gekozenSjabloon) return;
+  closePrintMenu();
+  // Bouw afdrukinhoud in een verborgen div
+  const printDiv = document.getElementById('print-content') || (() => {
+    const d = document.createElement('div');
+    d.id = 'print-content';
+    document.body.appendChild(d);
+    return d;
+  })();
+
+  let html = `<style>
+    @media print { #print-content { display:block !important; } body > *:not(#print-content) { display:none !important; } }
+    body { font-family: Arial, sans-serif; font-size: 11pt; color: #1a2e31; }
+    h1 { font-size: 16pt; color: #1a4a52; border-bottom: 2px solid #2a8a96; padding-bottom: 6pt; margin-bottom: 12pt; }
+    h2 { font-size: 13pt; color: #1a4a52; margin: 14pt 0 4pt; border-left: 4px solid #2a8a96; padding-left: 8pt; }
+    h3 { font-size: 11pt; color: #2a8a96; margin: 10pt 0 3pt; }
+    table { width:100%; border-collapse:collapse; font-size:10pt; margin: 8pt 0; }
+    th { background:#1a4a52; color:white; padding:5pt 8pt; text-align:left; font-size:9pt; }
+    td { padding:5pt 8pt; border-bottom:0.5pt solid #e2eaec; vertical-align:top; }
+    tr:nth-child(even) td { background:#eaf6f8; }
+    .status-open { color:#5a7a80; } .status-loopt { color:#e09a20; font-weight:bold; }
+    .status-klaar { color:#2a9a5a; font-weight:bold; }
+    .tag { font-size:8pt; font-weight:bold; padding:2pt 6pt; border-radius:2pt; background:#d4eef1; color:#1a4a52; }
+    .sectie-hdr { background:#1a4a52; color:white; padding:8pt 12pt; margin:16pt 0 0; border-radius:4pt 4pt 0 0; }
+    .sectie-hdr h2 { color:white; border:none; padding:0; margin:0; font-size:13pt; }
+    .eval-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8pt; margin:8pt 0; }
+    .eval-borgen { background:#e8f5ec; padding:8pt; border-radius:4pt; border-left:3pt solid #2a9a5a; }
+    .eval-bannen { background:#f9e8e7; padding:8pt; border-radius:4pt; border-left:3pt solid #c0392b; }
+    .eval-bijsturen { background:#fef3e2; padding:8pt; border-radius:4pt; border-left:3pt solid #e09a20; }
+    .eval-grid h4 { font-size:9pt; text-transform:uppercase; letter-spacing:0.5pt; margin-bottom:4pt; }
+    .page-break { page-break-before: always; }
+    .meta { font-size:9pt; color:#5a7a80; margin-bottom:16pt; }
+    @page { margin: 1.5cm; }
+  </style>`;
+
+  const nu = new Date().toLocaleDateString('nl-BE', {day:'numeric',month:'long',year:'numeric'});
+
+  if (gekozenSjabloon === 'volledig') {
+    html += `<h1>WICO — Prioriteitenplan 2025–2028</h1><p class="meta">Volledig overzicht · Afgedrukt op ${nu}</p>`;
+    data.forEach((p, pidx) => {
+      if (pidx > 0) html += '<div class="page-break"></div>';
+      const ver = Array.isArray(p.verantwoordelijke) ? p.verantwoordelijke.join(', ') : (p.verantwoordelijke||'—');
+      html += `<div class="sectie-hdr"><h2>${esc(p.tag)}</h2></div>`;
+      html += `<p style="margin:8pt 0;font-size:10pt;">${esc(p.streefdoel)}</p>`;
+      html += `<p style="font-size:9pt;color:#5a7a80;">Verantwoordelijke: <strong>${esc(ver)}</strong></p>`;
+      p.operationeleDelen.forEach((od, oi) => {
+        html += `<h3>OD${oi+1} — ${esc(od.titel)}</h3>`;
+        if (od.omschrijving) html += `<p style="font-size:10pt;margin:4pt 0 6pt;">${esc(od.omschrijving)}</p>`;
+        const odActies = p.acties.filter(a => (a.od||[]).some(k => (k.pidx!==undefined?k.pidx:pidx)===pidx && (k.oi!==undefined?k.oi:k)===oi));
+        if (odActies.length) {
+          html += `<table><tr><th>Actie</th><th>Wanneer</th><th>Wie</th><th>Status</th></tr>`;
+          odActies.forEach(a => {
+            const wie = Array.isArray(a.wie)?a.wie.join(', '):(a.wie||'—');
+            html += `<tr><td>${esc(a.actie)}</td><td>${esc(a.wanneer||'—')}</td><td>${esc(wie)}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
+          });
+          html += `</table>`;
+        }
+      });
+    });
+
+  } else if (gekozenSjabloon === 'acties') {
+    html += `<h1>WICO — Actieoverzicht</h1><p class="meta">Alle acties per prioriteit · Afgedrukt op ${nu}</p>`;
+    html += `<table><tr><th>Actie</th><th>Prioriteit</th><th>Operationeel doel</th><th>Wanneer</th><th>Wie</th><th>Status</th></tr>`;
+    data.forEach((p, pidx) => {
+      p.acties.forEach(a => {
+        const wie = Array.isArray(a.wie)?a.wie.join(', '):(a.wie||'—');
+        const kops = a.od||[];
+        let odT = '—';
+        if (kops.length) { const k=kops[0]; const kpidx=k.pidx!==undefined?k.pidx:pidx; const koi=k.oi!==undefined?k.oi:k; if(data[kpidx]&&data[kpidx].operationeleDelen[koi]) odT=data[kpidx].operationeleDelen[koi].titel; }
+        html += `<tr><td>${esc(a.actie)}</td><td><span class="tag">${esc(p.tag)}</span></td><td style="font-size:9pt;color:#5a7a80;">${esc(odT)}</td><td>${esc(a.wanneer||'—')}</td><td>${esc(wie)}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
+      });
+    });
+    html += `</table>`;
+
+  } else if (gekozenSjabloon === 'prioriteit' && gekozenPrioriteitIdx !== null) {
+    const p = data[gekozenPrioriteitIdx];
+    const pidx = gekozenPrioriteitIdx;
+    const ver = Array.isArray(p.verantwoordelijke) ? p.verantwoordelijke.join(', ') : (p.verantwoordelijke||'—');
+    html += `<h1>${esc(p.tag)}</h1>`;
+    html += `<p class="meta">Detailrapport · Afgedrukt op ${nu}</p>`;
+    html += `<p style="font-size:10pt;margin-bottom:8pt;">${esc(p.streefdoel)}</p>`;
+    html += `<p style="font-size:9pt;color:#5a7a80;margin-bottom:16pt;">Verantwoordelijke: <strong>${esc(ver)}</strong> &nbsp;|&nbsp; Tijdspad: 25-26 initiëren · 26-27 verderzetten · 27-28 borgen</p>`;
+    p.operationeleDelen.forEach((od, oi) => {
+      html += `<h2>OD${oi+1} — ${esc(od.titel)}</h2>`;
+      if (od.omschrijving) html += `<p style="font-size:10pt;margin:4pt 0;">${esc(od.omschrijving)}</p>`;
+      if (od.effecten) html += `<p style="font-size:9pt;color:#2a8a96;margin:4pt 0 8pt;"><em>Gewenste effecten: ${esc(od.effecten)}</em></p>`;
+      const odActies = p.acties.filter(a => (a.od||[]).some(k => (k.pidx!==undefined?k.pidx:pidx)===pidx && (k.oi!==undefined?k.oi:k)===oi));
+      if (odActies.length) {
+        html += `<table><tr><th>Actie</th><th>Wanneer</th><th>Wie</th><th>Status</th></tr>`;
+        odActies.forEach(a => {
+          const wie = Array.isArray(a.wie)?a.wie.join(', '):(a.wie||'—');
+          html += `<tr><td>${esc(a.actie)}</td><td>${esc(a.wanneer||'—')}</td><td>${esc(wie)}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
+        });
+        html += `</table>`;
+      }
+      const ev = p.evaluatiePerOD?.[oi]||{};
+      if (ev.borgen||ev.bannen||ev.bijsturen) {
+        html += `<div class="eval-grid">
+          <div class="eval-borgen"><h4>Borgen</h4><p style="font-size:9pt;">${esc(ev.borgen||'—')}</p></div>
+          <div class="eval-bannen"><h4>Bannen</h4><p style="font-size:9pt;">${esc(ev.bannen||'—')}</p></div>
+          <div class="eval-bijsturen"><h4>Bijsturen</h4><p style="font-size:9pt;">${esc(ev.bijsturen||'—')}</p></div>
+        </div>`;
+      }
+    });
+
+  } else if (gekozenSjabloon === 'team') {
+    html += `<h1>WICO — Teamopvolging</h1><p class="meta">Acties per teamlid · Afgedrukt op ${nu}</p>`;
+    const perPersoon = {};
+    teamleden.forEach(n => { perPersoon[n] = []; });
+    data.forEach((p, pidx) => {
+      p.acties.forEach(a => {
+        const wie = Array.isArray(a.wie) ? a.wie : (a.wie ? [a.wie] : []);
+        const entry = { actie: a.actie, wanneer: a.wanneer, status: a.status, tag: p.tag };
+        if (!wie.length) { if (!perPersoon['(geen)']) perPersoon['(geen)'] = []; perPersoon['(geen)'].push(entry); }
+        else wie.forEach(n => { if (!perPersoon[n]) perPersoon[n] = []; perPersoon[n].push(entry); });
+      });
+    });
+    Object.entries(perPersoon).forEach(([naam, acties]) => {
+      if (!acties.length) return;
+      const klaar = acties.filter(a=>a.status==='klaar').length;
+      const pct = Math.round((klaar/acties.length)*100);
+      html += `<h2>${esc(naam)} <span style="font-size:10pt;color:#5a7a80;font-weight:400;">(${klaar}/${acties.length} klaar · ${pct}%)</span></h2>`;
+      html += `<table><tr><th>Actie</th><th>Prioriteit</th><th>Wanneer</th><th>Status</th></tr>`;
+      acties.forEach(a => {
+        html += `<tr><td>${esc(a.actie)}</td><td><span class="tag">${esc(a.tag)}</span></td><td>${esc(a.wanneer||'—')}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
+      });
+      html += `</table>`;
+    });
+
+  } else if (gekozenSjabloon === 'kalender') {
+    html += `<h1>WICO — Kalenderoverzicht acties</h1><p class="meta">Acties gerangschikt per deadline · Afgedrukt op ${nu}</p>`;
+    const acties = alleActiesMetDatum();
+    const groepen = {};
+    acties.filter(a=>a.datum).forEach(a => {
+      const key = a.datum.getFullYear()+'-'+String(a.datum.getMonth()).padStart(2,'0');
+      if (!groepen[key]) groepen[key] = [];
+      groepen[key].push(a);
+    });
+    Object.keys(groepen).sort().forEach(key => {
+      const [jaar, maand] = key.split('-');
+      html += `<h2>${MAANDEN[parseInt(maand)]} ${jaar}</h2>`;
+      html += `<table><tr><th>Actie</th><th>Prioriteit</th><th>Wanneer</th><th>Wie</th><th>Status</th></tr>`;
+      groepen[key].forEach(a => {
+        const wie = Array.isArray(data[a.pidx].acties[a.ai].wie) ? data[a.pidx].acties[a.ai].wie.join(', ') : (data[a.pidx].acties[a.ai].wie||'—');
+        html += `<tr><td>${esc(a.actie)}</td><td><span class="tag">${esc(a.tag)}</span></td><td>${esc(a.wanneer)}</td><td>${esc(wie)}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
+      });
+      html += `</table>`;
+    });
+    const zonder = acties.filter(a=>!a.datum);
+    if (zonder.length) {
+      html += `<h2>Zonder deadline</h2><table><tr><th>Actie</th><th>Prioriteit</th><th>Wie</th><th>Status</th></tr>`;
+      zonder.forEach(a => {
+        const wie = Array.isArray(data[a.pidx].acties[a.ai].wie) ? data[a.pidx].acties[a.ai].wie.join(', ') : (data[a.pidx].acties[a.ai].wie||'—');
+        html += `<tr><td>${esc(a.actie)}</td><td><span class="tag">${esc(a.tag)}</span></td><td>${esc(wie)}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
+      });
+      html += `</table>`;
+    }
+
+  } else if (gekozenSjabloon === 'evaluatie') {
+    html += `<h1>WICO — Evaluatierapport</h1><p class="meta">Borgen · Bannen · Bijsturen per operationeel doel · Afgedrukt op ${nu}</p>`;
+    data.forEach((p, pidx) => {
+      html += `<div class="sectie-hdr" style="${pidx>0?'margin-top:24pt;':''}"><h2>${esc(p.tag)}</h2></div>`;
+      p.operationeleDelen.forEach((od, oi) => {
+        const ev = p.evaluatiePerOD?.[oi]||{};
+        html += `<h3 style="margin-top:12pt;">OD${oi+1} — ${esc(od.titel)}</h3>`;
+        html += `<div class="eval-grid">
+          <div class="eval-borgen"><h4>✅ Borgen</h4><p style="font-size:9pt;">${esc(ev.borgen||'Nog niet ingevuld')}</p></div>
+          <div class="eval-bannen"><h4>🚫 Bannen</h4><p style="font-size:9pt;">${esc(ev.bannen||'Nog niet ingevuld')}</p></div>
+          <div class="eval-bijsturen"><h4>🔄 Bijsturen</h4><p style="font-size:9pt;">${esc(ev.bijsturen||'Nog niet ingevuld')}</p></div>
+        </div>`;
+        if (ev.wanneer||ev.wie) html += `<p style="font-size:9pt;color:#5a7a80;margin-top:4pt;">Evaluatiemoment: ${esc(ev.wanneer||'—')} &nbsp;|&nbsp; Door: ${esc(ev.wie||'—')}</p>`;
+      });
+    });
+  }
+
+  printDiv.innerHTML = html;
+  printDiv.style.display = 'block';
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => { printDiv.style.display = 'none'; printDiv.innerHTML = ''; }, 1000);
+  }, 200);
+}
+
+/* ── tabs & view switching ── */
+function showSecTab(idx,tab,el) {
+  ['doelen','acties','indicatoren','evaluatie'].forEach(t=>{
+    const e=document.getElementById('sectab-'+idx+'-'+t); if(e) e.style.display='none';
+  });
+  const tgt=document.getElementById('sectab-'+idx+'-'+tab); if(tgt) tgt.style.display='block';
+  if(el){ el.closest('.section-tabs').querySelectorAll('.sec-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+}
+function showView(viewId, tabEl) {
+  document.querySelectorAll('[id^="view-"]').forEach(el => el.style.display='none');
+  const tgt = document.getElementById('view-'+viewId);
+  if (tgt) tgt.style.display = 'block';
+
+  if      (viewId === 'overview')  renderOverview();
+  else if (viewId === 'team')      renderTeamView();
+  else if (viewId === 'kalender')  renderKalender();
+  else                             renderDetail(parseInt(viewId.replace('detail-','')));
+
+  const tabs = document.querySelectorAll('.nav-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+
+  const hTeam = document.getElementById('header-team-btn');
+  const hKal  = document.getElementById('header-kal-btn');
+  if (hTeam) hTeam.style.background = viewId === 'team'     ? 'rgba(255,255,255,0.25)' : '';
+  if (hKal)  hKal.style.background  = viewId === 'kalender' ? 'rgba(255,255,255,0.25)' : '';
+
+  if (tabEl && tabEl.classList.contains('nav-tab')) {
+    tabEl.classList.add('active');
+  } else if (viewId === 'overview') {
+    tabs[0].classList.add('active');
+  } else if (viewId !== 'team' && viewId !== 'kalender') {
+    const i = parseInt(viewId.replace('detail-',''));
+    if (tabs[i+1]) tabs[i+1].classList.add('active');
+  }
+}
+
+renderOverview();
+</script>
+
+<script>
+/* =====================================================================
+   WICO — GitHub opslag
+   Slaat data.json op in je GitHub-repository via de GitHub API.
+   Geen inloggen, geen Azure, geen server nodig.
+
+   STAP 1 — Vul deze 4 waarden in:
+   ===================================================================== */
+const GH_CONFIG = {
+  owner: "richardthijs-gif",
+  repo:  "wico-prioriteitenplan",
+  path:  "data.json",
+  // Token wordt opgeslagen in localStorage zodat je het maar 1x hoeft in te vullen
+  token: localStorage.getItem('wico_gh_token') || '',
+  autosaveMs: 2000
+};
+
+
+/* =====================================================================
+   GitHub API helpers
+   ===================================================================== */
+const GH_STATE = { sha: null };   // SHA van het huidige data.json — nodig voor updates
+
+/* ── Gebruikersnaam bijhouden (voor commit-boodschappen) ── */
+let ghGebruiker = localStorage.getItem('wico_gebruiker') || '';
+
+function toonGebruikerWelkom() {
+  // Modal wordt nu direct bij laden getoond als nodig (zie checkSetupNodig).
+  // Deze functie enkel nog voor label update.
+  updateNaamLabel();
+}
+
+function setupOpslaan() {
+  const naam  = (document.getElementById('setup-naam').value || '').trim();
+  const token = (document.getElementById('setup-token').value || '').trim();
+  if (!naam)  { document.getElementById('setup-naam').focus();  return; }
+  if (!token) { document.getElementById('setup-token').focus(); return; }
+  ghGebruiker     = naam;
+  GH_CONFIG.token = token;
+  localStorage.setItem('wico_gebruiker', naam);
+  localStorage.setItem('wico_gh_token', token);
+  updateNaamLabel();
+  // Verberg modal
+  const overlay = document.getElementById('setup-overlay');
+  overlay.classList.remove('open');
+  overlay.style.display = '';
+  ghSetStatus('🔄 Verbinden...', '#2a8a96');
+  ghBootstrap();
+}
+
+function setupOverslaan() {
+  const naam = (document.getElementById('setup-naam').value || '').trim();
+  if (naam) {
+    ghGebruiker = naam;
+    localStorage.setItem('wico_gebruiker', naam);
+    updateNaamLabel();
+  }
+  const ov = document.getElementById('setup-overlay'); ov.classList.remove('open'); ov.style.display = '';
+  ghBootstrap();
+}
+
+function updateNaamLabel() {
+  const el = document.getElementById('save-gebruiker');
+  if (el) el.textContent = ghGebruiker ? '👤 ' + ghGebruiker : '';
+}
+
+function wisselGebruiker() {
+  const ni = document.getElementById('setup-naam');
+  const ti = document.getElementById('setup-token');
+  if (ni) ni.value = ghGebruiker || '';
+  if (ti) ti.value = GH_CONFIG.token || '';
+  document.getElementById('setup-overlay').classList.add('open');
+  setTimeout(() => { if (ni) ni.focus(); }, 150);
+}
+
+function ghSetStatus(tekst, kleur) {
+  const el = document.getElementById('gh-conn');
+  if (el) { el.textContent = tekst; el.style.background = kleur; }
+}
+
+// Laad data.json van GitHub
+async function ghLoad() {
+  const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}`;
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': 'Bearer ' + GH_CONFIG.token,
+      'Accept': 'application/vnd.github+json'
+    }
+  });
+
+  if (res.status === 404) {
+    // Bestand bestaat nog niet — begin met lege state, eerste save maakt het aan
+    GH_STATE.sha = null;
+    return null;
+  }
+  if (!res.ok) throw new Error(`GitHub laden mislukt (${res.status})`);
+
+  const json = await res.json();
+  GH_STATE.sha = json.sha;
+  // Inhoud is base64-geëncodeerd
+  const decoded = decodeURIComponent(escape(atob(json.content.split('
+').join(''))));
+  return JSON.parse(decoded);
+}
+
+// Sla data.json op naar GitHub
+async function ghSave(payload) {
+  const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+
+  const body = {
+    message: `Dashboard update door ${ghGebruiker || 'onbekend'} op ${new Date().toLocaleString('nl-BE')}` ,
+    content: content,
+    ...(GH_STATE.sha ? { sha: GH_STATE.sha } : {})  // sha verplicht bij update
+  };
+
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'Bearer ' + GH_CONFIG.token,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error('GitHub opslaan mislukt: ' + (err.message || res.status));
+  }
+
+  const result = await res.json();
+  // Bijwerken SHA voor volgende save
+  GH_STATE.sha = result.content?.sha || GH_STATE.sha;
+}
+
+/* =====================================================================
+   Opslaan — overschrijft de standaard saveAll()
+   ===================================================================== */
+window.saveAll = async function () {
+  const btns = document.querySelectorAll('.save-btn');
+  btns.forEach(b => b.disabled = true);
+  ghSetStatus('⏳ Opslaan...', '#2a8a96');
+
+  try {
+    await ghSave({ data, teamleden });
+    // Ook lokaal cachen
+    localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+    localStorage.setItem('wico_team', JSON.stringify(teamleden));
+    ghSetStatus('🟢 Opgeslagen', '#2a9a5a');
+    const bar = document.getElementById('save-bar-msg');
+    if (bar) {
+      bar.textContent = '✅ Opgeslagen op GitHub om ' + new Date().toLocaleTimeString('nl-BE');
+      setTimeout(() => bar.textContent = 'Automatisch opgeslagen op GitHub.', 4000);
+    }
+  } catch (err) {
+    ghSetStatus('🔴 Fout', '#c0392b');
+    const bar = document.getElementById('save-bar-msg');
+    let errMsg = err.message || 'Onbekende fout';
+    if (!GH_CONFIG.token) {
+      errMsg = '⚠️ Geen token ingesteld. Herlaad de pagina om je token in te vullen.';
+    } else if (errMsg.includes('401') || errMsg.includes('Bad credentials')) {
+      localStorage.removeItem('wico_gh_token');
+      GH_CONFIG.token = '';
+      errMsg = '⚠️ Token ongeldig of verlopen. Herlaad de pagina om een nieuw token in te vullen.';
+    } else if (errMsg.includes('404')) {
+      errMsg = '⚠️ Repository niet gevonden. Controleer owner/repo in de configuratie.';
+    } else if (errMsg.includes('403')) {
+      errMsg = '⚠️ Geen schrijftoegang. Controleer of het token "Contents: Read and write" heeft.';
+    }
+    if (bar) bar.textContent = '❌ ' + errMsg;
+    // Lokaal opslaan als fallback
+    localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+    localStorage.setItem('wico_team', JSON.stringify(teamleden));
+  } finally {
+    btns.forEach(b => b.disabled = false);
+  }
+};
+
+/* =====================================================================
+   Autosave — na elke wijziging in het dashboard
+   ===================================================================== */
+let ghAutosaveTimer = null;
+function queueAutosave() {
+  clearTimeout(ghAutosaveTimer);
+  ghAutosaveTimer = setTimeout(() => window.saveAll().catch(() => {}), GH_CONFIG.autosaveMs || 2000);
+}
+if (GH_CONFIG.autosaveMs !== 0) {
+  document.addEventListener('change', e => { if (e.target.closest('.main')) queueAutosave(); });
+  document.addEventListener('input',  e => { if (e.target.closest('.main')) queueAutosave(); });
+}
+
+/* =====================================================================
+   Opstart — laad eerst van GitHub, val terug op lokale cache
+   ===================================================================== */
+async function ghBootstrap() {
+  ghSetStatus('⏳ Laden...', '#2a8a96');
+  try {
+    const remote = await ghLoad();
+    if (remote) {
+      if (remote.data)      data      = migrateData(remote.data);
+      if (remote.teamleden) teamleden = remote.teamleden;
+      localStorage.setItem('prioriteitenplan', JSON.stringify(data));
+      localStorage.setItem('wico_team', JSON.stringify(teamleden));
+    }
+    ghSetStatus('🟢 Verbonden', '#2a9a5a');
+    const bar = document.getElementById('save-bar-msg');
+    if (bar) bar.textContent = remote
+      ? '🔄 Gegevens geladen van GitHub'
+      : '✨ Nieuwe repository — sla op om te beginnen';
+  } catch (err) {
+    ghSetStatus('🔴 Lokaal', '#c0392b');
+    const bar = document.getElementById('save-bar-msg');
+    if (bar) bar.textContent = 'ℹ️ GitHub niet bereikbaar — werk lokaal. (' + err.message + ')';
+  }
+  // Render altijd, ook bij fout
+  toonGebruikerWelkom();
+  try { renderOverview(); } catch {}
+}
+
+// ── Toon setup-modal onmiddellijk als token of naam ontbreekt ──
+// Dit gebeurt synchroon, voor elke async operatie
+(function checkSetupNodig() {
+  const heeftToken = !!(localStorage.getItem('wico_gh_token') || '').trim();
+  const heeftNaam  = !!(localStorage.getItem('wico_gebruiker') || '').trim();
+  if (!heeftToken || !heeftNaam) {
+    const overlay = document.getElementById('setup-overlay');
+    if (overlay) {
+      overlay.style.display = 'flex';  // forceer zichtbaar
+      overlay.classList.add('open');
+      // Vul in wat al geweten is
+      const ni = document.getElementById('setup-naam');
+      const ti = document.getElementById('setup-token');
+      const bestaandeNaam  = localStorage.getItem('wico_gebruiker') || '';
+      const bestaandeToken = localStorage.getItem('wico_gh_token') || '';
+      if (ni && bestaandeNaam)  ni.value = bestaandeNaam;
+      if (ti && bestaandeToken) ti.value = bestaandeToken;
+      setTimeout(() => {
+        if (ni && !bestaandeNaam)  { ni.focus(); return; }
+        if (ti && !bestaandeToken) { ti.focus(); }
+      }, 100);
+    }
+  } else {
+    // Alles aanwezig — laad data van GitHub
+    ghBootstrap();
+  }
+})();
+
+// Enter-toets in setup modal
+document.getElementById('setup-naam').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('setup-token').focus();
+});
+document.getElementById('setup-token').addEventListener('keydown', e => {
+  if (e.key === 'Enter') setupOpslaan();
+});
+
+/* =====================================================================
+   HOE MAAK JE EEN GITHUB TOKEN AAN?
+
+   1. Ga naar github.com en log in
+   2. Klik rechtsboven op je profielfoto → "Settings"
+   3. Scroll naar beneden → klik "Developer settings"
+   4. Klik "Personal access tokens" → "Fine-grained tokens"
+   5. Klik "Generate new token"
+   6. Geef een naam: "WICO Dashboard"
+   7. Expiration: kies "No expiration" of 1 jaar
+   8. Under "Repository access": kies "Only select repositories"
+      → Selecteer "wico-prioriteitenplan"
+   9. Under "Permissions" → "Repository permissions":
+      → "Contents" → zet op "Read and write"
+   10. Klik "Generate token"
+   11. KOPIEER het token meteen! Je ziet het maar één keer.
+   12. Plak het als waarde van GH_CONFIG.token hierboven.
+   ===================================================================== */
+</script>
+</body>
+</html>
