@@ -446,11 +446,10 @@
 </div>
 
 <div class="save-bar">
-  <span id="save-bar-msg">Wijzigingen worden lokaal bijgehouden. Exporteer voor SharePoint opslaan.</span>
+  <span id="save-bar-msg">⏳ Gegevens laden van GitHub...</span>
   <div style="display:flex;gap:10px;align-items:center;">
-    <input type="file" id="import-file-input" accept=".json" style="display:none;" onchange="importFromFile(event)">
-    <button class="print-btn" onclick="document.getElementById('import-file-input').click()">📂 Importeer JSON</button>
-    <button class="print-btn" onclick="exportData()">💾 Exporteer JSON</button>
+    <span id="save-gebruiker" style="font-size:12px;color:rgba(255,255,255,0.7);"></span>
+    <button class="print-btn" onclick="wisselGebruiker()" title="Andere gebruiker kiezen">👤 Wissel</button>
     <button class="save-btn" onclick="saveAll()">Opslaan</button>
   </div>
 </div>
@@ -686,7 +685,7 @@ function saveAll() {
   localStorage.setItem('wico_team', JSON.stringify(teamleden));
   const bar = document.getElementById('save-bar-msg');
   bar.textContent = 'Opgeslagen op ' + new Date().toLocaleTimeString('nl-BE');
-  setTimeout(()=> bar.textContent='Wijzigingen worden lokaal bijgehouden. Exporteer voor SharePoint opslaan.',3000);
+  setTimeout(()=> bar.textContent='Automatisch opgeslagen op GitHub.',3000);
 }
 
 function exportData() {
@@ -720,7 +719,7 @@ function importFromFile(event) {
       showView('overview', null);
       const bar = document.getElementById('save-bar-msg');
       bar.textContent = '✅ Bestand succesvol ingeladen: ' + file.name;
-      setTimeout(()=> bar.textContent='Wijzigingen worden lokaal bijgehouden. Exporteer voor SharePoint opslaan.',4000);
+      setTimeout(()=> bar.textContent='Automatisch opgeslagen op GitHub.',4000);
     } catch(err) {
       alert('Fout bij inladen: ' + err.message);
     }
@@ -1596,14 +1595,71 @@ const GH_CONFIG = {
   owner: "richardthijs-gif",
   repo:  "wico-prioriteitenplan",
   path:  "data.json",
-  // ⚠️ Vervang dit door je NIEUWE token na het intrekken van het oude!
-  token: "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"
+  // Token wordt opgeslagen in localStorage zodat je het maar 1x hoeft in te vullen
+  token: localStorage.getItem('wico_gh_token') || '',
+  autosaveMs: 2000
 };
+
+// Vraag token op als het nog niet is ingesteld
+if (!GH_CONFIG.token) {
+  const t = prompt(
+    'GitHub token vereist voor opslaan.\n\n' +
+    'Maak aan via github.com → Settings → Developer settings\n' +
+    '→ Fine-grained tokens → Generate new token\n' +
+    '(Repository: wico-prioriteitenplan, Contents: Read and write)\n\n' +
+    'Plak je token hier:'
+  );
+  if (t && t.trim()) {
+    GH_CONFIG.token = t.trim();
+    localStorage.setItem('wico_gh_token', GH_CONFIG.token);
+  }
+}
 
 /* =====================================================================
    GitHub API helpers
    ===================================================================== */
 const GH_STATE = { sha: null };   // SHA van het huidige data.json — nodig voor updates
+
+/* ── Gebruikersnaam bijhouden (voor commit-boodschappen) ── */
+let ghGebruiker = localStorage.getItem('wico_gebruiker') || '';
+
+function toonGebruikerWelkom() {
+  if (!ghGebruiker) {
+    const naam = prompt('Welkom bij het WICO Prioriteitenplan!\n\nVul jouw naam in zodat bijgehouden wordt wie aanpassingen maakt:', '');
+    if (naam && naam.trim()) {
+      ghGebruiker = naam.trim();
+      localStorage.setItem('wico_gebruiker', ghGebruiker);
+    }
+  }
+  const el = document.getElementById('save-gebruiker');
+  if (el) el.textContent = ghGebruiker ? '👤 ' + ghGebruiker : '';
+}
+
+function wisselGebruiker() {
+  const keuze = prompt(
+    'Wat wil je doen?\n\n' +
+    '1 — Gebruikersnaam aanpassen (huidig: ' + (ghGebruiker||'niet ingesteld') + ')\n' +
+    '2 — GitHub token opnieuw instellen\n\n' +
+    'Typ 1 of 2:'
+  );
+  if (keuze === '1' || keuze === null) {
+    const naam = prompt('Nieuwe gebruikersnaam:', ghGebruiker || '');
+    if (naam !== null && naam.trim()) {
+      ghGebruiker = naam.trim();
+      localStorage.setItem('wico_gebruiker', ghGebruiker);
+      const el = document.getElementById('save-gebruiker');
+      if (el) el.textContent = '👤 ' + ghGebruiker;
+    }
+  } else if (keuze === '2') {
+    const t = prompt('Plak je nieuwe GitHub token:');
+    if (t && t.trim()) {
+      GH_CONFIG.token = t.trim();
+      localStorage.setItem('wico_gh_token', GH_CONFIG.token);
+      ghSetStatus('🔄 Token bijgewerkt — even testen...', '#2a8a96');
+      window.saveAll();
+    }
+  }
+}
 
 function ghSetStatus(tekst, kleur) {
   const el = document.getElementById('gh-conn');
@@ -1641,7 +1697,7 @@ async function ghSave(payload) {
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
 
   const body = {
-    message: 'Dashboard update ' + new Date().toLocaleString('nl-BE'),
+    message: `Dashboard update door ${ghGebruiker || 'onbekend'} op ${new Date().toLocaleString('nl-BE')}` ,
     content: content,
     ...(GH_STATE.sha ? { sha: GH_STATE.sha } : {})  // sha verplicht bij update
   };
@@ -1688,7 +1744,19 @@ window.saveAll = async function () {
   } catch (err) {
     ghSetStatus('🔴 Fout', '#c0392b');
     const bar = document.getElementById('save-bar-msg');
-    if (bar) bar.textContent = '❌ ' + err.message;
+    let errMsg = err.message || 'Onbekende fout';
+    if (!GH_CONFIG.token) {
+      errMsg = '⚠️ Geen token ingesteld. Herlaad de pagina om je token in te vullen.';
+    } else if (errMsg.includes('401') || errMsg.includes('Bad credentials')) {
+      localStorage.removeItem('wico_gh_token');
+      GH_CONFIG.token = '';
+      errMsg = '⚠️ Token ongeldig of verlopen. Herlaad de pagina om een nieuw token in te vullen.';
+    } else if (errMsg.includes('404')) {
+      errMsg = '⚠️ Repository niet gevonden. Controleer owner/repo in de configuratie.';
+    } else if (errMsg.includes('403')) {
+      errMsg = '⚠️ Geen schrijftoegang. Controleer of het token "Contents: Read and write" heeft.';
+    }
+    if (bar) bar.textContent = '❌ ' + errMsg;
     // Lokaal opslaan als fallback
     localStorage.setItem('prioriteitenplan', JSON.stringify(data));
     localStorage.setItem('wico_team', JSON.stringify(teamleden));
@@ -1734,6 +1802,7 @@ if (GH_CONFIG.autosaveMs !== 0) {
     if (bar) bar.textContent = 'ℹ️ GitHub niet bereikbaar — werk lokaal. (' + err.message + ')';
   }
   // Render altijd, ook bij fout
+  toonGebruikerWelkom();
   try { renderOverview(); } catch {}
 })();
 
