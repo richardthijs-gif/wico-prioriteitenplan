@@ -1636,65 +1636,61 @@ renderOverview();
 </script>
 
 <script>
-/* =====================================================================
-   WICO — GitHub opslag
-   Slaat data.json op in je GitHub-repository via de GitHub API.
-   Geen inloggen, geen Azure, geen server nodig.
-
-   STAP 1 — Vul deze 4 waarden in:
-   ===================================================================== */
-const GH_CONFIG = {
+/* ── WICO GitHub opslag ── */
+const GH = {
   owner: "richardthijs-gif",
   repo:  "wico-prioriteitenplan",
   path:  "data.json",
-  // Token wordt opgeslagen in localStorage zodat je het maar 1x hoeft in te vullen
-  token: localStorage.getItem('wico_gh_token') || '',
-  autosaveMs: 2000
+  get token() { return localStorage.getItem('wico_gh_token') || ''; },
+  set token(v) { localStorage.setItem('wico_gh_token', v); }
 };
-
-
-/* =====================================================================
-   GitHub API helpers
-   ===================================================================== */
-const GH_STATE = { sha: null };   // SHA van het huidige data.json — nodig voor updates
-
-/* ── Gebruikersnaam bijhouden (voor commit-boodschappen) ── */
+const GH_STATE = { sha: null };
 let ghGebruiker = localStorage.getItem('wico_gebruiker') || '';
 
-function toonGebruikerWelkom() {
-  const heeftToken = !!GH_CONFIG.token;
-  const heeftNaam  = !!ghGebruiker;
-  if (!heeftToken || !heeftNaam) {
-    // Vul vooraf in wat al gekend is
-    const ni = document.getElementById('setup-naam');
-    const ti = document.getElementById('setup-token');
-    if (ni && heeftNaam)  ni.value = ghGebruiker;
-    if (ti && heeftToken) ti.value = GH_CONFIG.token;
-    const _ov = document.getElementById('setup-overlay'); _ov.style.display = 'flex'; _ov.classList.add('open');
-    setTimeout(() => {
-      const focus = !heeftNaam ? document.getElementById('setup-naam') : document.getElementById('setup-token');
-      if (focus) focus.focus();
-    }, 150);
-  } else {
-    updateNaamLabel();
-  }
+/* ── Status indicator ── */
+function ghStatus(tekst, kleur) {
+  const el = document.getElementById('gh-conn');
+  if (el) { el.textContent = tekst; el.style.background = kleur; }
 }
 
+/* ── Naam label ── */
+function updateNaamLabel() {
+  const el = document.getElementById('save-gebruiker');
+  if (el) el.textContent = ghGebruiker ? '👤 ' + ghGebruiker : '';
+}
+
+/* ── Setup modal tonen/verbergen ── */
+function toonSetup() {
+  const ov = document.getElementById('setup-overlay');
+  if (!ov) return;
+  document.getElementById('setup-naam').value  = ghGebruiker || '';
+  document.getElementById('setup-token').value = GH.token || '';
+  ov.style.display = 'flex';
+  setTimeout(() => {
+    (ghGebruiker
+      ? document.getElementById('setup-token')
+      : document.getElementById('setup-naam')
+    ).focus();
+  }, 50);
+}
+
+function verbergSetup() {
+  const ov = document.getElementById('setup-overlay');
+  if (ov) ov.style.display = 'none';
+}
+
+/* ── Knoppen in modal ── */
 function setupOpslaan() {
-  const naam  = (document.getElementById('setup-naam').value || '').trim();
+  const naam  = (document.getElementById('setup-naam').value  || '').trim();
   const token = (document.getElementById('setup-token').value || '').trim();
   if (!naam)  { document.getElementById('setup-naam').focus();  return; }
   if (!token) { document.getElementById('setup-token').focus(); return; }
-  ghGebruiker     = naam;
-  GH_CONFIG.token = token;
-  localStorage.setItem('wico_gebruiker',  naam);
-  localStorage.setItem('wico_gh_token', token);
+  ghGebruiker = naam;
+  GH.token    = token;
+  localStorage.setItem('wico_gebruiker', naam);
   updateNaamLabel();
-  const ov = document.getElementById('setup-overlay');
-  ov.style.display = 'none';
-  ov.classList.remove('open');
-  ghSetStatus('🔄 Verbinden...', '#2a8a96');
-  ghBootstrap();
+  verbergSetup();
+  ghLaadEnVerbind();
 }
 
 function setupOverslaan() {
@@ -1704,123 +1700,69 @@ function setupOverslaan() {
     localStorage.setItem('wico_gebruiker', naam);
     updateNaamLabel();
   }
-  const ov = document.getElementById('setup-overlay');
-  ov.style.display = 'none';
-  ov.classList.remove('open');
+  verbergSetup();
   try { renderOverview(); } catch {}
 }
 
-function updateNaamLabel() {
-  const el = document.getElementById('save-gebruiker');
-  if (el) el.textContent = ghGebruiker ? '👤 ' + ghGebruiker : '';
-}
+function wisselGebruiker() { toonSetup(); }
+function toonGebruikerWelkom() { updateNaamLabel(); }
 
-function wisselGebruiker() {
-  const ni = document.getElementById('setup-naam');
-  const ti = document.getElementById('setup-token');
-  if (ni) ni.value = ghGebruiker || '';
-  if (ti) ti.value = GH_CONFIG.token || '';
-  document.getElementById('setup-overlay').classList.add('open');
-  setTimeout(() => { if (ni) ni.focus(); }, 150);
-}
-
-function ghSetStatus(tekst, kleur) {
-  const el = document.getElementById('gh-conn');
-  if (el) { el.textContent = tekst; el.style.background = kleur; }
-}
-
-// Laad data.json van GitHub
-async function ghLoad() {
-  const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}`;
+/* ── GitHub API ── */
+async function ghLaad() {
+  const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`;
   const res = await fetch(url, {
-    headers: {
-      'Authorization': 'Bearer ' + GH_CONFIG.token,
-      'Accept': 'application/vnd.github+json'
-    }
+    headers: { 'Authorization': 'Bearer ' + GH.token, 'Accept': 'application/vnd.github+json' }
   });
-
-  if (res.status === 404) {
-    // Bestand bestaat nog niet — begin met lege state, eerste save maakt het aan
-    GH_STATE.sha = null;
-    return null;
-  }
-  if (!res.ok) throw new Error(`GitHub laden mislukt (${res.status})`);
-
+  if (res.status === 404) { GH_STATE.sha = null; return null; }
+  if (!res.ok) throw new Error('GitHub laden mislukt (' + res.status + ')');
   const json = await res.json();
   GH_STATE.sha = json.sha;
-  // Inhoud is base64-geëncodeerd
-  const decoded = decodeURIComponent(escape(atob(json.content.split('
-').join(''))));
-  return JSON.parse(decoded);
+  return JSON.parse(decodeURIComponent(escape(atob(json.content.split('\n').join('')))));
 }
 
-// Sla data.json op naar GitHub
-async function ghSave(payload) {
-  const url = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${GH_CONFIG.path}`;
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-
+async function ghSla(payload) {
+  const url  = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`;
   const body = {
-    message: `Dashboard update door ${ghGebruiker || 'onbekend'} op ${new Date().toLocaleString('nl-BE')}` ,
-    content: content,
-    ...(GH_STATE.sha ? { sha: GH_STATE.sha } : {})  // sha verplicht bij update
+    message: 'Update door ' + (ghGebruiker || 'onbekend') + ' op ' + new Date().toLocaleString('nl-BE'),
+    content: btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2)))),
+    ...(GH_STATE.sha ? { sha: GH_STATE.sha } : {})
   };
-
   const res = await fetch(url, {
     method: 'PUT',
-    headers: {
-      'Authorization': 'Bearer ' + GH_CONFIG.token,
-      'Accept': 'application/vnd.github+json',
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Authorization': 'Bearer ' + GH.token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error('GitHub opslaan mislukt: ' + (err.message || res.status));
+    if (res.status === 401 || res.status === 403) {
+      localStorage.removeItem('wico_gh_token');
+      throw new Error('Token ongeldig — klik op 👤 Wissel om een nieuw token in te stellen');
+    }
+    throw new Error('Opslaan mislukt: ' + (err.message || res.status));
   }
-
   const result = await res.json();
-  // Bijwerken SHA voor volgende save
-  GH_STATE.sha = result.content?.sha || GH_STATE.sha;
+  GH_STATE.sha = result.content && result.content.sha ? result.content.sha : GH_STATE.sha;
 }
 
-/* =====================================================================
-   Opslaan — overschrijft de standaard saveAll()
-   ===================================================================== */
-window.saveAll = async function () {
+/* ── Opslaan override ── */
+window.saveAll = async function() {
   const btns = document.querySelectorAll('.save-btn');
   btns.forEach(b => b.disabled = true);
-  ghSetStatus('⏳ Opslaan...', '#2a8a96');
-
+  ghStatus('⏳ Opslaan...', '#2a8a96');
   try {
-    await ghSave({ data, teamleden });
-    // Ook lokaal cachen
+    await ghSla({ data, teamleden });
     localStorage.setItem('prioriteitenplan', JSON.stringify(data));
     localStorage.setItem('wico_team', JSON.stringify(teamleden));
-    ghSetStatus('🟢 Opgeslagen', '#2a9a5a');
+    ghStatus('🟢 Opgeslagen', '#2a9a5a');
     const bar = document.getElementById('save-bar-msg');
     if (bar) {
-      bar.textContent = '✅ Opgeslagen op GitHub om ' + new Date().toLocaleTimeString('nl-BE');
+      bar.textContent = '✅ Opgeslagen om ' + new Date().toLocaleTimeString('nl-BE');
       setTimeout(() => bar.textContent = 'Automatisch opgeslagen op GitHub.', 4000);
     }
   } catch (err) {
-    ghSetStatus('🔴 Fout', '#c0392b');
+    ghStatus('🔴 Fout', '#c0392b');
     const bar = document.getElementById('save-bar-msg');
-    let errMsg = err.message || 'Onbekende fout';
-    if (!GH_CONFIG.token) {
-      errMsg = '⚠️ Geen token ingesteld. Herlaad de pagina om je token in te vullen.';
-    } else if (errMsg.includes('401') || errMsg.includes('Bad credentials')) {
-      localStorage.removeItem('wico_gh_token');
-      GH_CONFIG.token = '';
-      errMsg = '⚠️ Token ongeldig of verlopen. Herlaad de pagina om een nieuw token in te vullen.';
-    } else if (errMsg.includes('404')) {
-      errMsg = '⚠️ Repository niet gevonden. Controleer owner/repo in de configuratie.';
-    } else if (errMsg.includes('403')) {
-      errMsg = '⚠️ Geen schrijftoegang. Controleer of het token "Contents: Read and write" heeft.';
-    }
-    if (bar) bar.textContent = '❌ ' + errMsg;
-    // Lokaal opslaan als fallback
+    if (bar) bar.textContent = '❌ ' + err.message;
     localStorage.setItem('prioriteitenplan', JSON.stringify(data));
     localStorage.setItem('wico_team', JSON.stringify(teamleden));
   } finally {
@@ -1828,104 +1770,54 @@ window.saveAll = async function () {
   }
 };
 
-/* =====================================================================
-   Autosave — na elke wijziging in het dashboard
-   ===================================================================== */
-let ghAutosaveTimer = null;
-function queueAutosave() {
-  clearTimeout(ghAutosaveTimer);
-  ghAutosaveTimer = setTimeout(() => window.saveAll().catch(() => {}), GH_CONFIG.autosaveMs || 2000);
-}
-if (GH_CONFIG.autosaveMs !== 0) {
-  document.addEventListener('change', e => { if (e.target.closest('.main')) queueAutosave(); });
-  document.addEventListener('input',  e => { if (e.target.closest('.main')) queueAutosave(); });
-}
+/* ── Autosave ── */
+let _autosaveTimer = null;
+document.addEventListener('change', e => {
+  if (!e.target.closest('.main')) return;
+  clearTimeout(_autosaveTimer);
+  _autosaveTimer = setTimeout(() => window.saveAll().catch(() => {}), 2000);
+});
+document.addEventListener('input', e => {
+  if (!e.target.closest('.main')) return;
+  clearTimeout(_autosaveTimer);
+  _autosaveTimer = setTimeout(() => window.saveAll().catch(() => {}), 2000);
+});
 
-/* =====================================================================
-   Opstart — laad eerst van GitHub, val terug op lokale cache
-   ===================================================================== */
-async function ghBootstrap() {
-  ghSetStatus('⏳ Laden...', '#2a8a96');
+/* ── Laden van GitHub + start ── */
+async function ghLaadEnVerbind() {
+  ghStatus('⏳ Laden...', '#2a8a96');
   try {
-    const remote = await ghLoad();
+    const remote = await ghLaad();
     if (remote) {
       if (remote.data)      data      = migrateData(remote.data);
       if (remote.teamleden) teamleden = remote.teamleden;
       localStorage.setItem('prioriteitenplan', JSON.stringify(data));
       localStorage.setItem('wico_team', JSON.stringify(teamleden));
     }
-    ghSetStatus('🟢 Verbonden', '#2a9a5a');
+    ghStatus('🟢 Verbonden', '#2a9a5a');
     const bar = document.getElementById('save-bar-msg');
-    if (bar) bar.textContent = remote
-      ? '🔄 Gegevens geladen van GitHub'
-      : '✨ Nieuwe repository — sla op om te beginnen';
+    if (bar) bar.textContent = remote ? '🔄 Geladen van GitHub' : '✨ Klaar om te starten';
   } catch (err) {
-    ghSetStatus('🔴 Lokaal', '#c0392b');
+    ghStatus('🔴 Lokaal', '#c0392b');
     const bar = document.getElementById('save-bar-msg');
-    if (bar) bar.textContent = 'ℹ️ GitHub niet bereikbaar — werk lokaal. (' + err.message + ')';
+    if (bar) bar.textContent = 'ℹ️ Lokaal — ' + err.message;
   }
-  // Render altijd, ook bij fout
-  toonGebruikerWelkom();
+  updateNaamLabel();
   try { renderOverview(); } catch {}
 }
 
-// Enter-toets in setup modal
-document.getElementById('setup-naam').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('setup-token').focus();
-});
-document.getElementById('setup-token').addEventListener('keydown', e => {
-  if (e.key === 'Enter') setupOpslaan();
-});
+/* ── Enter-toets in modal ── */
+document.getElementById('setup-naam').addEventListener('keydown',  e => { if (e.key === 'Enter') document.getElementById('setup-token').focus(); });
+document.getElementById('setup-token').addEventListener('keydown', e => { if (e.key === 'Enter') setupOpslaan(); });
 
-// ── Verberg modal als naam + token al gekend zijn, anders toon hem ──
-(function initSetup() {
-  const naam  = (localStorage.getItem('wico_gebruiker') || '').trim();
-  const token = (localStorage.getItem('wico_gh_token')  || '').trim();
-  const overlay = document.getElementById('setup-overlay');
-
-  if (naam && token) {
-    // Alles aanwezig: verberg modal en start meteen
-    overlay.style.display = 'none';
-    ghGebruiker     = naam;
-    GH_CONFIG.token = token;
-    updateNaamLabel();
-    ghBootstrap();
-  } else {
-    // Toon modal (al zichtbaar via CSS, maar voor zekerheid):
-    overlay.style.display = 'flex';
-    // Vul in wat al gekend is
-    if (naam)  document.getElementById('setup-naam').value  = naam;
-    if (token) document.getElementById('setup-token').value = token;
-    // Focus op eerste leeg veld
-    setTimeout(() => {
-      (!naam
-        ? document.getElementById('setup-naam')
-        : document.getElementById('setup-token')
-      ).focus();
-    }, 100);
-    // Laad wel al data lokaal op de achtergrond
-    try { renderOverview(); } catch {}
-  }
-})();
-
-/* =====================================================================
-   HOE MAAK JE EEN GITHUB TOKEN AAN?
-
-   1. Ga naar github.com en log in
-   2. Klik rechtsboven op je profielfoto → "Settings"
-   3. Scroll naar beneden → klik "Developer settings"
-   4. Klik "Personal access tokens" → "Fine-grained tokens"
-   5. Klik "Generate new token"
-   6. Geef een naam: "WICO Dashboard"
-   7. Expiration: kies "No expiration" of 1 jaar
-   8. Under "Repository access": kies "Only select repositories"
-      → Selecteer "wico-prioriteitenplan"
-   9. Under "Permissions" → "Repository permissions":
-      → "Contents" → zet op "Read and write"
-   10. Klik "Generate token"
-   11. KOPIEER het token meteen! Je ziet het maar één keer.
-   12. Plak het als waarde van GH_CONFIG.token hierboven.
-   ===================================================================== */
+/* ── Start: toon modal of laad meteen ── */
+if (!GH.token || !ghGebruiker) {
+  toonSetup();
+  try { renderOverview(); } catch {}
+} else {
+  verbergSetup();
+  ghLaadEnVerbind();
+}
 </script>
 </body>
 </html>
