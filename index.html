@@ -272,6 +272,71 @@
     color:var(--wico-text); cursor:pointer; }
   .eval-datum-input:focus { outline:1px solid var(--wico-teal); background:var(--wico-white); }
 
+
+  /* ── Deadline kleurcodes ── */
+  .dl-te-laat  { color:#c0392b; font-weight:700; font-size:11px; }
+  .dl-urgent   { color:#e09a20; font-weight:700; font-size:11px; }
+  .dl-ok       { color:#2a9a5a; font-size:11px; }
+  .dl-badge    { display:inline-block; padding:1px 6px; border-radius:3px; font-size:10px; font-weight:700; }
+  .dl-badge.te-laat { background:#f9e8e7; color:#c0392b; }
+  .dl-badge.urgent  { background:#fef3e2; color:#e09a20; }
+  .datum-input.te-laat { color:#c0392b !important; }
+  .datum-input.urgent  { color:#e09a20 !important; }
+
+  /* ── Eigenaar / Betrokkenen ── */
+  .eigenaar-wrap { display:flex; flex-direction:column; gap:3px; }
+  .eigenaar-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--wico-muted); }
+
+  /* ── Directieoverzicht ── */
+  .dir-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:24px; }
+  .dir-kpi  { background:var(--wico-white); border-radius:10px; border:1px solid var(--wico-gray); padding:18px 20px; text-align:center; }
+  .dir-kpi-nr { font-size:32px; font-weight:800; color:var(--wico-petrol); line-height:1; margin-bottom:4px; }
+  .dir-kpi-nr.rood  { color:#c0392b; }
+  .dir-kpi-nr.oranje{ color:#e09a20; }
+  .dir-kpi-nr.groen { color:#2a9a5a; }
+  .dir-kpi-lbl { font-size:11px; color:var(--wico-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+  .dir-sectie { background:var(--wico-white); border-radius:10px; border:1px solid var(--wico-gray); margin-bottom:16px; overflow:hidden; }
+  .dir-sectie-hdr { background:var(--wico-petrol); padding:10px 18px; font-size:13px; font-weight:700; color:white; display:flex; align-items:center; gap:8px; }
+  .dir-rij { display:flex; align-items:center; gap:12px; padding:9px 18px; border-bottom:0.5px solid var(--wico-gray); font-size:12px; cursor:pointer; transition:background 0.1s; }
+  .dir-rij:last-child { border-bottom:none; }
+  .dir-rij:hover { background:var(--wico-teal-xlight); }
+  .dir-bar-wrap { flex:1; height:6px; background:var(--wico-gray); border-radius:3px; overflow:hidden; }
+  .dir-bar { height:100%; border-radius:3px; background:var(--wico-teal); }
+  .dir-bar.vol { background:#2a9a5a; }
+
+  /* ── Herinnering blok ── */
+  .herinnering-blok { background:var(--wico-white); border-radius:10px; border:1px solid var(--wico-gray); border-left:4px solid #e09a20; padding:14px 18px; margin-bottom:20px; }
+  .herinnering-hdr  { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:#7a4a0a; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:10px; }
+  .herinnering-item { display:flex; align-items:flex-start; gap:10px; padding:5px 0; border-bottom:0.5px solid var(--wico-gray); font-size:12px; cursor:pointer; }
+  .herinnering-item:last-child { border-bottom:none; }
+  .herinnering-item:hover { color:var(--wico-teal); }
+  .herinnering-tag  { font-size:10px; font-weight:700; padding:1px 6px; border-radius:3px; background:var(--wico-teal-xlight); color:var(--wico-petrol); white-space:nowrap; }
+
+  /* ── Mijn acties knop ── */
+  .mijn-acties-btn { font-size:11px; font-weight:700; padding:5px 14px; border-radius:20px; border:1.5px solid var(--wico-teal); background:var(--wico-white); color:var(--wico-teal); cursor:pointer; transition:all 0.15s; }
+  .mijn-acties-btn.actief { background:var(--wico-teal); color:white; }
+  .mijn-acties-btn:hover { background:var(--wico-teal); color:white; }
+
+  /* ── Schooljaarweergave ── */
+  .sjaar-wrap { background:var(--wico-white); border-radius:10px; border:1px solid var(--wico-gray); overflow:hidden; margin-bottom:16px; }
+  .sjaar-hdr  { background:var(--wico-petrol); padding:10px 18px; display:flex; align-items:center; justify-content:space-between; }
+  .sjaar-hdr h3 { font-size:14px; font-weight:700; color:white; }
+  .sjaar-selector { display:flex; gap:6px; align-items:center; }
+  .sjaar-btn { background:rgba(255,255,255,0.15); border:none; color:white; border-radius:5px; padding:4px 12px; font-size:12px; font-weight:600; cursor:pointer; }
+  .sjaar-btn:hover { background:rgba(255,255,255,0.3); }
+  .sjaar-body { padding:16px 18px; overflow-x:auto; }
+  .sjaar-grid { display:grid; min-width:700px; }
+  .sjaar-maand-hdr { display:grid; grid-template-columns:120px repeat(10,1fr); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--wico-muted); margin-bottom:8px; }
+  .sjaar-rij  { display:grid; grid-template-columns:120px repeat(10,1fr); margin-bottom:6px; align-items:center; min-height:28px; }
+  .sjaar-prio-lbl { font-size:11px; font-weight:700; color:var(--wico-petrol); padding-right:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sjaar-maand-cel { position:relative; height:24px; }
+  .sjaar-event { position:absolute; top:2px; left:1px; right:1px; height:20px; border-radius:3px; font-size:9px; font-weight:700; display:flex; align-items:center; padding:0 4px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; cursor:pointer; transition:opacity 0.15s; }
+  .sjaar-event:hover { opacity:0.8; }
+  .sjaar-today-line { position:absolute; top:0; bottom:0; width:2px; background:var(--wico-red); opacity:0.7; z-index:5; pointer-events:none; }
+  .sjaar-legende { display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px solid var(--wico-gray); }
+  .sjaar-legende-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--wico-muted); }
+  .sjaar-legende-dot { width:10px; height:10px; border-radius:2px; }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -366,7 +431,10 @@
   </div>
   <div class="header-right">
     <button onclick="showView('kalender', this)" id="header-kal-btn" class="print-btn" style="margin-right:6px;">📅 Kalender</button>
+    <button onclick="showView('sjaar', this)" id="header-sjaar-btn" class="print-btn" style="margin-right:6px;">📊 Schooljaar</button>
+    <button onclick="showView('directie', this)" id="header-dir-btn" class="print-btn" style="margin-right:6px;">🎯 Directie</button>
     <button onclick="showView('team', this)" id="header-team-btn" class="print-btn" style="margin-right:6px;">👥 Teamopvolging</button>
+    <button onclick="toggleMijnActies()" id="header-mijn-btn" class="print-btn" style="margin-right:6px;">👤 Mijn acties</button>
     <button onclick="openTeamManager()" class="print-btn" style="margin-right:6px;">⚙️ Team beheren</button>
     <button onclick="openPrintMenu()" class="print-btn" style="margin-right:6px;">🖨️ Afdrukken</button>
     <span id="gh-conn" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:#5a7a80;color:#fff;white-space:nowrap;cursor:default;" title="GitHub opslag status">⏳ Laden...</span>
@@ -525,6 +593,7 @@
 
   <!-- OVERVIEW -->
   <div id="view-overview">
+    <div id="herinnering-blok-wrap"></div>
     <div class="section-title">Strategische prioriteiten</div>
     <div class="overview-grid" id="priority-overview"></div>
   </div>
@@ -533,6 +602,18 @@
   <div id="view-kalender" style="display:none;">
     <div class="section-title">Kalender — acties per deadline</div>
     <div id="kalender-content"></div>
+  </div>
+
+  <!-- SCHOOLJAAR VIEW -->
+  <div id="view-sjaar" style="display:none;">
+    <div class="section-title">Schooljaarweergave</div>
+    <div id="sjaar-content"></div>
+  </div>
+
+  <!-- DIRECTIE VIEW -->
+  <div id="view-directie" style="display:none;">
+    <div class="section-title">Directieoverzicht</div>
+    <div id="directie-content"></div>
   </div>
 
   <!-- TEAM VIEW -->
@@ -706,7 +787,7 @@ const PRIORITEITEN = [
 function migrateData(raw) {
   raw.forEach(p => {
     if (!Array.isArray(p.verantwoordelijke)) p.verantwoordelijke = p.verantwoordelijke ? [p.verantwoordelijke] : [];
-    p.acties = (p.acties||[]).map(a => ({od:[],wie:[],doc:'',...a, wie: Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]) }));
+    p.acties = (p.acties||[]).map(a => ({od:[],wie:[],eigenaar:'',betrokkenen:[],doc:'',...a, wie: Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]), betrokkenen: Array.isArray(a.betrokkenen)?a.betrokkenen:[] }));
     if (!p.indicatorenPerOD) p.indicatorenPerOD = {};
     if (!p.evaluatiePerOD)  p.evaluatiePerOD  = {};
     p.operationeleDelen.forEach((_,oi) => {
@@ -837,15 +918,333 @@ function importFromFile(event) {
 }
 
 /* ── overview ── */
+
+/* ── Eigenaar select (enkelvoudig) ── */
+function eigenaarSelectHTML(geselecteerd, cbName) {
+  const id = 'es_' + Math.random().toString(36).slice(2,8);
+  const tag = geselecteerd
+    ? `<span class="person-tag light">${esc(geselecteerd)}</span>`
+    : `<span class="person-placeholder light">— eigenaar —</span>`;
+  const opts = ['', ...teamleden].map(naam => {
+    const chk = naam === geselecteerd;
+    return `<div class="person-opt ${chk?'checked':''}" onclick="kiesEigenaar('${id}','${naam.replace(/'/g,"\'")}','${cbName}')">
+      ${naam ? esc(naam) : '<em style="color:var(--wico-muted)">— geen —</em>'}
+    </div>`;
+  }).join('');
+  return `<div class="person-select-wrap" id="${id}">
+    <div class="person-select-btn light" onclick="togglePersonDD('${id}')">${tag}</div>
+    <div class="person-dropdown" id="${id}_dd">${opts}</div>
+  </div>`;
+}
+
+function kiesEigenaar(wrapId, naam, cbName) {
+  if (typeof window[cbName] === 'function') window[cbName](naam);
+  const wrap = document.getElementById(wrapId);
+  const btn  = wrap.querySelector('.person-select-btn');
+  btn.innerHTML = naam
+    ? `<span class="person-tag light">${esc(naam)}</span>`
+    : `<span class="person-placeholder light">— eigenaar —</span>`;
+  wrap.querySelectorAll('.person-opt').forEach(o => {
+    o.classList.toggle('checked', o.textContent.trim() === naam);
+  });
+  document.querySelectorAll('.person-dropdown').forEach(d => d.classList.remove('open'));
+}
+
+/* ── Mijn acties filter ── */
+let mijnActiesActief = false;
+
+function toggleMijnActies() {
+  mijnActiesActief = !mijnActiesActief;
+  const btn = document.getElementById('header-mijn-btn');
+  if (btn) {
+    btn.style.background = mijnActiesActief ? 'rgba(255,255,255,0.35)' : '';
+    btn.style.fontWeight = mijnActiesActief ? '800' : '';
+    btn.textContent = mijnActiesActief ? `👤 ${ghGebruiker||'Mijn'} acties ✕` : '👤 Mijn acties';
+  }
+  // Als we al in een detail-view zijn, herrender
+  const activeDetail = document.querySelector('[id^="view-detail-"]:not([style*="none"])');
+  if (activeDetail) {
+    const idx = parseInt(activeDetail.id.replace('view-detail-',''));
+    if (!isNaN(idx)) { renderDetail(idx); showSecTab(idx,'acties',null); }
+  }
+  renderOverview();
+}
+
+function actieMatchtFilter(a) {
+  if (!mijnActiesActief || !ghGebruiker) return true;
+  return a.eigenaar === ghGebruiker ||
+         (Array.isArray(a.betrokkenen) && a.betrokkenen.includes(ghGebruiker)) ||
+         (Array.isArray(a.wie) && a.wie.includes(ghGebruiker));
+}
+
+/* ── Herinnering blok op overzicht ── */
+function renderHerinnering() {
+  const wrap = document.getElementById('herinnering-blok-wrap');
+  if (!wrap) return;
+
+  const nu  = new Date();
+  const bin = new Date(nu); bin.setDate(bin.getDate() + 14);
+
+  const items = [];
+  data.forEach((p, pidx) => {
+    p.acties.forEach((a, ai) => {
+      if (a.status === 'klaar') return;
+      const iso = datumNaarISO(a.wanneer);
+      if (!iso) return;
+      const d    = new Date(iso + 'T12:00:00');
+      const diff = Math.round((d - nu) / (1000*60*60*24));
+      const kleur = deadlineKleur(a.wanneer, a.status);
+      if (kleur) items.push({ a, pidx, ai, diff, kleur, tag: p.tag });
+    });
+  });
+
+  if (!items.length) { wrap.innerHTML = ''; return; }
+  items.sort((a,b) => a.diff - b.diff);
+
+  const rijen = items.slice(0,6).map(it => {
+    const kods = it.a.od||[];
+    const odIdx = kods.length ? (kods[0].oi||0) : 0;
+    const diffTxt = it.diff < 0
+      ? `<span style="color:#c0392b;font-weight:700;">${Math.abs(it.diff)} dagen te laat</span>`
+      : it.diff === 0
+      ? `<span style="color:#e09a20;font-weight:700;">Vandaag!</span>`
+      : `<span style="color:#e09a20;">Over ${it.diff} dagen</span>`;
+    return `<div class="herinnering-item" onclick="navigeerNaarActie(${it.pidx},${odIdx})">
+      <div class="team-actie-dot ${it.kleur==='te-laat'?'klaar':'loopt'}" style="background:${it.kleur==='te-laat'?'#c0392b':'#e09a20'};margin-top:3px;flex-shrink:0;"></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:500;">${esc(it.a.actie||'(leeg)')}</div>
+        <div style="font-size:10px;color:var(--wico-muted);margin-top:1px;">${diffTxt} · ${esc(it.a.eigenaar||'Geen eigenaar')}</div>
+      </div>
+      <span class="herinnering-tag">${esc(it.tag)}</span>
+    </div>`;
+  }).join('');
+
+  const aantalTeLaat = items.filter(i=>i.kleur==='te-laat').length;
+  const aantalUrgent = items.filter(i=>i.kleur==='urgent').length;
+  wrap.innerHTML = `<div class="herinnering-blok">
+    <div class="herinnering-hdr">
+      ⏰ ${aantalTeLaat>0?`<span style="color:#c0392b;">${aantalTeLaat} te laat</span> · `:''} ${aantalUrgent} binnenkort (14 dagen)
+    </div>
+    ${rijen}
+  </div>`;
+}
+
+/* ── Directieoverzicht ── */
+function renderDirectie() {
+  const container = document.getElementById('directie-content');
+
+  let totaal=0, klaar=0, teLaat=0, urgent=0, zonderEigenaar=0, zonderDeadline=0;
+  const perPrioriteit = data.map(p => {
+    const pt = p.acties.length;
+    const pk = p.acties.filter(a=>a.status==='klaar').length;
+    const ptl= p.acties.filter(a=>a.status!=='klaar'&&deadlineKleur(a.wanneer,a.status)==='te-laat').length;
+    totaal += pt; klaar += pk; teLaat += ptl;
+    urgent += p.acties.filter(a=>a.status!=='klaar'&&deadlineKleur(a.wanneer,a.status)==='urgent').length;
+    zonderEigenaar += p.acties.filter(a=>!a.eigenaar&&a.status!=='klaar').length;
+    zonderDeadline += p.acties.filter(a=>!a.wanneer&&a.status!=='klaar').length;
+    return { tag:p.tag, tagClass:p.tagClass, id:p.id, totaal:pt, klaar:pk, teLaat:ptl };
+  });
+
+  const pct = totaal ? Math.round((klaar/totaal)*100) : 0;
+
+  // KPI kaarten
+  const kpis = `<div class="dir-grid">
+    <div class="dir-kpi"><div class="dir-kpi-nr">${totaal}</div><div class="dir-kpi-lbl">Totaal acties</div></div>
+    <div class="dir-kpi"><div class="dir-kpi-nr groen">${klaar}</div><div class="dir-kpi-lbl">Afgerond</div></div>
+    <div class="dir-kpi"><div class="dir-kpi-nr ${teLaat>0?'rood':'groen'}">${teLaat}</div><div class="dir-kpi-lbl">Te laat</div></div>
+    <div class="dir-kpi"><div class="dir-kpi-nr ${urgent>0?'oranje':'groen'}">${urgent}</div><div class="dir-kpi-lbl">Binnenkort deadline</div></div>
+    <div class="dir-kpi"><div class="dir-kpi-nr ${zonderEigenaar>0?'oranje':'groen'}">${zonderEigenaar}</div><div class="dir-kpi-lbl">Zonder eigenaar</div></div>
+    <div class="dir-kpi"><div class="dir-kpi-nr">${pct}%</div><div class="dir-kpi-lbl">Voortgang totaal</div></div>
+  </div>`;
+
+  // Per prioriteit
+  const perPrioHtml = `<div class="dir-sectie">
+    <div class="dir-sectie-hdr">📊 Voortgang per prioriteit</div>
+    ${perPrioriteit.map(p => {
+      const pct2 = p.totaal ? Math.round((p.klaar/p.totaal)*100) : 0;
+      return `<div class="dir-rij" onclick="showView('detail-${p.id}',null)">
+        <span class="priority-tag ${p.tagClass}" style="font-size:9px;padding:2px 6px;">${esc(p.tag)}</span>
+        <div class="dir-bar-wrap"><div class="dir-bar ${pct2===100?'vol':''}" style="width:${pct2}%"></div></div>
+        <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);min-width:36px;text-align:right;">${pct2}%</span>
+        <span style="font-size:11px;color:var(--wico-muted);min-width:60px;">${p.klaar}/${p.totaal}</span>
+        ${p.teLaat>0?`<span class="dl-badge te-laat">${p.teLaat} te laat</span>`:''}
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  // Te late acties
+  const teLaatActies = [];
+  data.forEach((p,pidx) => p.acties.forEach((a,ai) => {
+    if (deadlineKleur(a.wanneer,a.status)==='te-laat')
+      teLaatActies.push({a,pidx,ai,tag:p.tag,id:p.id,od:(a.od&&a.od[0])?a.od[0].oi||0:0});
+  }));
+
+  const teLaatHtml = teLaatActies.length ? `<div class="dir-sectie">
+    <div class="dir-sectie-hdr" style="background:#c0392b;">⚠ Te late acties (${teLaatActies.length})</div>
+    ${teLaatActies.map(it => `<div class="dir-rij" onclick="navigeerNaarActie(${it.pidx},${it.od})">
+      <div style="flex:1;font-weight:500;">${esc(it.a.actie)}</div>
+      <span style="font-size:11px;color:#c0392b;font-weight:700;">${datumLeesbaar(it.a.wanneer)||it.a.wanneer}</span>
+      <span style="font-size:11px;color:var(--wico-muted);">${esc(it.a.eigenaar||'—')}</span>
+      <span class="priority-tag ${data[it.pidx].tagClass}" style="font-size:9px;padding:2px 6px;">${esc(it.tag)}</span>
+    </div>`).join('')}
+  </div>` : '';
+
+  // Zonder eigenaar
+  const zeActies = [];
+  data.forEach((p,pidx) => p.acties.forEach((a,ai) => {
+    if (!a.eigenaar && a.status!=='klaar')
+      zeActies.push({a,pidx,ai,tag:p.tag,id:p.id,od:(a.od&&a.od[0])?a.od[0].oi||0:0});
+  }));
+  const zeHtml = zeActies.length ? `<div class="dir-sectie">
+    <div class="dir-sectie-hdr" style="background:#e09a20;">👤 Acties zonder eigenaar (${zeActies.length})</div>
+    ${zeActies.map(it=>`<div class="dir-rij" onclick="navigeerNaarActie(${it.pidx},${it.od})">
+      <div style="flex:1;font-weight:500;">${esc(it.a.actie)}</div>
+      <span class="priority-tag ${data[it.pidx].tagClass}" style="font-size:9px;padding:2px 6px;">${esc(it.tag)}</span>
+    </div>`).join('')}
+  </div>` : '';
+
+  container.innerHTML = kpis + perPrioHtml + teLaatHtml + zeHtml;
+}
+
+/* ── Schooljaarweergave ── */
+let sjaarJaar = new Date().getMonth() >= 8
+  ? new Date().getFullYear()
+  : new Date().getFullYear() - 1;
+
+const SJAAR_MAANDEN = ['Sep','Okt','Nov','Dec','Jan','Feb','Mrt','Apr','Mei','Jun'];
+
+function sjaarMaandNr(maandIdx) {
+  // maandIdx 0=sep, 1=okt, ..., 3=dec, 4=jan, ...
+  return maandIdx <= 3 ? maandIdx + 8 : maandIdx - 4;
+}
+
+function sjaarJaarVoor(maandIdx) {
+  return maandIdx <= 3 ? sjaarJaar : sjaarJaar + 1;
+}
+
+function renderSjaar() {
+  const container = document.getElementById('sjaar-content');
+  const nu = new Date();
+
+  // Per prioriteit: verzamel acties met datum
+  const prios = data.map((p, pidx) => {
+    const acties = p.acties.filter(a => {
+      if (!a.wanneer) return false;
+      const iso = datumNaarISO(a.wanneer);
+      if (!iso) return false;
+      const d = new Date(iso + 'T12:00:00');
+      // Valt het in dit schooljaar?
+      const startSjaar = new Date(sjaarJaar, 8, 1);
+      const eindSjaar  = new Date(sjaarJaar+1, 5, 30);
+      return d >= startSjaar && d <= eindSjaar;
+    }).map(a => {
+      const iso = datumNaarISO(a.wanneer);
+      const d   = new Date(iso + 'T12:00:00');
+      const mnd = d.getMonth();
+      const sjMaandIdx = mnd >= 8 ? mnd - 8 : mnd + 4;
+      return { ...a, sjMaandIdx, datum: d, kleur: deadlineKleur(a.wanneer, a.status) };
+    });
+    return { ...p, pidx, actiesInSjaar: acties };
+  }).filter(p => p.actiesInSjaar.length > 0);
+
+  if (!prios.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--wico-muted);font-size:13px;">
+      Geen acties gevonden in schooljaar ${sjaarJaar}–${sjaarJaar+1}.<br>
+      Voeg deadlines toe aan acties via het datumveld.
+    </div>`;
+    return;
+  }
+
+  // Huidige maand in schooljaar
+  const nuMaandIdx = nu.getMonth() >= 8 ? nu.getMonth() - 8 : nu.getMonth() + 4;
+  const nuInSjaar  = (nu.getFullYear() === sjaarJaar && nu.getMonth() >= 8) ||
+                     (nu.getFullYear() === sjaarJaar+1 && nu.getMonth() < 6);
+  const nuDag      = nu.getDate();
+  const dagenInMaand = new Date(nu.getFullYear(), nu.getMonth()+1, 0).getDate();
+  const nuPct = (nuDag / dagenInMaand) * 100;
+
+  // Bouw grid
+  const maandHdr = `<div class="sjaar-maand-hdr">
+    <div></div>
+    ${SJAAR_MAANDEN.map((m,i) => `<div style="text-align:center;">${m}<br><span style="font-weight:400;font-size:9px;">${sjaarJaarVoor(i)}</span></div>`).join('')}
+  </div>`;
+
+  const rijen = prios.map(p => {
+    const cellen = SJAAR_MAANDEN.map((_, mi) => {
+      const actiesInMaand = p.actiesInSjaar.filter(a => a.sjMaandIdx === mi);
+      const isNu = nuInSjaar && mi === nuMaandIdx;
+      const todayLine = isNu
+        ? `<div class="sjaar-today-line" style="left:${nuPct}%;"></div>`
+        : '';
+      if (!actiesInMaand.length) return `<div class="sjaar-maand-cel">${todayLine}</div>`;
+
+      // Meerdere acties: toon ze gestapeld
+      const chips = actiesInMaand.map((a, ai) => {
+        const kleur = a.kleur === 'te-laat' ? '#c0392b'
+                    : a.kleur === 'urgent'   ? '#e09a20'
+                    : a.status === 'klaar'   ? '#2a9a5a'
+                    : '#2a8a96';
+        const tekstKleur = 'white';
+        const odIdx = (a.od&&a.od[0]) ? a.od[0].oi||0 : 0;
+        return `<div class="sjaar-event" style="background:${kleur};color:${tekstKleur};top:${2+ai*22}px;"
+          onclick="event.stopPropagation();navigeerNaarActie(${p.pidx},${odIdx})"
+          title="${esc(a.actie)} — ${datumLeesbaar(a.wanneer)}">
+          ${esc((a.actie||'').substring(0,20))}
+        </div>`;
+      }).join('');
+
+      const hoogte = Math.max(24, actiesInMaand.length * 22 + 4);
+      return `<div class="sjaar-maand-cel" style="height:${hoogte}px;">${todayLine}${chips}</div>`;
+    }).join('');
+
+    return `<div class="sjaar-rij">
+      <div class="sjaar-prio-lbl" title="${esc(p.tag)}">${esc(p.tag)}</div>
+      ${cellen}
+    </div>`;
+  }).join('');
+
+  const legende = `<div class="sjaar-legende">
+    <div class="sjaar-legende-item"><div class="sjaar-legende-dot" style="background:#2a8a96;"></div>Open</div>
+    <div class="sjaar-legende-item"><div class="sjaar-legende-dot" style="background:#e09a20;"></div>Binnenkort</div>
+    <div class="sjaar-legende-item"><div class="sjaar-legende-dot" style="background:#c0392b;"></div>Te laat</div>
+    <div class="sjaar-legende-item"><div class="sjaar-legende-dot" style="background:#2a9a5a;"></div>Klaar</div>
+    <div class="sjaar-legende-item"><div style="width:2px;height:10px;background:#c0392b;opacity:0.7;"></div>Vandaag</div>
+  </div>`;
+
+  container.innerHTML = `<div class="sjaar-wrap">
+    <div class="sjaar-hdr">
+      <h3>Schooljaar ${sjaarJaar}–${sjaarJaar+1}</h3>
+      <div class="sjaar-selector">
+        <button class="sjaar-btn" onclick="sjaarJaar--;renderSjaar()">‹ ${sjaarJaar-1}–${sjaarJaar}</button>
+        <button class="sjaar-btn" onclick="sjaarJaar++;renderSjaar()">${sjaarJaar+1}–${sjaarJaar+2} ›</button>
+      </div>
+    </div>
+    <div class="sjaar-body">
+      <div class="sjaar-grid">
+        ${maandHdr}
+        ${rijen}
+      </div>
+      ${legende}
+    </div>
+  </div>`;
+}
+
 function renderOverview() {
   const grid = document.getElementById('priority-overview');
   grid.innerHTML = data.map(p => {
-    const klaar = p.acties.filter(a=>a.status==='klaar').length;
-    const pct   = p.acties.length ? Math.round((klaar/p.acties.length)*100) : 0;
-    const dots  = p.acties.slice(0,8).map(a=>`<div class="dot ${a.status==='klaar'?'done':a.status==='loopt'?'inprogress':'open'}"></div>`).join('');
-    const verArr= Array.isArray(p.verantwoordelijke)?p.verantwoordelijke:(p.verantwoordelijke?[p.verantwoordelijke]:[]);
+    const klaar   = p.acties.filter(a=>a.status==='klaar').length;
+    const teLaat  = p.acties.filter(a=>a.status!=='klaar'&&deadlineKleur(a.wanneer,a.status)==='te-laat').length;
+    const urgent  = p.acties.filter(a=>a.status!=='klaar'&&deadlineKleur(a.wanneer,a.status)==='urgent').length;
+    const pct     = p.acties.length ? Math.round((klaar/p.acties.length)*100) : 0;
+    const dots    = p.acties.slice(0,8).map(a=>`<div class="dot ${a.status==='klaar'?'done':a.status==='loopt'?'inprogress':'open'}"></div>`).join('');
+    const verArr  = Array.isArray(p.verantwoordelijke)?p.verantwoordelijke:(p.verantwoordelijke?[p.verantwoordelijke]:[]);
+    const waarsch = teLaat>0
+      ? `<span class="dl-badge te-laat" style="margin-left:6px;">⚠ ${teLaat} te laat</span>`
+      : urgent>0
+      ? `<span class="dl-badge urgent" style="margin-left:6px;">⏰ ${urgent} binnenkort</span>`
+      : '';
     return `<div class="priority-card" onclick="showView('detail-${p.id}',null)">
-      <span class="priority-tag ${p.tagClass}">${esc(p.tag)}</span>
+      <span class="priority-tag ${p.tagClass}">${esc(p.tag)}</span>${waarsch}
       <h3>${esc(p.streefdoel.substring(0,120))}${p.streefdoel.length>120?'…':''}</h3>
       <div class="verantw">Verantwoordelijke: <strong>${verArr.length?esc(verArr.join(', ')):'—'}</strong></div>
       <div class="status-dots">${dots}</div>
@@ -853,6 +1252,7 @@ function renderOverview() {
       <div style="font-size:11px;color:var(--wico-muted);margin-top:4px;">${klaar} van ${p.acties.length} acties afgerond</div>
     </div>`;
   }).join('');
+  renderHerinnering();
 }
 
 /* ── editable ── */
@@ -968,21 +1368,52 @@ function docChip(doc) {
   } catch { return `<a href="${esc(doc)}" target="_blank" class="doc-link-chip">📎 document</a>`; }
 }
 
+function deadlineKleur(wanneer, status) {
+  if (!wanneer || status === 'klaar') return '';
+  const iso = datumNaarISO(wanneer);
+  if (!iso) return '';
+  const d = new Date(iso + 'T12:00:00');
+  const nu = new Date();
+  const diff = (d - nu) / (1000*60*60*24);
+  if (diff < 0)  return 'te-laat';
+  if (diff <= 14) return 'urgent';
+  return '';
+}
+
+function deadlineBadge(wanneer, status) {
+  const kleur = deadlineKleur(wanneer, status);
+  if (!kleur) return '';
+  const tekst = kleur === 'te-laat' ? '⚠ Te laat' : '⏰ Binnenkort';
+  return `<span class="dl-badge ${kleur}">${tekst}</span>`;
+}
+
 function actieRow(idx,ai,p) {
   const a=p.acties[ai];
-  const wieArr=Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]);
+  const eigenaar = a.eigenaar||'';
+  const betArr   = Array.isArray(a.betrokkenen)?a.betrokkenen:(a.betrokkenen?[a.betrokkenen]:[]);
   const doc=a.doc||'';
-  return `<tr style="vertical-align:middle;">
-    <td><input type="text" value="${esc(a.actie)}" onchange="data[${idx}].acties[${ai}].actie=this.value" placeholder="Actie..."/></td>
+  const dlKleur  = deadlineKleur(a.wanneer, a.status);
+  return `<tr style="vertical-align:middle;${dlKleur==='te-laat'?'background:#fff8f7;':''}">
     <td>
-      <input type="date" class="datum-input"
+      <input type="text" value="${esc(a.actie)}" onchange="data[${idx}].acties[${ai}].actie=this.value" placeholder="Actie..."/>
+      ${deadlineBadge(a.wanneer, a.status)}
+    </td>
+    <td>
+      <input type="date" class="datum-input ${dlKleur}"
         value="${datumNaarISO(a.wanneer)}"
         title="${a.wanneer ? datumLeesbaar(datumNaarISO(a.wanneer)) : 'Kies een datum'}"
-        onchange="data[${idx}].acties[${ai}].wanneer=this.value;this.title=datumLeesbaar(this.value);"
+        onchange="data[${idx}].acties[${ai}].wanneer=this.value;this.title=datumLeesbaar(this.value);renderDetail(${idx});showSecTab(${idx},'acties',null);"
       />
     </td>
-    <td>${personSelectHTML(wieArr,'setWie_'+idx+'_'+ai,true,false)}</td>
-    <td><select onchange="data[${idx}].acties[${ai}].status=this.value;renderOverview();">
+    <td>
+      <div class="eigenaar-wrap">
+        <span class="eigenaar-label">Eigenaar</span>
+        ${eigenaarSelectHTML(eigenaar,'setEigenaar_'+idx+'_'+ai)}
+        <span class="eigenaar-label" style="margin-top:4px;">Betrokkenen</span>
+        ${personSelectHTML(betArr,'setBetrokken_'+idx+'_'+ai,true,false)}
+      </div>
+    </td>
+    <td><select onchange="data[${idx}].acties[${ai}].status=this.value;renderOverview();renderDetail(${idx});showSecTab(${idx},'acties',null);">
       <option value="open" ${a.status==='open'?'selected':''}>Open</option>
       <option value="loopt" ${a.status==='loopt'?'selected':''}>Loopt</option>
       <option value="klaar" ${a.status==='klaar'?'selected':''}>Klaar</option>
@@ -991,7 +1422,7 @@ function actieRow(idx,ai,p) {
       <span onclick="toggleKoppelPanel(${idx},${ai})" title="Koppelingen beheren" style="cursor:pointer;font-size:14px;margin-left:4px;color:var(--wico-teal);">🔗</span></td>
     <td style="text-align:center;white-space:nowrap;">
       ${docChip(doc)}
-      <span onclick="openDocPopup(${idx},${ai})" title="Document koppelen" style="cursor:pointer;font-size:15px;opacity:${doc?'0.5':'1'};" >📎</span>
+      <span onclick="openDocPopup(${idx},${ai})" title="Document koppelen" style="cursor:pointer;font-size:15px;opacity:${doc?'0.5':'1'};">📎</span>
     </td>
     <td style="cursor:pointer;color:var(--wico-red);text-align:center;" onclick="removeActie(${idx},${ai})">✕</td>
   </tr>${koppelPanel(idx,ai)}`;
@@ -1038,7 +1469,7 @@ function renderDetail(idx) {
       <div style="overflow-x:auto;border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;">
         <table class="actions-table"><thead><tr>
           <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
-          <th style="min-width:130px;">Wie</th><th style="min-width:75px;">Status</th>
+          <th style="min-width:160px;">Eigenaar / Betrokkenen</th><th style="min-width:75px;">Status</th>
           <th style="min-width:120px;">Koppelingen</th><th style="min-width:80px;">Document</th><th style="width:28px;"></th>
         </tr></thead><tbody>${rows}</tbody></table></div>
       <button class="add-btn" onclick="addActie(${idx},${oi})">+ Actie toevoegen aan OD${oi+1}</button></div>`;
@@ -1048,7 +1479,7 @@ function renderDetail(idx) {
     <div style="overflow-x:auto;border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;">
       <table class="actions-table"><thead><tr>
         <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
-        <th style="min-width:130px;">Wie</th><th style="min-width:75px;">Status</th>
+        <th style="min-width:160px;">Eigenaar / Betrokkenen</th><th style="min-width:75px;">Status</th>
         <th style="min-width:120px;">Koppelingen</th><th style="min-width:80px;">Document</th><th style="width:28px;"></th>
       </tr></thead><tbody>${p.acties.map((a,ai)=>!(a.od||[]).length?actieRow(idx,ai,p):'').join('')}</tbody></table></div>
     <button class="add-btn" onclick="addActie(${idx},null)">+ Actie toevoegen (ontkoppeld)</button></div>`;
@@ -1142,6 +1573,14 @@ function renderDetail(idx) {
       if(!Array.isArray(data[idx].acties[ai].wie)) data[idx].acties[ai].wie=[];
       const arr=data[idx].acties[ai].wie;
       if(chk){ if(!arr.includes(naam)) arr.push(naam); } else { data[idx].acties[ai].wie=arr.filter(n=>n!==naam); }
+    };
+    window['setEigenaar_'+idx+'_'+ai] = function(naam) {
+      data[idx].acties[ai].eigenaar = naam;
+    };
+    window['setBetrokken_'+idx+'_'+ai] = function(naam,chk) {
+      if(!Array.isArray(data[idx].acties[ai].betrokkenen)) data[idx].acties[ai].betrokkenen=[];
+      const arr=data[idx].acties[ai].betrokkenen;
+      if(chk){ if(!arr.includes(naam)) arr.push(naam); } else { data[idx].acties[ai].betrokkenen=arr.filter(n=>n!==naam); }
     };
   });
 }
@@ -1725,21 +2164,28 @@ function showView(viewId, tabEl) {
   if      (viewId === 'overview')  renderOverview();
   else if (viewId === 'team')      renderTeamView();
   else if (viewId === 'kalender')  renderKalender();
+  else if (viewId === 'directie')  renderDirectie();
+  else if (viewId === 'sjaar')     renderSjaar();
   else                             renderDetail(parseInt(viewId.replace('detail-','')));
 
   const tabs = document.querySelectorAll('.nav-tab');
   tabs.forEach(t => t.classList.remove('active'));
 
-  const hTeam = document.getElementById('header-team-btn');
-  const hKal  = document.getElementById('header-kal-btn');
-  if (hTeam) hTeam.style.background = viewId === 'team'     ? 'rgba(255,255,255,0.25)' : '';
-  if (hKal)  hKal.style.background  = viewId === 'kalender' ? 'rgba(255,255,255,0.25)' : '';
+  // Header knop highlights
+  const hBtns = {
+    'header-team-btn': 'team', 'header-kal-btn': 'kalender',
+    'header-dir-btn': 'directie', 'header-sjaar-btn': 'sjaar'
+  };
+  Object.entries(hBtns).forEach(([id, view]) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.style.background = viewId === view ? 'rgba(255,255,255,0.25)' : '';
+  });
 
   if (tabEl && tabEl.classList.contains('nav-tab')) {
     tabEl.classList.add('active');
   } else if (viewId === 'overview') {
     tabs[0].classList.add('active');
-  } else if (viewId !== 'team' && viewId !== 'kalender') {
+  } else if (!['team','kalender','directie','sjaar'].includes(viewId)) {
     const i = parseInt(viewId.replace('detail-',''));
     if (tabs[i+1]) tabs[i+1].classList.add('active');
   }
