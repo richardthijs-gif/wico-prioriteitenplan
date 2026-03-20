@@ -10,16 +10,19 @@
       "streefdoel": "Nog in te vullen — strategisch doel rond gelijke onderwijskansen en talenbeleid.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "Operationeel doel 1",
           "omschrijving": "Nog in te vullen",
           "effecten": "Nog in te vullen"
         },
         {
+          "vergaderlog": [],
           "titel": "Operationeel doel 2",
           "omschrijving": "Vakoverstijgende uitwisseling faciliteren.",
           "effecten": "Idem als OD1, maar dan vakoverstijgend."
         },
         {
+          "vergaderlog": [],
           "titel": "Operationeel doel 3",
           "omschrijving": "Nog in te vullen",
           "effecten": ""
@@ -28,19 +31,27 @@
       "acties": [
         {
           "od": [],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nog invullen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nog invullen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -80,16 +91,19 @@
       "streefdoel": "Begeleiding volgens het zorgcontinuüm: focus op onderwijsbehoeften op school en groepsniveau — Executieve functies en routines en structuren.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "Operationeel doel 1",
           "omschrijving": "Nog in te vullen",
           "effecten": "Nog in te vullen"
         },
         {
+          "vergaderlog": [],
           "titel": "Operationeel doel 2",
           "omschrijving": "Vakoverstijgende uitwisseling faciliteren.",
           "effecten": "Idem als OD1 maar vakoverstijgend."
         },
         {
+          "vergaderlog": [],
           "titel": "Operationeel doel 3",
           "omschrijving": "Nog in te vullen",
           "effecten": ""
@@ -98,11 +112,15 @@
       "acties": [
         {
           "od": [],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nog invullen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -142,21 +160,25 @@
       "streefdoel": "De school bouwt een sterke professionele leergemeenschap uit waarin systematische en planmatige expertisedeling tussen alle teamleden leidt tot voortdurende verbetering van de onderwijskwaliteit.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "OD1 — Common ground in aanpak en afspraken",
           "omschrijving": "Tegen juni 2026 beschikt het volledige schoolteam over een afgesproken en gedocumenteerde set van criteria en structuren voor expertisedeling (bv. formats, werkvormen, overlegstructuur), die in alle vakgroepen en teams wordt toegepast.",
           "effecten": "In juni 2026 blijkt uit verslag van 80% van de vakgroepen dat er inhoudelijke expertise werd gedeeld. In april 2026 geeft meer dan de helft aan iets bijgeleerd te hebben van een vakcollega."
         },
         {
+          "vergaderlog": [],
           "titel": "OD2 — Structurele tijd en werkvormen voor expertisedeling",
           "omschrijving": "Vanaf september 2025 plant elke vakgroep minstens 6 momenten per schooljaar waarin leraren gericht expertise delen volgens de afgesproken structuur.",
           "effecten": "Idem als OD1, maar vakoverstijgend."
         },
         {
+          "vergaderlog": [],
           "titel": "OD3 — Waarneembare impact op lespraktijk",
           "omschrijving": "Tegen juni 2027 past minstens 75% van de leraren twee of meer gedeelde praktijken/strategieën aantoonbaar toe in hun lesvoering.",
           "effecten": "Tegen juni 2027 rapporteert minstens 80% van de teamleden dat expertisedeling bijdraagt aan hun professionele groei en de kwaliteit van hun lespraktijk."
         },
         {
+          "vergaderlog": [],
           "titel": "OD4 — Expertise wordt gedeeld over teams heen",
           "omschrijving": "Tegen juni 2026 wordt expertise die in één vakgroep wordt ontwikkeld minstens tweemaal per jaar schoolbreed gedeeld via studiedagen, intervisies of leerateliers.",
           "effecten": ""
@@ -170,13 +192,17 @@
               "oi": 0
             }
           ],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "wie": [
             "Directie"
           ],
-          "doc": "",
           "actie": "SD/OD opnemen in schoolwerkplan",
           "wanneer": "2026-04-21",
-          "status": "loopt"
+          "status": "loopt",
+          "eigenaar": "Directie",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -185,14 +211,20 @@
               "oi": 0
             }
           ],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "wie": [
             "Coördinatoren",
             "Directie"
           ],
-          "doc": "",
           "actie": "Werkvorm vakgroepvergadering bedenken en verdelen",
           "wanneer": "2026-05-26",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": [
+            "Directie"
+          ]
         },
         {
           "od": [
@@ -201,11 +233,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Vakgroepverslag sjabloon herbekijken, verbeteren en delen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -214,11 +250,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Elke vakgroep gebruikt VAK in Smartschool voor vakverslagen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -227,13 +267,17 @@
               "oi": 0
             }
           ],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "wie": [
             "Directie"
           ],
-          "doc": "",
           "actie": "Toelichting SD en OD tijdens PV",
           "wanneer": "2026-05-21",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "Directie",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -242,11 +286,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Expertisedeling als vast onderdeel in agenda vakgroepoverleg",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -255,11 +303,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Kwalitatieve evaluatie door enquête",
           "wanneer": "Voor paasvakantie",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -268,11 +320,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Check van de vakverslagen",
           "wanneer": "Voor juni 2026",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -281,11 +337,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Collegiale visitatie / Flitsbezoeken / Kijken over de muur van je buur",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -294,11 +354,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Vakgroepcoördinatoren samen vrij roosteren voor overleg",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -307,11 +371,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "In schoolkalender minstens 2 momenten per schooljaar inplannen voor vakoverstijgende uitwisseling",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -320,11 +388,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Werkvorm uitwerken voor vakoverstijgende expertisedeling",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -333,11 +405,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Fichebak per vakgroep met gedeelde praktijken",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -346,11 +422,15 @@
               "oi": 3
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Ruimte voorzien in APV",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -398,26 +478,31 @@
       "streefdoel": "De school versterkt het eigenaarschap van leerlingen door hen inzicht te geven in hun leerproces, zodat zij doelgericht kunnen werken aan hun eigen vooruitgang.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "OD1 — Effectieve feedback in het leerproces",
           "omschrijving": "Het lerarenteam past effectieve feedback toe in het leerproces van de leerling.",
           "effecten": "Op het einde van schooljaar 25/26 weten alle leerkrachten waarom effectieve feedback belangrijk is. Leerkrachten begrijpen het verschil tussen feedback, feedup en feedforward en passen dit gericht toe vanaf januari 2027."
         },
         {
+          "vergaderlog": [],
           "titel": "OD2 — Doelgerichte, transparante en objectieve evaluaties",
           "omschrijving": "De evaluaties zijn doelgericht, transparant, objectief en gericht op verbetering.",
           "effecten": "1. Aantal beroepsprocedures verloren op basis van resultaten daalt met 100%.\n2. Aantal B en C-attesten daalt over de helft tov 24/25."
         },
         {
+          "vergaderlog": [],
           "titel": "OD3 — Leerling kan werkpunten en sterktes aangeven",
           "omschrijving": "De leerling kan aangeven waar werkpunten, kansen, mogelijkheden en sterke punten liggen en weet hoe hiermee om te gaan.",
           "effecten": "De leerling leert efficiënter en haalt daardoor betere punten."
         },
         {
+          "vergaderlog": [],
           "titel": "OD4 — Gesprekken over leren worden structureel verankerd",
           "omschrijving": "Vanaf schooljaar 2026–2027 voert elke klastitularis minstens twee keer per jaar een leerprogressiegesprek.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD5 — Formatieve evaluatie wordt zichtbaar in de klaspraktijk",
           "omschrijving": "Tegen juni 2026 past minstens 70% van de leraren drie afgesproken formatieve praktijken toe (bv. succescriteria, peer feedback, exit tickets).",
           "effecten": ""
@@ -431,11 +516,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nascholing: wat is feedback (feedback, feedup en feedforward)",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -444,11 +533,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Kader ontwikkelen welke feedback op welk moment",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -457,11 +550,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Feedback in de mededeling in de focusplaatsen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -470,11 +567,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "De vakgroep screent de evaluaties aan de hand van een algemene kijkwijzer",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -483,11 +584,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "De vakgroep ontwikkelt een eigen kijkwijzer",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -496,11 +601,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Brainstormen op welke manier een leerling zichzelf kan leren inschatten",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -509,11 +618,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Leerstrategieën aanleren",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -522,11 +635,15 @@
               "oi": 3
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Leerlingen bereiden een oudercontact voor",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -582,31 +699,37 @@
       "streefdoel": "De school versterkt doelgericht de taalvaardigheid van alle leerlingen — van dagelijkse taal tot schooltaal en vaktaal — om hun leerprestaties te verbeteren en ongelijkheden te verkleinen.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "OD1 — Consequent taalstimulerende klaspraktijk",
           "omschrijving": "Tegen juni 2026 past minstens 80% van de leraren drie afgesproken taalstimulerende didactische praktijken toe.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD2 — Schoolbreed beleid voor woordenschat",
           "omschrijving": "Tegen december 2025 ontwikkelt en implementeert de school een samenhangend beleid voor woordenschatonderwijs.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD3 — Doelgerichte ondersteuning voor leerlingen met verhoogd taalrisico",
           "omschrijving": "Tegen juni 2027 krijgt elke leerling met een vastgestelde taalachterstand een gepersonaliseerd taaltraject.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD4 — Data-gestuurde monitoring van prestatiekloof",
           "omschrijving": "Vanaf schooljaar 2026–2027 monitort de school systematisch leerresultaten van verschillende leerlingengroepen.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD5 — Rijke, taalrijke leeromgeving in alle vakken",
           "omschrijving": "Tegen juni 2027 is in minimaal 75% van de vaklokalen zichtbaar een taalrijke leeromgeving aanwezig.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD6 — Betrekken van ouders bij taalontwikkeling",
           "omschrijving": "Tegen juni 2026 biedt de school minstens drie laagdrempelige initiatieven aan om ouders te ondersteunen in de taalontwikkeling.",
           "effecten": ""
@@ -615,19 +738,27 @@
       "acties": [
         {
           "od": [],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nog in te vullen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nog in te vullen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -691,16 +822,19 @@
       "streefdoel": "De school versterkt haar werking door een participatief beleid waarin interne en externe partners actief betrokken worden bij beleidsvorming, besluitvorming en kwaliteitsontwikkeling.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "OD1 — Duidelijke participatiestructuur",
           "omschrijving": "Tegen december 2025 ontwikkelt de school een werkdocument waarin rollen, overlegvormen en beslissingsbevoegdheden helder zijn vastgelegd.",
           "effecten": "test"
         },
         {
+          "vergaderlog": [],
           "titel": "OD2 — Systematische betrokkenheid van leerlingen en ouders",
           "omschrijving": "Vanaf schooljaar 2026–2027 worden leerlingen en ouders minstens vier keer per jaar structureel betrokken bij beleidsvoorbereiding.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD3 — Versterkte samenwerking met externe partners",
           "omschrijving": "Tegen juni 2027 sluit de school doelgerichte samenwerkingen af met minstens vijf externe partners.",
           "effecten": ""
@@ -714,11 +848,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Visie uitschrijven",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -727,11 +865,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "De adviesorganen/participatieve organen in kaart brengen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -740,11 +882,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "De participatieve organen worden gericht mee opgenomen in de communicatie",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -753,11 +899,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nieuwsbrief voor bedrijven",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -766,11 +916,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Opening sporthal?",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -779,11 +933,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Expertisegroepen? (wetenschap, sport, Eco, STEM,...)",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -792,11 +950,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Participatiematrix uitwerken (wie wat waar wanneer)",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -805,11 +967,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Infodag duaal leren",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -818,11 +984,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Netwerkmoment projectdag",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -862,31 +1032,37 @@
       "streefdoel": "De school ontwikkelt en organiseert kwaliteitsvol ervaringsgericht leren, in samenwerking met leerlingen, leraren, ouders en externe partners.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "OD1 — Kwaliteitskader voor ervaringsgericht leren",
           "omschrijving": "Tegen juni 2026 ontwikkelt de school een kwaliteitskader met criteria, rollen, veiligheidsafspraken en leerdoelen.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD2 — Structurele samenwerking met bedrijven en externe partners",
           "omschrijving": "Vanaf schooljaar 2026–2027 werkt de school jaarlijks samen met minstens vijf relevante externe partners.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD3 — Elke leerling neemt deel aan meerdere ervaringen",
           "omschrijving": "Vanaf 2026 neemt elke leerling jaarlijks deel aan minstens twee vormende ervaringsgerichte activiteiten.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD4 — Professionalisering van betrokken leraren",
           "omschrijving": "Tegen juni 2027 heeft minstens 70% van de betrokken leraren een vorming gevolgd.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD5 — Betrokkenheid van ouders versterken",
           "omschrijving": "Tegen juni 2026 organiseert de school minstens drie initiatieven waarbij ouders betrokken worden.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD6 — Kwaliteitsbewaking via systematische evaluatie",
           "omschrijving": "Vanaf 2027 evalueert de school jaarlijks alle ervaringsgerichte leeractiviteiten.",
           "effecten": ""
@@ -900,11 +1076,15 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Visie uitschrijven",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -913,11 +1093,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Quickstage optimaliseren/controleren en bijwerken",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -926,11 +1110,15 @@
               "oi": 1
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Uitwerken van een volledig project binnen WPL",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [
@@ -939,11 +1127,15 @@
               "oi": 2
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Voorbeeldfuncties afhankelijk van de activiteitenlijsten uit BK",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -1007,31 +1199,37 @@
       "streefdoel": "De school versterkt haar leerlingbegeleiding door een team dat verantwoordelijkheid opneemt in alle vier begeleidingsdomeinen — onderwijsloopbaan, leren en studeren, psychosociaal welzijn en preventieve gezondheidszorg.",
       "operationeleDelen": [
         {
+          "vergaderlog": [],
           "titel": "OD1 — Duidelijke structuur en taakverdeling leerlingbegeleiding",
           "omschrijving": "Tegen december 2025 beschikt de school over een helder, schoolbreed kader.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD2 — Krachtige basiszorg door alle leraren",
           "omschrijving": "Tegen juni 2027 past minstens 80% van het team de afgesproken basiszorgpraktijken toe in alle vier domeinen.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD3 — Professionalisering in alle vier domeinen",
           "omschrijving": "Tegen juni 2026 heeft minstens 70% van de leraren een vorming gevolgd binnen minstens twee van de vier domeinen.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD4 — Systematische opvolging van kwetsbare leerlingen",
           "omschrijving": "Vanaf schooljaar 2026–2027 volgt de school kwetsbare leerlingen systematisch op via een digitaal volgsysteem.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD5 — Actieve betrokkenheid van ouders",
           "omschrijving": "Tegen juni 2026 betrekt de school ouders structureel bij het begeleidingstraject.",
           "effecten": ""
         },
         {
+          "vergaderlog": [],
           "titel": "OD6 — Gezondheidseducatie en welzijnsbevordering",
           "omschrijving": "Vanaf 2026 integreert de school in elke graad minstens drie acties per jaar rond preventieve gezondheidszorg en psychosociaal welzijn.",
           "effecten": ""
@@ -1045,19 +1243,27 @@
               "oi": 0
             }
           ],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Visie uitschrijven",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
           "od": [],
-          "wie": [],
           "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "wie": [],
           "actie": "Nog in te vullen",
           "wanneer": "",
-          "status": "open"
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
