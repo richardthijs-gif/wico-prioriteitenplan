@@ -167,7 +167,8 @@
   .team-progress-fill { height: 100%; border-radius: 3px; background: var(--wico-teal); transition: width 0.4s; }
   .team-progress-fill.full { background: #2a9a5a; }
   .team-actie-list { padding: 8px 0 12px; }
-  .team-actie-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 18px; border-bottom: 0.5px solid var(--wico-gray); font-size: 12px; }
+  .team-actie-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 18px; border-bottom: 0.5px solid var(--wico-gray); font-size: 12px; cursor: pointer; transition: background 0.1s; }
+  .team-actie-item:hover { background: var(--wico-teal-xlight); }
   .team-actie-item:last-child { border-bottom: none; }
   .team-actie-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
   .team-actie-dot.open   { background: var(--wico-gray); border: 1.5px solid #aaa; }
@@ -1159,7 +1160,15 @@ function renderTeamView() {
   data.forEach((p, pidx) => {
     p.acties.forEach((a, ai) => {
       const wie = Array.isArray(a.wie) ? a.wie : (a.wie ? [a.wie] : []);
-      const entry = { actie: a.actie, wanneer: a.wanneer, status: a.status, prioriteit: p.tag, pidx, ai };
+      // Eerste OD-koppeling bepalen voor navigatie
+      const kops = a.od || [];
+      let odIdx = 0;
+      if (kops.length) {
+        const k = kops[0];
+        const koi = k.oi !== undefined ? k.oi : k;
+        odIdx = typeof koi === 'number' ? koi : 0;
+      }
+      const entry = { actie: a.actie, wanneer: a.wanneer, status: a.status, prioriteit: p.tag, pidx, ai, odIdx };
       if (wie.length === 0) {
         perPersoon['(geen verantwoordelijke)'].push(entry);
       } else {
@@ -1201,12 +1210,13 @@ function renderTeamView() {
 
     const actieLijst = gefilterd.length
       ? gefilterd.map(a => `
-          <div class="team-actie-item">
+          <div class="team-actie-item" onclick="navigeerNaarActie(${a.pidx},${a.odIdx})" title="Ga naar ${esc(a.prioriteit)}">
             <div class="team-actie-dot ${a.status}"></div>
             <div style="flex:1;min-width:0;">
               <div class="team-actie-text ${a.status==='klaar'?'klaar':''}">${esc(a.actie||'(leeg)')}</div>
               <div class="team-actie-meta">
                 ${a.wanneer ? `<span style="margin-right:8px;">📅 ${datumLeesbaar(a.wanneer) || esc(a.wanneer)}</span>` : ''}
+                <span style="color:var(--wico-teal);font-size:10px;">→ bekijk detail</span>
               </div>
             </div>
             <span class="team-actie-prioriteit">${esc(a.prioriteit)}</span>
@@ -1459,13 +1469,16 @@ function renderKalender() {
 
 function navigeerNaarActie(pidx, odIdx) {
   showView('detail-' + pidx, null);
-  // Scroll naar en open het juiste OD
   setTimeout(() => {
-    const odEl = document.getElementById(`od-${pidx}-${odIdx}`);
-    if (odEl && !odEl.classList.contains('open')) {
-      toggleOD(pidx, odIdx);
-    }
-    if (odEl) odEl.scrollIntoView({ behavior:'smooth', block:'center' });
+    // Open de acties-tab
+    const actiesTab = document.querySelector(`#view-detail-${pidx} .sec-tab:nth-child(2)`);
+    if (actiesTab) showSecTab(pidx, 'acties', actiesTab);
+    // Open en scroll naar het juiste OD
+    setTimeout(() => {
+      const odEl = document.getElementById(`od-${pidx}-${odIdx}`);
+      if (odEl && !odEl.classList.contains('open')) toggleOD(pidx, odIdx);
+      if (odEl) odEl.scrollIntoView({ behavior:'smooth', block:'center' });
+    }, 100);
   }, 150);
 }
 
