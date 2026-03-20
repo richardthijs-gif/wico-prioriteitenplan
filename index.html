@@ -256,6 +256,21 @@
   .doc-link-chip { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:2px 8px; border-radius:3px; background:#fef3e2; color:#7a4a0a; text-decoration:none; max-width:120px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; vertical-align:middle; }
   .doc-link-chip:hover { background:#fde8c0; }
 
+
+  /* ── Datum input ── */
+  .datum-wrap { position:relative; display:inline-block; }
+  .datum-input { border:none; background:transparent; font-size:12px; font-family:inherit;
+    color:var(--wico-text); cursor:pointer; width:110px; padding:2px 4px; border-radius:4px; }
+  .datum-input:focus { background:var(--wico-teal-xlight); outline:1px solid var(--wico-teal); }
+  .datum-input::-webkit-calendar-picker-indicator { opacity:0.5; cursor:pointer; }
+  .datum-input::-webkit-calendar-picker-indicator:hover { opacity:1; }
+  .datum-leeg { font-size:12px; color:var(--wico-muted); font-style:italic; }
+  /* Evaluatie datum */
+  .eval-datum-input { width:100%; border:1px solid var(--wico-gray); border-radius:6px;
+    padding:7px 10px; font-size:13px; font-family:inherit; background:var(--wico-teal-xlight);
+    color:var(--wico-text); cursor:pointer; }
+  .eval-datum-input:focus { outline:1px solid var(--wico-teal); background:var(--wico-white); }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -958,7 +973,13 @@ function actieRow(idx,ai,p) {
   const doc=a.doc||'';
   return `<tr style="vertical-align:middle;">
     <td><input type="text" value="${esc(a.actie)}" onchange="data[${idx}].acties[${ai}].actie=this.value" placeholder="Actie..."/></td>
-    <td><input type="text" value="${esc(a.wanneer)}" onchange="data[${idx}].acties[${ai}].wanneer=this.value" placeholder="Wanneer?" style="width:90px;"/></td>
+    <td>
+      <input type="date" class="datum-input"
+        value="${datumNaarISO(a.wanneer)}"
+        title="${a.wanneer ? datumLeesbaar(datumNaarISO(a.wanneer)) : 'Kies een datum'}"
+        onchange="data[${idx}].acties[${ai}].wanneer=this.value;this.title=datumLeesbaar(this.value);"
+      />
+    </td>
     <td>${personSelectHTML(wieArr,'setWie_'+idx+'_'+ai,true,false)}</td>
     <td><select onchange="data[${idx}].acties[${ai}].status=this.value;renderOverview();">
       <option value="open" ${a.status==='open'?'selected':''}>Open</option>
@@ -1048,7 +1069,11 @@ function renderDetail(idx) {
         <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);">OD${oi+1} — ${esc(od.titel)}</span></div>
       <div style="border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;padding:14px;">
         <div class="eval-meta" style="margin-bottom:12px;">
-          <div class="meta-field"><label>Wanneer</label><input type="text" value="${esc(ev.wanneer||'')}" onchange="data[${idx}].evaluatiePerOD[${oi}].wanneer=this.value" placeholder="bv. juni 2026..."/></div>
+          <div class="meta-field"><label>Wanneer</label>
+            <input type="date" class="eval-datum-input"
+              value="${datumNaarISO(ev.wanneer||'')}"
+              onchange="data[${idx}].evaluatiePerOD[${oi}].wanneer=this.value;"
+            /></div>
           <div class="meta-field"><label>Wie (actoren)</label><input type="text" value="${esc(ev.wie||'')}" onchange="data[${idx}].evaluatiePerOD[${oi}].wie=this.value" placeholder="bv. beleidsteam..."/></div>
         </div>
         <div class="evaluatie-grid">
@@ -1181,7 +1206,7 @@ function renderTeamView() {
             <div style="flex:1;min-width:0;">
               <div class="team-actie-text ${a.status==='klaar'?'klaar':''}">${esc(a.actie||'(leeg)')}</div>
               <div class="team-actie-meta">
-                ${a.wanneer ? `<span style="margin-right:8px;">📅 ${esc(a.wanneer)}</span>` : ''}
+                ${a.wanneer ? `<span style="margin-right:8px;">📅 ${datumLeesbaar(a.wanneer) || esc(a.wanneer)}</span>` : ''}
               </div>
             </div>
             <span class="team-actie-prioriteit">${esc(a.prioriteit)}</span>
@@ -1231,6 +1256,28 @@ const MAANDEN_SHORT = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','ok
 const DAGEN = ['Ma','Di','Wo','Do','Vr','Za','Zo'];
 
 // Probeer datum te parsen uit tekstveld "wanneer"
+
+/* ── Datum helpers ── */
+function datumNaarISO(tekst) {
+  // Zet bestaande vrije tekst om naar YYYY-MM-DD indien mogelijk
+  if (!tekst) return '';
+  // Al ISO-formaat
+  if (/^\d{4}-\d{2}-\d{2}$/.test(tekst)) return tekst;
+  const d = parseerDatum(tekst);
+  if (!d || isNaN(d)) return '';
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return d.getFullYear() + '-' + m + '-' + dd;
+}
+
+function datumLeesbaar(iso) {
+  // Zet YYYY-MM-DD om naar "15 jun 2026"
+  if (!iso) return '';
+  const d = new Date(iso + 'T12:00:00');
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString('nl-BE', { day:'numeric', month:'short', year:'numeric' });
+}
+
 function parseerDatum(tekst) {
   if (!tekst) return null;
   const t = tekst.toLowerCase().trim();
@@ -1319,7 +1366,7 @@ function renderKalender() {
           <div class="kal-tl-dot ${a.status}"></div>
           <div style="flex:1;min-width:0;">
             <div class="kal-tl-actie ${a.status==='klaar'?'klaar':''}">${esc(a.actie||'(leeg)')}</div>
-            <div class="kal-tl-meta">${a.wanneer ? esc(a.wanneer) : ''}</div>
+            <div class="kal-tl-meta">${a.wanneer ? datumLeesbaar(a.wanneer) || esc(a.wanneer) : ''}</div>
           </div>
           <span class="kal-tl-tag">${esc(a.tag)}</span>
         </div>`).join('');
@@ -1688,6 +1735,7 @@ function showView(viewId, tabEl) {
 renderOverview();
 </script>
 
+<script>
 /* ── Document link popup ── */
 let _docIdx = null, _docAi = null;
 
@@ -1724,6 +1772,7 @@ function verwijderDocLink() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') sluitDocPopup();
 });
+</script>
 
 <script>
 /* ── WICO GitHub opslag ── */
