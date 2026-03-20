@@ -388,6 +388,32 @@
   .versie-badge { font-size:10px; color:rgba(255,255,255,0.5); padding:3px 8px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); cursor:pointer; white-space:nowrap; }
   .versie-badge:hover { color:rgba(255,255,255,0.9); border-color:rgba(255,255,255,0.4); }
 
+
+  /* ── @ mention dropdown ── */
+  .mention-dropdown { position:absolute; background:var(--wico-white); border:1px solid var(--wico-gray); border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.15); z-index:2000; min-width:180px; max-height:200px; overflow-y:auto; padding:4px; }
+  .mention-opt { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:5px; cursor:pointer; font-size:13px; color:var(--wico-text); transition:background 0.1s; }
+  .mention-opt:hover, .mention-opt.actief { background:var(--wico-teal-xlight); }
+  .mention-opt .mention-avatar { width:26px; height:26px; border-radius:50%; background:var(--wico-petrol); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .mention-tag { display:inline; background:var(--wico-teal-xlight); color:var(--wico-teal); font-weight:700; border-radius:3px; padding:0 3px; }
+
+  /* ── Meldingen badge ── */
+  .melding-badge { display:inline-flex; align-items:center; justify-content:center; background:var(--wico-red); color:white; border-radius:50%; width:16px; height:16px; font-size:9px; font-weight:800; margin-left:4px; vertical-align:middle; }
+  .melding-popup { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.6); z-index:1000; align-items:center; justify-content:center; }
+  .melding-popup.open { display:flex; }
+  .melding-modal { background:var(--wico-white); border-radius:12px; width:480px; max-width:96vw; max-height:80vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.25); }
+  .melding-hdr { background:var(--wico-petrol); padding:14px 20px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+  .melding-hdr h3 { font-size:14px; font-weight:700; color:white; }
+  .melding-body { flex:1; overflow-y:auto; padding:12px 20px; }
+  .melding-item { display:flex; gap:10px; padding:10px 0; border-bottom:0.5px solid var(--wico-gray); cursor:pointer; transition:background 0.1s; border-radius:4px; }
+  .melding-item:last-child { border-bottom:none; }
+  .melding-item:hover { background:var(--wico-teal-xlight); padding-left:6px; }
+  .melding-item.gelezen { opacity:0.5; }
+  .melding-dot { width:8px; height:8px; border-radius:50%; background:var(--wico-teal); flex-shrink:0; margin-top:4px; }
+  .melding-dot.gelezen { background:var(--wico-gray); }
+  .melding-tekst { flex:1; font-size:12px; line-height:1.5; }
+  .melding-meta { font-size:10px; color:var(--wico-muted); margin-top:2px; }
+  .melding-ftr { padding:12px 20px; border-top:1px solid var(--wico-gray); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -488,6 +514,7 @@
     <button onclick="showView('directie', this)" id="header-dir-btn" class="print-btn" style="margin-right:6px;">🎯 Directie</button>
     <button onclick="showView('team', this)" id="header-team-btn" class="print-btn" style="margin-right:6px;">👥 Teamopvolging</button>
     <button onclick="toggleMijnActies()" id="header-mijn-btn" class="print-btn" style="margin-right:6px;">👤 Mijn acties</button>
+    <button onclick="openMeldingen()" id="header-meld-btn" class="print-btn" style="margin-right:6px;">🔔<span id="melding-count" style="display:none;" class="melding-badge">0</span></button>
     <button onclick="openTeamManager()" class="print-btn" style="margin-right:6px;">⚙️ Team beheren</button>
     <button onclick="openPrintMenu()" class="print-btn" style="margin-right:6px;">🖨️ Afdrukken</button>
     <span id="gh-conn" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:#5a7a80;color:#fff;white-space:nowrap;cursor:default;" title="GitHub opslag status">⏳ Laden...</span>
@@ -642,12 +669,31 @@
       <div class="notitie-log" id="notitie-log"></div>
       <div class="notitie-nieuw">
         <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--wico-muted);display:block;margin-bottom:6px;">Nieuwe notitie toevoegen</label>
-        <textarea id="notitie-input" placeholder="Typ hier je notitie... (bijv. besproken in vergadering, beslissing, opmerking)"></textarea>
+        <div style="position:relative;">
+          <textarea id="notitie-input" placeholder="Typ hier je notitie... Gebruik @ om iemand te taggen (bijv. @Richard)" style="width:100%;"></textarea>
+          <div class="mention-dropdown" id="mention-dd-notitie" style="display:none;"></div>
+        </div>
       </div>
     </div>
     <div class="notitie-ftr">
       <button onclick="sluitNotities()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:7px 16px;font-size:13px;cursor:pointer;color:var(--wico-muted);">Sluiten</button>
       <button onclick="voegNototieToe()" class="save-btn">+ Notitie toevoegen</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Meldingen popup -->
+<div class="melding-popup" id="melding-popup" onclick="if(event.target===this)sluitMeldingen()">
+  <div class="melding-modal">
+    <div class="melding-hdr">
+      <h3>🔔 Meldingen</h3>
+      <button onclick="sluitMeldingen()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <div class="melding-body" id="melding-body"></div>
+    <div class="melding-ftr">
+      <button onclick="markeerAllesGelezen()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;color:var(--wico-muted);">Alles als gelezen markeren</button>
+      <button onclick="sluitMeldingen()" class="save-btn">Sluiten</button>
     </div>
   </div>
 </div>
@@ -1322,7 +1368,10 @@ function openNotities(idx, ai) {
   document.getElementById('notitie-input').value = '';
   renderNotitielog();
   document.getElementById('notitie-popup').classList.add('open');
-  setTimeout(() => document.getElementById('notitie-input').focus(), 100);
+  setTimeout(() => {
+    document.getElementById('notitie-input').focus();
+    initMentionTA('notitie-input','mention-dd-notitie');
+  }, 100);
 }
 
 function renderNotitielog() {
@@ -1336,7 +1385,7 @@ function renderNotitielog() {
             <span>${esc(n.datum||'')} · ${esc(n.auteur||'')}</span>
             <span class="notitie-item-del" onclick="verwijderNotitie(${realI})">✕ verwijder</span>
           </div>
-          <div class="notitie-item-tekst">${esc(n.tekst||'')}</div>
+          <div class="notitie-item-tekst">${renderMentions(n.tekst||'')}</div>
         </div>`;
       }).join('')
     : '<p style="font-size:13px;color:var(--wico-muted);">Nog geen notities voor deze actie.</p>';
@@ -1348,12 +1397,11 @@ function voegNototieToe() {
   const tekst = (document.getElementById('notitie-input').value||'').trim();
   if (!tekst) return;
   if (!Array.isArray(data[_notIdx].acties[_notAi].notities)) data[_notIdx].acties[_notAi].notities=[];
-  data[_notIdx].acties[_notAi].notities.push({
-    tekst,
-    datum: new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'}),
-    auteur: ghGebruiker||'onbekend'
-  });
+  const notDatum = new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'});
+  data[_notIdx].acties[_notAi].notities.push({ tekst, datum: notDatum, auteur: ghGebruiker||'onbekend' });
+  verwerkMentions(tekst, 'notitie bij actie "' + (data[_notIdx].acties[_notAi].actie||'').substring(0,30) + '"');
   document.getElementById('notitie-input').value='';
+  updateMeldingBadge();
   renderNotitielog();
   // Refresh chip in tabel
   renderDetail(_notIdx); showSecTab(_notIdx,'acties',null);
@@ -1381,11 +1429,10 @@ function voegVlogToe(idx, oi) {
   const tekst = (el?.value||'').trim();
   if (!tekst) return;
   if (!Array.isArray(data[idx].operationeleDelen[oi].vergaderlog)) data[idx].operationeleDelen[oi].vergaderlog=[];
-  data[idx].operationeleDelen[oi].vergaderlog.push({
-    tekst,
-    datum: new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'}),
-    auteur: ghGebruiker||'onbekend'
-  });
+  const vlogDatum = new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'});
+  data[idx].operationeleDelen[oi].vergaderlog.push({ tekst, datum: vlogDatum, auteur: ghGebruiker||'onbekend' });
+  verwerkMentions(tekst, 'vergaderlog OD "' + (data[idx].operationeleDelen[oi].titel||'').substring(0,30) + '"');
+  updateMeldingBadge();
   renderDetail(idx); showSecTab(idx,'vergader',null);
 }
 
@@ -1402,6 +1449,215 @@ function updateVersieBadge() {
   const nu = new Date();
   el.textContent = 'v ' + nu.toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'2-digit'})
     + ' ' + nu.toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'});
+}
+
+
+/* ══════════════════════════════════════════════════════
+   @ MENTION SYSTEEM
+   ══════════════════════════════════════════════════════ */
+
+// Parses @naam tags in tekst naar HTML spans
+function renderMentions(tekst) {
+  if (!tekst) return '';
+  return esc(tekst).replace(/@([^\s@<]+)/g, (match, naam) => {
+    const gevonden = teamleden.find(t => t.toLowerCase() === naam.toLowerCase());
+    if (gevonden) return `<span class="mention-tag">@${esc(gevonden)}</span>`;
+    return match;
+  });
+}
+
+// Mention dropdown state
+let _mentionTA = null;
+let _mentionDD = null;
+let _mentionIdx = -1;
+let _mentionStart = 0;
+let _mentionItems = [];
+
+function initMentionTA(taId, ddId) {
+  const ta = document.getElementById(taId);
+  const dd = document.getElementById(ddId);
+  if (!ta || !dd) return;
+
+  ta.addEventListener('input', () => handleMentionInput(ta, dd));
+  ta.addEventListener('keydown', (e) => handleMentionKey(e, ta, dd));
+  ta.addEventListener('blur', () => setTimeout(() => { dd.style.display='none'; }, 150));
+}
+
+function handleMentionInput(ta, dd) {
+  const val = ta.value;
+  const cur = ta.selectionStart;
+  // Zoek @ voor cursor
+  let at = -1;
+  for (let i = cur-1; i >= 0; i--) {
+    if (val[i] === '@') { at = i; break; }
+    if (val[i] === ' ' || val[i] === '\n') break;
+  }
+  if (at === -1) { dd.style.display='none'; return; }
+
+  const zoek = val.substring(at+1, cur).toLowerCase();
+  const matches = teamleden.filter(n => n.toLowerCase().startsWith(zoek));
+
+  if (!matches.length) { dd.style.display='none'; return; }
+
+  _mentionTA    = ta;
+  _mentionDD    = dd;
+  _mentionStart = at;
+  _mentionIdx   = -1;
+  _mentionItems = matches;
+
+  dd.innerHTML = matches.map((naam, i) => {
+    const init = naam.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
+    return `<div class="mention-opt" id="mopt-${i}" onmousedown="kiesMention('${naam.replace(/'/g,"\'")}')">
+      <div class="mention-avatar">${init}</div>
+      ${esc(naam)}
+    </div>`;
+  }).join('');
+  dd.style.display='block';
+}
+
+function handleMentionKey(e, ta, dd) {
+  if (dd.style.display==='none') return;
+  if (e.key==='ArrowDown') {
+    e.preventDefault();
+    _mentionIdx = Math.min(_mentionIdx+1, _mentionItems.length-1);
+    highlightMentionOpt();
+  } else if (e.key==='ArrowUp') {
+    e.preventDefault();
+    _mentionIdx = Math.max(_mentionIdx-1, 0);
+    highlightMentionOpt();
+  } else if (e.key==='Enter' && _mentionIdx >= 0) {
+    e.preventDefault();
+    kiesMention(_mentionItems[_mentionIdx]);
+  } else if (e.key==='Escape') {
+    dd.style.display='none';
+  }
+}
+
+function highlightMentionOpt() {
+  document.querySelectorAll('.mention-opt').forEach((el,i) => {
+    el.classList.toggle('actief', i===_mentionIdx);
+  });
+}
+
+function kiesMention(naam) {
+  if (!_mentionTA) return;
+  const val = _mentionTA.value;
+  const cur = _mentionTA.selectionStart;
+  const voor = val.substring(0, _mentionStart);
+  const na   = val.substring(cur);
+  _mentionTA.value = voor + '@' + naam + ' ' + na;
+  _mentionTA.selectionStart = _mentionTA.selectionEnd = _mentionStart + naam.length + 2;
+  if (_mentionDD) _mentionDD.style.display='none';
+  _mentionTA.focus();
+}
+
+// Init mention op notitie-input na het openen van de popup
+const _origOpenNotities = window.openNotities || function(){};
+
+function setupMentionListeners() {
+  // Notitie input
+  initMentionTA('notitie-input', 'mention-dd-notitie');
+}
+
+/* ══════════════════════════════════════════════════════
+   MELDINGEN SYSTEEM
+   ══════════════════════════════════════════════════════ */
+
+function getMeldingen() {
+  return JSON.parse(localStorage.getItem('wico_meldingen_' + ghGebruiker) || '[]');
+}
+
+function slaaMeldingenOp(meldingen) {
+  if (!ghGebruiker) return;
+  localStorage.setItem('wico_meldingen_' + ghGebruiker, JSON.stringify(meldingen));
+}
+
+// Extraheer @mentions uit tekst en maak meldingen aan
+function verwerkMentions(tekst, context) {
+  if (!tekst || !ghGebruiker) return;
+  const gevonden = new Set();
+  const regex = /@([^\s@]+)/g;
+  let match;
+  while ((match = regex.exec(tekst)) !== null) {
+    const naam = teamleden.find(t => t.toLowerCase() === match[1].toLowerCase());
+    if (naam && naam !== ghGebruiker) gevonden.add(naam);
+  }
+  gevonden.forEach(naam => {
+    // Sla melding op voor die persoon
+    const sleutel = 'wico_meldingen_' + naam;
+    const bestaand = JSON.parse(localStorage.getItem(sleutel) || '[]');
+    bestaand.push({
+      id: Date.now() + Math.random(),
+      van: ghGebruiker,
+      tekst: tekst.substring(0, 100) + (tekst.length>100?'...':''),
+      context,
+      datum: new Date().toLocaleString('nl-BE',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),
+      gelezen: false
+    });
+    localStorage.setItem(sleutel, JSON.stringify(bestaand));
+  });
+}
+
+function updateMeldingBadge() {
+  if (!ghGebruiker) return;
+  const meldingen = getMeldingen();
+  const ongelezen = meldingen.filter(m=>!m.gelezen).length;
+  const badge = document.getElementById('melding-count');
+  if (badge) {
+    badge.textContent = ongelezen;
+    badge.style.display = ongelezen > 0 ? 'inline-flex' : 'none';
+  }
+}
+
+function openMeldingen() {
+  const meldingen = getMeldingen();
+  const body = document.getElementById('melding-body');
+  if (!body) return;
+
+  if (!ghGebruiker) {
+    body.innerHTML = '<p style="padding:20px;color:var(--wico-muted);font-size:13px;">Log in om meldingen te zien.</p>';
+  } else if (!meldingen.length) {
+    body.innerHTML = '<p style="padding:20px;color:var(--wico-muted);font-size:13px;">Geen meldingen. Je wordt hier getagd wanneer iemand @ jouw naam gebruikt in een notitie of vergaderlog.</p>';
+  } else {
+    body.innerHTML = [...meldingen].reverse().map((m,i) => {
+      const realI = meldingen.length-1-i;
+      return `<div class="melding-item ${m.gelezen?'gelezen':''}" onclick="klikMelding(${realI})">
+        <div class="melding-dot ${m.gelezen?'gelezen':''}"></div>
+        <div class="melding-tekst">
+          <strong>${esc(m.van||'')}</strong> heeft je getagd${m.context?' in <em>'+esc(m.context)+'</em>':''}
+          <div style="margin-top:4px;padding:6px 8px;background:var(--wico-teal-xlight);border-radius:4px;font-style:italic;">"${esc(m.tekst)}"</div>
+          <div class="melding-meta">${esc(m.datum||'')}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('melding-popup').classList.add('open');
+
+  // Markeer alle als gelezen na 2 seconden
+  setTimeout(() => {
+    const m = getMeldingen().map(x=>({...x, gelezen:true}));
+    slaaMeldingenOp(m);
+    updateMeldingBadge();
+  }, 2000);
+}
+
+function klikMelding(i) {
+  const meldingen = getMeldingen();
+  meldingen[i].gelezen = true;
+  slaaMeldingenOp(meldingen);
+  sluitMeldingen();
+}
+
+function markeerAllesGelezen() {
+  const m = getMeldingen().map(x=>({...x, gelezen:true}));
+  slaaMeldingenOp(m);
+  updateMeldingBadge();
+  openMeldingen();
+}
+
+function sluitMeldingen() {
+  document.getElementById('melding-popup').classList.remove('open');
 }
 
 
@@ -1728,7 +1984,7 @@ function renderDetail(idx) {
           <div class="vlog-datum">${esc(entry.datum||'')}</div>
           <div class="vlog-auteur">${esc(entry.auteur||'')}</div>
         </div>
-        <div class="vlog-tekst">${esc(entry.tekst||'')}</div>
+        <div class="vlog-tekst">${renderMentions(entry.tekst||'')}</div>
         <span class="vlog-del" onclick="verwijderVlog(${idx},${oi},${realEi})" title="Verwijderen">✕</span>
       </div>`;
     }).join('') || '<p style="font-size:13px;color:var(--wico-muted);padding:8px 0;">Nog geen vergadernotities voor dit doel.</p>';
@@ -1740,7 +1996,10 @@ function renderDetail(idx) {
       <div style="border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;padding:14px;">
         <div class="vlog-wrap">${items}</div>
         <div class="vlog-nieuw-wrap">
-          <textarea id="vlog-input-${idx}-${oi}" placeholder="Noteer hier de bespreking, beslissing of opmerking van vandaag..."></textarea>
+          <div style="position:relative;flex:1;">
+            <textarea id="vlog-input-${idx}-${oi}" style="width:100%;" placeholder="Noteer hier de bespreking, beslissing of opmerking van vandaag... Gebruik @ om iemand te taggen"></textarea>
+            <div class="mention-dropdown" id="mention-dd-vlog-${idx}-${oi}" style="display:none;"></div>
+          </div>
           <button class="save-btn" style="align-self:flex-end;" onclick="voegVlogToe(${idx},${oi})">+ Toevoegen</button>
         </div>
       </div>
@@ -2632,6 +2891,8 @@ async function ghLaadEnVerbind() {
     if (bar) bar.textContent = 'ℹ️ Lokaal — ' + err.message;
   }
   updateNaamLabel();
+  updateMeldingBadge();
+  setTimeout(setupMentionListeners, 500);
   try { renderOverview(); } catch {}
 }
 
