@@ -91,7 +91,13 @@
       "streefdoel": "Begeleiding volgens het zorgcontinuüm: focus op onderwijsbehoeften op school en groepsniveau — Executieve functies en routines en structuren.",
       "operationeleDelen": [
         {
-          "vergaderlog": [],
+          "vergaderlog": [
+            {
+              "tekst": "Test @Ri test",
+              "datum": "20 mrt 2026",
+              "auteur": "Ri"
+            }
+          ],
           "titel": "Operationeel doel 1",
           "omschrijving": "Nog in te vullen",
           "effecten": "Nog in te vullen"
