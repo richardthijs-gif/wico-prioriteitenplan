@@ -1,0 +1,1075 @@
+{
+  "data": [
+    {
+      "id": 0,
+      "tag": "GOK & Taalbeleid",
+      "tagClass": "tag-gok",
+      "verantwoordelijke": [
+        "Elke Boes"
+      ],
+      "streefdoel": "Nog in te vullen — strategisch doel rond gelijke onderwijskansen en talenbeleid.",
+      "operationeleDelen": [
+        {
+          "titel": "Operationeel doel 1",
+          "omschrijving": "Nog in te vullen",
+          "effecten": "Nog in te vullen"
+        },
+        {
+          "titel": "Operationeel doel 2",
+          "omschrijving": "Vakoverstijgende uitwisseling faciliteren.",
+          "effecten": "Idem als OD1, maar dan vakoverstijgend."
+        },
+        {
+          "titel": "Operationeel doel 3",
+          "omschrijving": "Nog in te vullen",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [],
+          "wie": [],
+          "actie": "Nog invullen",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [],
+          "wie": [],
+          "actie": "Nog invullen",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "",
+        "1": "",
+        "2": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    },
+    {
+      "id": 1,
+      "tag": "Executieve functies",
+      "tagClass": "tag-executief",
+      "verantwoordelijke": [],
+      "streefdoel": "Begeleiding volgens het zorgcontinuüm: focus op onderwijsbehoeften op school en groepsniveau — Executieve functies en routines en structuren.",
+      "operationeleDelen": [
+        {
+          "titel": "Operationeel doel 1",
+          "omschrijving": "Nog in te vullen",
+          "effecten": "Nog in te vullen"
+        },
+        {
+          "titel": "Operationeel doel 2",
+          "omschrijving": "Vakoverstijgende uitwisseling faciliteren.",
+          "effecten": "Idem als OD1 maar vakoverstijgend."
+        },
+        {
+          "titel": "Operationeel doel 3",
+          "omschrijving": "Nog in te vullen",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [],
+          "wie": [],
+          "actie": "Nog invullen",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "",
+        "1": "",
+        "2": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    },
+    {
+      "id": 2,
+      "tag": "Organisatiebeleid K2",
+      "tagClass": "tag-organisatie",
+      "verantwoordelijke": [],
+      "streefdoel": "De school bouwt een sterke professionele leergemeenschap uit waarin systematische en planmatige expertisedeling tussen alle teamleden leidt tot voortdurende verbetering van de onderwijskwaliteit.",
+      "operationeleDelen": [
+        {
+          "titel": "OD1 — Common ground in aanpak en afspraken",
+          "omschrijving": "Tegen juni 2026 beschikt het volledige schoolteam over een afgesproken en gedocumenteerde set van criteria en structuren voor expertisedeling (bv. formats, werkvormen, overlegstructuur), die in alle vakgroepen en teams wordt toegepast.",
+          "effecten": "In juni 2026 blijkt uit verslag van 80% van de vakgroepen dat er inhoudelijke expertise werd gedeeld. In april 2026 geeft meer dan de helft aan iets bijgeleerd te hebben van een vakcollega."
+        },
+        {
+          "titel": "OD2 — Structurele tijd en werkvormen voor expertisedeling",
+          "omschrijving": "Vanaf september 2025 plant elke vakgroep minstens 6 momenten per schooljaar waarin leraren gericht expertise delen volgens de afgesproken structuur.",
+          "effecten": "Idem als OD1, maar vakoverstijgend."
+        },
+        {
+          "titel": "OD3 — Waarneembare impact op lespraktijk",
+          "omschrijving": "Tegen juni 2027 past minstens 75% van de leraren twee of meer gedeelde praktijken/strategieën aantoonbaar toe in hun lesvoering.",
+          "effecten": "Tegen juni 2027 rapporteert minstens 80% van de teamleden dat expertisedeling bijdraagt aan hun professionele groei en de kwaliteit van hun lespraktijk."
+        },
+        {
+          "titel": "OD4 — Expertise wordt gedeeld over teams heen",
+          "omschrijving": "Tegen juni 2026 wordt expertise die in één vakgroep wordt ontwikkeld minstens tweemaal per jaar schoolbreed gedeeld via studiedagen, intervisies of leerateliers.",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "SD/OD opnemen in schoolwerkplan",
+          "wanneer": "",
+          "status": "loopt"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Werkvorm vakgroepvergadering bedenken en verdelen",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Vakgroepverslag sjabloon herbekijken, verbeteren en delen",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Elke vakgroep gebruikt VAK in Smartschool voor vakverslagen",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Toelichting SD en OD tijdens PV",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Expertisedeling als vast onderdeel in agenda vakgroepoverleg",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Kwalitatieve evaluatie door enquête",
+          "wanneer": "Voor paasvakantie",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Check van de vakverslagen",
+          "wanneer": "Voor juni 2026",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "Collegiale visitatie / Flitsbezoeken / Kijken over de muur van je buur",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "Vakgroepcoördinatoren samen vrij roosteren voor overleg",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "In schoolkalender minstens 2 momenten per schooljaar inplannen voor vakoverstijgende uitwisseling",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "Werkvorm uitwerken voor vakoverstijgende expertisedeling",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Fichebak per vakgroep met gedeelde praktijken",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 2,
+              "oi": 3
+            }
+          ],
+          "wie": [],
+          "actie": "Ruimte voorzien in APV",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "- Alle leerkrachten schalen zichzelf hoger in op de schalen van het GROEI-kompas\n- Er is meetbare leerwinst bij leerlingen\n- Minstens 60% van de leraren geven aan vaardiger te worden\n- 80% van het schoolteam ziet zichzelf als een lerende organisatie",
+        "1": "",
+        "2": "",
+        "3": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "3": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    },
+    {
+      "id": 3,
+      "tag": "Eigenaarschap leerlingen",
+      "tagClass": "tag-eigenaarschap",
+      "verantwoordelijke": [],
+      "streefdoel": "De school versterkt het eigenaarschap van leerlingen door hen inzicht te geven in hun leerproces, zodat zij doelgericht kunnen werken aan hun eigen vooruitgang.",
+      "operationeleDelen": [
+        {
+          "titel": "OD1 — Effectieve feedback in het leerproces",
+          "omschrijving": "Het lerarenteam past effectieve feedback toe in het leerproces van de leerling.",
+          "effecten": "Op het einde van schooljaar 25/26 weten alle leerkrachten waarom effectieve feedback belangrijk is. Leerkrachten begrijpen het verschil tussen feedback, feedup en feedforward en passen dit gericht toe vanaf januari 2027."
+        },
+        {
+          "titel": "OD2 — Doelgerichte, transparante en objectieve evaluaties",
+          "omschrijving": "De evaluaties zijn doelgericht, transparant, objectief en gericht op verbetering.",
+          "effecten": "1. Aantal beroepsprocedures verloren op basis van resultaten daalt met 100%.\n2. Aantal B en C-attesten daalt over de helft tov 24/25."
+        },
+        {
+          "titel": "OD3 — Leerling kan werkpunten en sterktes aangeven",
+          "omschrijving": "De leerling kan aangeven waar werkpunten, kansen, mogelijkheden en sterke punten liggen en weet hoe hiermee om te gaan.",
+          "effecten": "De leerling leert efficiënter en haalt daardoor betere punten."
+        },
+        {
+          "titel": "OD4 — Gesprekken over leren worden structureel verankerd",
+          "omschrijving": "Vanaf schooljaar 2026–2027 voert elke klastitularis minstens twee keer per jaar een leerprogressiegesprek.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD5 — Formatieve evaluatie wordt zichtbaar in de klaspraktijk",
+          "omschrijving": "Tegen juni 2026 past minstens 70% van de leraren drie afgesproken formatieve praktijken toe (bv. succescriteria, peer feedback, exit tickets).",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Nascholing: wat is feedback (feedback, feedup en feedforward)",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Kader ontwikkelen welke feedback op welk moment",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Feedback in de mededeling in de focusplaatsen",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "De vakgroep screent de evaluaties aan de hand van een algemene kijkwijzer",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "De vakgroep ontwikkelt een eigen kijkwijzer",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Brainstormen op welke manier een leerling zichzelf kan leren inschatten",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Leerstrategieën aanleren",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 3,
+              "oi": 3
+            }
+          ],
+          "wie": [],
+          "actie": "Leerlingen bereiden een oudercontact voor",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "- Er is meetbare leerwinst bij 80% van de leerlingen\n- Alle leerlingen kunnen aangeven op welke manier ze leerwinst kunnen boeken",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "3": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "4": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    },
+    {
+      "id": 4,
+      "tag": "Taalvaardigheid",
+      "tagClass": "tag-taal",
+      "verantwoordelijke": [],
+      "streefdoel": "De school versterkt doelgericht de taalvaardigheid van alle leerlingen — van dagelijkse taal tot schooltaal en vaktaal — om hun leerprestaties te verbeteren en ongelijkheden te verkleinen.",
+      "operationeleDelen": [
+        {
+          "titel": "OD1 — Consequent taalstimulerende klaspraktijk",
+          "omschrijving": "Tegen juni 2026 past minstens 80% van de leraren drie afgesproken taalstimulerende didactische praktijken toe.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD2 — Schoolbreed beleid voor woordenschat",
+          "omschrijving": "Tegen december 2025 ontwikkelt en implementeert de school een samenhangend beleid voor woordenschatonderwijs.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD3 — Doelgerichte ondersteuning voor leerlingen met verhoogd taalrisico",
+          "omschrijving": "Tegen juni 2027 krijgt elke leerling met een vastgestelde taalachterstand een gepersonaliseerd taaltraject.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD4 — Data-gestuurde monitoring van prestatiekloof",
+          "omschrijving": "Vanaf schooljaar 2026–2027 monitort de school systematisch leerresultaten van verschillende leerlingengroepen.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD5 — Rijke, taalrijke leeromgeving in alle vakken",
+          "omschrijving": "Tegen juni 2027 is in minimaal 75% van de vaklokalen zichtbaar een taalrijke leeromgeving aanwezig.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD6 — Betrekken van ouders bij taalontwikkeling",
+          "omschrijving": "Tegen juni 2026 biedt de school minstens drie laagdrempelige initiatieven aan om ouders te ondersteunen in de taalontwikkeling.",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [],
+          "wie": [],
+          "actie": "Nog in te vullen",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [],
+          "wie": [],
+          "actie": "Nog in te vullen",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "3": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "4": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "5": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    },
+    {
+      "id": 5,
+      "tag": "Participatief beleid",
+      "tagClass": "tag-participatie",
+      "verantwoordelijke": [],
+      "streefdoel": "De school versterkt haar werking door een participatief beleid waarin interne en externe partners actief betrokken worden bij beleidsvorming, besluitvorming en kwaliteitsontwikkeling.",
+      "operationeleDelen": [
+        {
+          "titel": "OD1 — Duidelijke participatiestructuur",
+          "omschrijving": "Tegen december 2025 ontwikkelt de school een werkdocument waarin rollen, overlegvormen en beslissingsbevoegdheden helder zijn vastgelegd.",
+          "effecten": "test"
+        },
+        {
+          "titel": "OD2 — Systematische betrokkenheid van leerlingen en ouders",
+          "omschrijving": "Vanaf schooljaar 2026–2027 worden leerlingen en ouders minstens vier keer per jaar structureel betrokken bij beleidsvoorbereiding.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD3 — Versterkte samenwerking met externe partners",
+          "omschrijving": "Tegen juni 2027 sluit de school doelgerichte samenwerkingen af met minstens vijf externe partners.",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Visie uitschrijven",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "De adviesorganen/participatieve organen in kaart brengen",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "De participatieve organen worden gericht mee opgenomen in de communicatie",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Nieuwsbrief voor bedrijven",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Opening sporthal?",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Expertisegroepen? (wetenschap, sport, Eco, STEM,...)",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Participatiematrix uitwerken (wie wat waar wanneer)",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "Infodag duaal leren",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 5,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "Netwerkmoment projectdag",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "- Nieuwsbrief voor bedrijven\n- Netwerkdag per afdeling?\n- Nog in te vullen",
+        "1": "",
+        "2": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    },
+    {
+      "id": 6,
+      "tag": "Ervaringsgericht leren",
+      "tagClass": "tag-ervaringsgericht",
+      "verantwoordelijke": [],
+      "streefdoel": "De school ontwikkelt en organiseert kwaliteitsvol ervaringsgericht leren, in samenwerking met leerlingen, leraren, ouders en externe partners.",
+      "operationeleDelen": [
+        {
+          "titel": "OD1 — Kwaliteitskader voor ervaringsgericht leren",
+          "omschrijving": "Tegen juni 2026 ontwikkelt de school een kwaliteitskader met criteria, rollen, veiligheidsafspraken en leerdoelen.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD2 — Structurele samenwerking met bedrijven en externe partners",
+          "omschrijving": "Vanaf schooljaar 2026–2027 werkt de school jaarlijks samen met minstens vijf relevante externe partners.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD3 — Elke leerling neemt deel aan meerdere ervaringen",
+          "omschrijving": "Vanaf 2026 neemt elke leerling jaarlijks deel aan minstens twee vormende ervaringsgerichte activiteiten.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD4 — Professionalisering van betrokken leraren",
+          "omschrijving": "Tegen juni 2027 heeft minstens 70% van de betrokken leraren een vorming gevolgd.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD5 — Betrokkenheid van ouders versterken",
+          "omschrijving": "Tegen juni 2026 organiseert de school minstens drie initiatieven waarbij ouders betrokken worden.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD6 — Kwaliteitsbewaking via systematische evaluatie",
+          "omschrijving": "Vanaf 2027 evalueert de school jaarlijks alle ervaringsgerichte leeractiviteiten.",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [
+            {
+              "pidx": 6,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Visie uitschrijven",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 6,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Quickstage optimaliseren/controleren en bijwerken",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 6,
+              "oi": 1
+            }
+          ],
+          "wie": [],
+          "actie": "Uitwerken van een volledig project binnen WPL",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [
+            {
+              "pidx": 6,
+              "oi": 2
+            }
+          ],
+          "wie": [],
+          "actie": "Voorbeeldfuncties afhankelijk van de activiteitenlijsten uit BK",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "- Activiteitenlijsten (BK's)\n- Stagebedrijven\n- Rolmodellen\n- Afspraken rond bedrijfsbezoeken met lln",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "3": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "4": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "5": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    },
+    {
+      "id": 7,
+      "tag": "Leerlingbegeleiding",
+      "tagClass": "tag-begeleiding",
+      "verantwoordelijke": [],
+      "streefdoel": "De school versterkt haar leerlingbegeleiding door een team dat verantwoordelijkheid opneemt in alle vier begeleidingsdomeinen — onderwijsloopbaan, leren en studeren, psychosociaal welzijn en preventieve gezondheidszorg.",
+      "operationeleDelen": [
+        {
+          "titel": "OD1 — Duidelijke structuur en taakverdeling leerlingbegeleiding",
+          "omschrijving": "Tegen december 2025 beschikt de school over een helder, schoolbreed kader.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD2 — Krachtige basiszorg door alle leraren",
+          "omschrijving": "Tegen juni 2027 past minstens 80% van het team de afgesproken basiszorgpraktijken toe in alle vier domeinen.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD3 — Professionalisering in alle vier domeinen",
+          "omschrijving": "Tegen juni 2026 heeft minstens 70% van de leraren een vorming gevolgd binnen minstens twee van de vier domeinen.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD4 — Systematische opvolging van kwetsbare leerlingen",
+          "omschrijving": "Vanaf schooljaar 2026–2027 volgt de school kwetsbare leerlingen systematisch op via een digitaal volgsysteem.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD5 — Actieve betrokkenheid van ouders",
+          "omschrijving": "Tegen juni 2026 betrekt de school ouders structureel bij het begeleidingstraject.",
+          "effecten": ""
+        },
+        {
+          "titel": "OD6 — Gezondheidseducatie en welzijnsbevordering",
+          "omschrijving": "Vanaf 2026 integreert de school in elke graad minstens drie acties per jaar rond preventieve gezondheidszorg en psychosociaal welzijn.",
+          "effecten": ""
+        }
+      ],
+      "acties": [
+        {
+          "od": [
+            {
+              "pidx": 7,
+              "oi": 0
+            }
+          ],
+          "wie": [],
+          "actie": "Visie uitschrijven",
+          "wanneer": "",
+          "status": "open"
+        },
+        {
+          "od": [],
+          "wie": [],
+          "actie": "Nog in te vullen",
+          "wanneer": "",
+          "status": "open"
+        }
+      ],
+      "indicatorenPerOD": {
+        "0": "",
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": ""
+      },
+      "evaluatiePerOD": {
+        "0": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "1": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "2": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "3": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "4": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        },
+        "5": {
+          "wanneer": "",
+          "wie": "",
+          "borgen": "",
+          "bannen": "",
+          "bijsturen": ""
+        }
+      }
+    }
+  ],
+  "teamleden": [
+    "Pedagogische raad",
+    "Directie",
+    "Coördinatoren",
+    "TA's",
+    "Vakcoördinatoren"
+  ]
+}
