@@ -240,6 +240,22 @@
   .setup-btn-start:hover { background:#a93226; }
   .setup-btn-skip { background:none; border:1px solid #e2eaec; border-radius:7px; padding:10px 16px; font-size:12px; color:#5a7a80; cursor:pointer; }
 
+
+  /* ── Document link popup ── */
+  .doc-popup { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.6); z-index:1000; align-items:center; justify-content:center; }
+  .doc-popup.open { display:flex; }
+  .doc-modal { background:var(--wico-white); border-radius:12px; width:480px; max-width:95vw; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.25); }
+  .doc-modal-hdr { background:var(--wico-petrol); padding:14px 20px; display:flex; justify-content:space-between; align-items:center; }
+  .doc-modal-hdr h3 { font-size:14px; font-weight:700; color:white; }
+  .doc-modal-body { padding:18px 20px; }
+  .doc-modal-body label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--wico-muted); display:block; margin-bottom:6px; }
+  .doc-modal-body input { width:100%; border:1.5px solid var(--wico-gray); border-radius:7px; padding:9px 12px; font-size:13px; font-family:inherit; background:var(--wico-teal-xlight); }
+  .doc-modal-body input:focus { outline:none; border-color:var(--wico-teal); background:white; }
+  .doc-modal-body .hint { font-size:11px; color:var(--wico-muted); margin-top:6px; line-height:1.5; }
+  .doc-modal-ftr { padding:12px 20px; border-top:1px solid var(--wico-gray); display:flex; gap:8px; justify-content:flex-end; }
+  .doc-link-chip { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:2px 8px; border-radius:3px; background:#fef3e2; color:#7a4a0a; text-decoration:none; max-width:120px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; vertical-align:middle; }
+  .doc-link-chip:hover { background:#fde8c0; }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -453,6 +469,30 @@
   </div>
 </div>
 
+
+<!-- Document link popup -->
+<div class="doc-popup" id="doc-popup" onclick="if(event.target===this)sluitDocPopup()">
+  <div class="doc-modal">
+    <div class="doc-modal-hdr">
+      <h3>📎 Document koppelen aan actie</h3>
+      <button onclick="sluitDocPopup()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div class="doc-modal-body">
+      <label>Link naar document (SharePoint, OneDrive, ...)</label>
+      <input type="url" id="doc-link-input" placeholder="https://school.sharepoint.com/..." autocomplete="off"/>
+      <p class="hint">
+        Kopieer de link vanuit SharePoint of OneDrive via <strong>Koppeling kopiëren</strong>.<br>
+        Word-bestanden openen automatisch in Word Online. PDF's openen in de browser.
+      </p>
+    </div>
+    <div class="doc-modal-ftr">
+      <button onclick="verwijderDocLink()" class="print-btn" style="color:var(--wico-red);margin-right:auto;">🗑 Verwijderen</button>
+      <button onclick="sluitDocPopup()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:7px 16px;font-size:13px;cursor:pointer;color:var(--wico-muted);">Annuleren</button>
+      <button onclick="slaDocLinkOp()" class="save-btn">Opslaan</button>
+    </div>
+  </div>
+</div>
+
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="showView('overview', this)">Overzicht</div>
   <div class="nav-tab" onclick="showView('detail-0', this)">GOK & Taalbeleid</div>
@@ -650,7 +690,7 @@ const PRIORITEITEN = [
 function migrateData(raw) {
   raw.forEach(p => {
     if (!Array.isArray(p.verantwoordelijke)) p.verantwoordelijke = p.verantwoordelijke ? [p.verantwoordelijke] : [];
-    p.acties = (p.acties||[]).map(a => ({od:[],wie:[],...a, wie: Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]) }));
+    p.acties = (p.acties||[]).map(a => ({od:[],wie:[],doc:'',...a, wie: Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]) }));
     if (!p.indicatorenPerOD) p.indicatorenPerOD = {};
     if (!p.evaluatiePerOD)  p.evaluatiePerOD  = {};
     p.operationeleDelen.forEach((_,oi) => {
@@ -904,9 +944,18 @@ function koppelPanel(idx,ai) {
 }
 
 /* ── actie rows ── */
+function docChip(doc) {
+  if (!doc) return '';
+  try {
+    const label = new URL(doc).hostname.replace('www.','').split('.')[0];
+    return `<a href="${esc(doc)}" target="_blank" class="doc-link-chip" title="${esc(doc)}">📎 ${esc(label)}</a>`;
+  } catch { return `<a href="${esc(doc)}" target="_blank" class="doc-link-chip">📎 document</a>`; }
+}
+
 function actieRow(idx,ai,p) {
   const a=p.acties[ai];
   const wieArr=Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]);
+  const doc=a.doc||'';
   return `<tr style="vertical-align:middle;">
     <td><input type="text" value="${esc(a.actie)}" onchange="data[${idx}].acties[${ai}].actie=this.value" placeholder="Actie..."/></td>
     <td><input type="text" value="${esc(a.wanneer)}" onchange="data[${idx}].acties[${ai}].wanneer=this.value" placeholder="Wanneer?" style="width:90px;"/></td>
@@ -918,6 +967,10 @@ function actieRow(idx,ai,p) {
     </select></td>
     <td style="min-width:120px;"><span id="koppel-lbl-${idx}-${ai}">${koppelLabel(idx,ai)}</span>
       <span onclick="toggleKoppelPanel(${idx},${ai})" title="Koppelingen beheren" style="cursor:pointer;font-size:14px;margin-left:4px;color:var(--wico-teal);">🔗</span></td>
+    <td style="text-align:center;white-space:nowrap;">
+      ${docChip(doc)}
+      <span onclick="openDocPopup(${idx},${ai})" title="Document koppelen" style="cursor:pointer;font-size:15px;opacity:${doc?'0.5':'1'};" >📎</span>
+    </td>
     <td style="cursor:pointer;color:var(--wico-red);text-align:center;" onclick="removeActie(${idx},${ai})">✕</td>
   </tr>${koppelPanel(idx,ai)}`;
 }
@@ -964,7 +1017,7 @@ function renderDetail(idx) {
         <table class="actions-table"><thead><tr>
           <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
           <th style="min-width:130px;">Wie</th><th style="min-width:75px;">Status</th>
-          <th style="min-width:120px;">Koppelingen</th><th style="width:28px;"></th>
+          <th style="min-width:120px;">Koppelingen</th><th style="min-width:80px;">Document</th><th style="width:28px;"></th>
         </tr></thead><tbody>${rows}</tbody></table></div>
       <button class="add-btn" onclick="addActie(${idx},${oi})">+ Actie toevoegen aan OD${oi+1}</button></div>`;
   }).join('') + `<div style="margin-bottom:18px;">
@@ -974,7 +1027,7 @@ function renderDetail(idx) {
       <table class="actions-table"><thead><tr>
         <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
         <th style="min-width:130px;">Wie</th><th style="min-width:75px;">Status</th>
-        <th style="min-width:120px;">Koppelingen</th><th style="width:28px;"></th>
+        <th style="min-width:120px;">Koppelingen</th><th style="min-width:80px;">Document</th><th style="width:28px;"></th>
       </tr></thead><tbody>${p.acties.map((a,ai)=>!(a.od||[]).length?actieRow(idx,ai,p):'').join('')}</tbody></table></div>
     <button class="add-btn" onclick="addActie(${idx},null)">+ Actie toevoegen (ontkoppeld)</button></div>`;
 
@@ -1635,6 +1688,43 @@ function showView(viewId, tabEl) {
 renderOverview();
 </script>
 
+/* ── Document link popup ── */
+let _docIdx = null, _docAi = null;
+
+function openDocPopup(idx, ai) {
+  _docIdx = idx; _docAi = ai;
+  const huidig = data[idx].acties[ai].doc || '';
+  document.getElementById('doc-link-input').value = huidig;
+  document.getElementById('doc-popup').classList.add('open');
+  setTimeout(() => document.getElementById('doc-link-input').focus(), 100);
+}
+
+function sluitDocPopup() {
+  document.getElementById('doc-popup').classList.remove('open');
+  _docIdx = null; _docAi = null;
+}
+
+function slaDocLinkOp() {
+  if (_docIdx === null) return;
+  const link = document.getElementById('doc-link-input').value.trim();
+  data[_docIdx].acties[_docAi].doc = link;
+  sluitDocPopup();
+  renderDetail(_docIdx);
+  showSecTab(_docIdx, 'acties', null);
+}
+
+function verwijderDocLink() {
+  if (_docIdx === null) return;
+  data[_docIdx].acties[_docAi].doc = '';
+  sluitDocPopup();
+  renderDetail(_docIdx);
+  showSecTab(_docIdx, 'acties', null);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') sluitDocPopup();
+});
+
 <script>
 /* ── WICO GitHub opslag ── */
 const GH = {
@@ -1807,6 +1897,7 @@ async function ghLaadEnVerbind() {
 }
 
 /* ── Enter-toets in modal ── */
+document.getElementById('doc-link-input').addEventListener('keydown', e => { if (e.key === 'Enter') slaDocLinkOp(); });
 document.getElementById('setup-naam').addEventListener('keydown',  e => { if (e.key === 'Enter') document.getElementById('setup-token').focus(); });
 document.getElementById('setup-token').addEventListener('keydown', e => { if (e.key === 'Enter') setupOpslaan(); });
 
