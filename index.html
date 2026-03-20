@@ -103,15 +103,22 @@
   .effecten-box h5 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--wico-teal); margin-bottom: 6px; }
 
   /* Acties tabel */
-  .actions-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .actions-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
   .actions-table th { text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--wico-muted); padding: 6px 8px; border-bottom: 2px solid var(--wico-teal-light); background: var(--wico-teal-xlight); }
-  .actions-table td { padding: 8px 8px; border-bottom: 1px solid var(--wico-gray); vertical-align: top; }
+  .actions-table td { padding: 8px 8px; border-bottom: 1px solid var(--wico-gray); vertical-align: top; word-break: break-word; }
   .actions-table tr:last-child td { border-bottom: none; }
   .actions-table tr:hover td { background: var(--wico-teal-xlight); }
   .actions-table td:first-child { font-weight: 500; }
-  .actions-table input[type="text"] { width: 100%; border: none; background: transparent; font-size: 13px; font-family: inherit; color: var(--wico-text); padding: 2px 4px; border-radius: 4px; }
+  .actions-table input[type="text"] { width: 100%; border: none; background: transparent; font-size: 13px; font-family: inherit; color: var(--wico-text); padding: 2px 4px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word; }
   .actions-table input[type="text"]:focus { background: var(--wico-teal-xlight); outline: 1px solid var(--wico-teal); }
-  .actions-table select { border: none; background: transparent; font-size: 12px; font-family: inherit; color: var(--wico-muted); cursor: pointer; }
+  .actions-table select { border: none; background: transparent; font-size: 12px; font-family: inherit; color: var(--wico-muted); cursor: pointer; max-width: 80px; }
+  .col-actie { width: 30%; }
+  .col-datum  { width: 110px; }
+  .col-wie    { width: 22%; }
+  .col-status { width: 80px; }
+  .col-koppel { width: 14%; }
+  .col-doc    { width: 90px; }
+  .col-del    { width: 30px; }
   .status-open  { font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 600; background: #edf0f0; color: var(--wico-muted); }
   .status-loopt { font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 600; background: #fef3e2; color: #7a4a0a; }
   .status-klaar { font-size: 11px; padding: 2px 8px; border-radius: 3px; font-weight: 600; background: #e8f5ec; color: #1e6b38; }
@@ -206,7 +213,7 @@
   .team-modal-footer { padding:12px 20px; border-top:1px solid var(--wico-gray); display:flex; justify-content:flex-end; }
 
   /* Multi-select person dropdown */
-  .person-select-wrap { position:relative; display:inline-block; min-width:160px; }
+  .person-select-wrap { position:relative; display:inline-block; min-width:120px; max-width:100%; }
   .person-select-btn { display:flex; align-items:center; gap:4px; flex-wrap:wrap; border:1px solid rgba(255,255,255,0.3); border-radius:5px; padding:5px 8px; background:rgba(255,255,255,0.12); cursor:pointer; min-height:32px; }
   .person-select-btn.light { border:1px solid var(--wico-gray); background:var(--wico-teal-xlight); border-radius:5px; padding:4px 6px; }
   .person-tag { font-size:11px; font-weight:700; padding:2px 7px; border-radius:3px; background:rgba(255,255,255,0.2); color:white; white-space:nowrap; }
@@ -337,6 +344,50 @@
   .sjaar-legende-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--wico-muted); }
   .sjaar-legende-dot { width:10px; height:10px; border-radius:2px; }
 
+
+  /* ── Notities per actie ── */
+  .notitie-popup { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.6); z-index:1000; align-items:center; justify-content:center; }
+  .notitie-popup.open { display:flex; }
+  .notitie-modal { background:var(--wico-white); border-radius:12px; width:540px; max-width:96vw; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.25); }
+  .notitie-modal-hdr { background:var(--wico-petrol); padding:14px 20px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+  .notitie-modal-hdr h3 { font-size:14px; font-weight:700; color:white; }
+  .notitie-body { flex:1; overflow-y:auto; padding:16px 20px; }
+  .notitie-log { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+  .notitie-item { background:var(--wico-teal-xlight); border-left:3px solid var(--wico-teal); border-radius:0 6px 6px 0; padding:10px 14px; }
+  .notitie-item-meta { font-size:10px; color:var(--wico-muted); margin-bottom:4px; display:flex; justify-content:space-between; }
+  .notitie-item-tekst { font-size:13px; line-height:1.5; color:var(--wico-text); white-space:pre-wrap; }
+  .notitie-item-del { cursor:pointer; color:var(--wico-red); font-size:12px; opacity:0.6; }
+  .notitie-item-del:hover { opacity:1; }
+  .notitie-nieuw { border-top:1px solid var(--wico-gray); padding-top:12px; }
+  .notitie-nieuw textarea { width:100%; border:1.5px solid var(--wico-gray); border-radius:7px; padding:10px 12px; font-size:13px; font-family:inherit; min-height:80px; resize:vertical; background:var(--wico-teal-xlight); }
+  .notitie-nieuw textarea:focus { outline:none; border-color:var(--wico-teal); background:white; }
+  .notitie-ftr { padding:12px 20px; border-top:1px solid var(--wico-gray); display:flex; gap:8px; justify-content:flex-end; flex-shrink:0; }
+  .notitie-chip { display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:700; padding:2px 7px; border-radius:3px; background:#e8edf5; color:#2c3e6b; cursor:pointer; }
+  .notitie-chip:hover { background:#d0d8f0; }
+
+  /* ── Vergaderlog per OD ── */
+  .vlog-wrap { margin-top:12px; }
+  .vlog-item { display:flex; gap:10px; padding:8px 0; border-bottom:0.5px solid var(--wico-gray); font-size:12px; }
+  .vlog-item:last-child { border-bottom:none; }
+  .vlog-datum { font-weight:700; color:var(--wico-petrol); white-space:nowrap; min-width:80px; font-size:11px; }
+  .vlog-auteur { color:var(--wico-muted); font-size:10px; white-space:nowrap; }
+  .vlog-tekst { flex:1; line-height:1.5; white-space:pre-wrap; color:var(--wico-text); }
+  .vlog-del { cursor:pointer; color:var(--wico-red); opacity:0.5; flex-shrink:0; }
+  .vlog-del:hover { opacity:1; }
+  .vlog-nieuw-wrap { margin-top:10px; display:flex; gap:8px; }
+  .vlog-nieuw-wrap textarea { flex:1; border:1.5px solid var(--wico-gray); border-radius:6px; padding:8px 10px; font-size:13px; font-family:inherit; min-height:60px; resize:vertical; background:var(--wico-teal-xlight); }
+  .vlog-nieuw-wrap textarea:focus { outline:none; border-color:var(--wico-teal); background:white; }
+
+  /* ── Inline actie filter ── */
+  .actie-filter-bar { display:flex; gap:6px; align-items:center; padding:8px 0; flex-wrap:wrap; }
+  .actie-filter-chip { font-size:11px; font-weight:600; padding:3px 10px; border-radius:14px; border:1px solid var(--wico-gray); background:var(--wico-white); color:var(--wico-muted); cursor:pointer; transition:all 0.12s; }
+  .actie-filter-chip:hover { border-color:var(--wico-teal); color:var(--wico-teal); }
+  .actie-filter-chip.aan { background:var(--wico-petrol); color:white; border-color:var(--wico-petrol); }
+
+  /* ── Versie in header ── */
+  .versie-badge { font-size:10px; color:rgba(255,255,255,0.5); padding:3px 8px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); cursor:pointer; white-space:nowrap; }
+  .versie-badge:hover { color:rgba(255,255,255,0.9); border-color:rgba(255,255,255,0.4); }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -426,7 +477,9 @@
     </svg>
     <div>
       <h1>WICO — Prioriteitenplan 2025–2028</h1>
-      <div class="meta">Beleidsteam · Meerjarenplan secundair onderwijs</div>
+      <div class="meta">Beleidsteam · Meerjarenplan secundair onderwijs &nbsp;·&nbsp;
+        <span class="versie-badge" id="versie-badge" onclick="window.open('https://github.com/richardthijs-gif/wico-prioriteitenplan/commits/main','_blank')" title="Bekijk versiegeschiedenis op GitHub">v–</span>
+      </div>
     </div>
   </div>
   <div class="header-right">
@@ -573,6 +626,28 @@
       <button onclick="verwijderDocLink()" class="print-btn" style="color:var(--wico-red);margin-right:auto;">🗑 Verwijderen</button>
       <button onclick="sluitDocPopup()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:7px 16px;font-size:13px;cursor:pointer;color:var(--wico-muted);">Annuleren</button>
       <button onclick="slaDocLinkOp()" class="save-btn">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Notities popup -->
+<div class="notitie-popup" id="notitie-popup" onclick="if(event.target===this)sluitNotities()">
+  <div class="notitie-modal">
+    <div class="notitie-modal-hdr">
+      <h3 id="notitie-titel">📝 Notities</h3>
+      <button onclick="sluitNotities()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <div class="notitie-body">
+      <div class="notitie-log" id="notitie-log"></div>
+      <div class="notitie-nieuw">
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--wico-muted);display:block;margin-bottom:6px;">Nieuwe notitie toevoegen</label>
+        <textarea id="notitie-input" placeholder="Typ hier je notitie... (bijv. besproken in vergadering, beslissing, opmerking)"></textarea>
+      </div>
+    </div>
+    <div class="notitie-ftr">
+      <button onclick="sluitNotities()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:7px 16px;font-size:13px;cursor:pointer;color:var(--wico-muted);">Sluiten</button>
+      <button onclick="voegNototieToe()" class="save-btn">+ Notitie toevoegen</button>
     </div>
   </div>
 </div>
@@ -787,7 +862,15 @@ const PRIORITEITEN = [
 function migrateData(raw) {
   raw.forEach(p => {
     if (!Array.isArray(p.verantwoordelijke)) p.verantwoordelijke = p.verantwoordelijke ? [p.verantwoordelijke] : [];
-    p.acties = (p.acties||[]).map(a => ({od:[],wie:[],eigenaar:'',betrokkenen:[],doc:'',...a, wie: Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]), betrokkenen: Array.isArray(a.betrokkenen)?a.betrokkenen:[] }));
+    p.acties = (p.acties||[]).map(a => {
+      const wie = Array.isArray(a.wie)?a.wie:(a.wie?[a.wie]:[]);
+      // Migreer oud 'wie' veld naar eigenaar/betrokkenen als die nog leeg zijn
+      const eigenaar    = a.eigenaar || (wie.length===1 ? wie[0] : '');
+      const betrokkenen = Array.isArray(a.betrokkenen) ? a.betrokkenen
+                        : (wie.length>1 ? wie.slice(1) : []);
+      return {od:[],doc:'',notities:[],vergaderlog:[],...a, eigenaar, betrokkenen };
+    });
+    p.operationeleDelen = (p.operationeleDelen||[]).map(od => ({vergaderlog:[],...od}));
     if (!p.indicatorenPerOD) p.indicatorenPerOD = {};
     if (!p.evaluatiePerOD)  p.evaluatiePerOD  = {};
     p.operationeleDelen.forEach((_,oi) => {
@@ -1229,6 +1312,99 @@ function renderSjaar() {
   </div>`;
 }
 
+/* ── Notities per actie ── */
+let _notIdx=null, _notAi=null;
+
+function openNotities(idx, ai) {
+  _notIdx=idx; _notAi=ai;
+  const a = data[idx].acties[ai];
+  document.getElementById('notitie-titel').textContent = '📝 Notities — ' + (a.actie||'').substring(0,40);
+  document.getElementById('notitie-input').value = '';
+  renderNotitielog();
+  document.getElementById('notitie-popup').classList.add('open');
+  setTimeout(() => document.getElementById('notitie-input').focus(), 100);
+}
+
+function renderNotitielog() {
+  if (_notIdx===null) return;
+  const log = data[_notIdx].acties[_notAi].notities || [];
+  const html = log.length
+    ? [...log].reverse().map((n,i) => {
+        const realI = log.length-1-i;
+        return `<div class="notitie-item">
+          <div class="notitie-item-meta">
+            <span>${esc(n.datum||'')} · ${esc(n.auteur||'')}</span>
+            <span class="notitie-item-del" onclick="verwijderNotitie(${realI})">✕ verwijder</span>
+          </div>
+          <div class="notitie-item-tekst">${esc(n.tekst||'')}</div>
+        </div>`;
+      }).join('')
+    : '<p style="font-size:13px;color:var(--wico-muted);">Nog geen notities voor deze actie.</p>';
+  document.getElementById('notitie-log').innerHTML = html;
+}
+
+function voegNototieToe() {
+  if (_notIdx===null) return;
+  const tekst = (document.getElementById('notitie-input').value||'').trim();
+  if (!tekst) return;
+  if (!Array.isArray(data[_notIdx].acties[_notAi].notities)) data[_notIdx].acties[_notAi].notities=[];
+  data[_notIdx].acties[_notAi].notities.push({
+    tekst,
+    datum: new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'}),
+    auteur: ghGebruiker||'onbekend'
+  });
+  document.getElementById('notitie-input').value='';
+  renderNotitielog();
+  // Refresh chip in tabel
+  renderDetail(_notIdx); showSecTab(_notIdx,'acties',null);
+}
+
+function verwijderNotitie(i) {
+  if (!confirm('Notitie verwijderen?')) return;
+  data[_notIdx].acties[_notAi].notities.splice(i,1);
+  renderNotitielog();
+  renderDetail(_notIdx); showSecTab(_notIdx,'acties',null);
+}
+
+function sluitNotities() {
+  document.getElementById('notitie-popup').classList.remove('open');
+  _notIdx=null; _notAi=null;
+}
+
+document.getElementById('notitie-input').addEventListener('keydown', e => {
+  if (e.key==='Enter' && e.ctrlKey) voegNototieToe();
+});
+
+/* ── Vergaderlog per OD ── */
+function voegVlogToe(idx, oi) {
+  const el = document.getElementById(`vlog-input-${idx}-${oi}`);
+  const tekst = (el?.value||'').trim();
+  if (!tekst) return;
+  if (!Array.isArray(data[idx].operationeleDelen[oi].vergaderlog)) data[idx].operationeleDelen[oi].vergaderlog=[];
+  data[idx].operationeleDelen[oi].vergaderlog.push({
+    tekst,
+    datum: new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'}),
+    auteur: ghGebruiker||'onbekend'
+  });
+  renderDetail(idx); showSecTab(idx,'vergader',null);
+}
+
+function verwijderVlog(idx, oi, ei) {
+  if (!confirm('Vergadernotitie verwijderen?')) return;
+  data[idx].operationeleDelen[oi].vergaderlog.splice(ei,1);
+  renderDetail(idx); showSecTab(idx,'vergader',null);
+}
+
+/* ── Versie badge updaten ── */
+function updateVersieBadge() {
+  const el = document.getElementById('versie-badge');
+  if (!el) return;
+  const nu = new Date();
+  el.textContent = 'v ' + nu.toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'2-digit'})
+    + ' ' + nu.toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'});
+}
+
+
 function renderOverview() {
   const grid = document.getElementById('priority-overview');
   grid.innerHTML = data.map(p => {
@@ -1394,18 +1570,27 @@ function actieRow(idx,ai,p) {
   const doc=a.doc||'';
   const dlKleur  = deadlineKleur(a.wanneer, a.status);
   return `<tr style="vertical-align:middle;${dlKleur==='te-laat'?'background:#fff8f7;':''}">
-    <td>
-      <input type="text" value="${esc(a.actie)}" onchange="data[${idx}].acties[${ai}].actie=this.value" placeholder="Actie..."/>
-      ${deadlineBadge(a.wanneer, a.status)}
+    <td class="col-actie">
+      <textarea rows="2" style="width:100%;border:none;background:transparent;font-size:13px;font-family:inherit;color:var(--wico-text);padding:2px 4px;border-radius:4px;resize:vertical;line-height:1.4;font-weight:500;"
+        onchange="data[${idx}].acties[${ai}].actie=this.value"
+        onfocus="this.style.background='var(--wico-teal-xlight)';this.style.outline='1px solid var(--wico-teal)'"
+        onblur="this.style.background='transparent';this.style.outline='none'"
+        placeholder="Actie...">${esc(a.actie)}</textarea>
+      <div style="display:flex;gap:4px;align-items:center;margin-top:3px;flex-wrap:wrap;">
+        ${deadlineBadge(a.wanneer, a.status)}
+        <span class="notitie-chip" onclick="openNotities(${idx},${ai})" title="Notities bekijken/toevoegen">
+          📝${(a.notities||[]).length > 0 ? ' ' + (a.notities||[]).length : ''}
+        </span>
+      </div>
     </td>
-    <td>
+    <td class="col-datum">
       <input type="date" class="datum-input ${dlKleur}"
         value="${datumNaarISO(a.wanneer)}"
         title="${a.wanneer ? datumLeesbaar(datumNaarISO(a.wanneer)) : 'Kies een datum'}"
         onchange="data[${idx}].acties[${ai}].wanneer=this.value;this.title=datumLeesbaar(this.value);renderDetail(${idx});showSecTab(${idx},'acties',null);"
       />
     </td>
-    <td>
+    <td class="col-wie">
       <div class="eigenaar-wrap">
         <span class="eigenaar-label">Eigenaar</span>
         ${eigenaarSelectHTML(eigenaar,'setEigenaar_'+idx+'_'+ai)}
@@ -1459,18 +1644,33 @@ function renderDetail(idx) {
       </div></div>`).join('');
 
   const actiesTabHtml=p.operationeleDelen.map((od,oi)=>{
-    const rows=p.acties.map((a,ai)=>({...a,ai})).filter(a=>(a.od||[]).some(k=>{
+    const filterId = `actief-${idx}-${oi}`;
+    const alleActiesOD = p.acties.map((a,ai)=>({...a,ai})).filter(a=>(a.od||[]).some(k=>{
       const kp=k.pidx!==undefined?k.pidx:idx, ko=k.oi!==undefined?k.oi:k;
       return kp===idx&&ko===oi;
-    })).map(a=>actieRow(idx,a.ai,p)).join('');
+    }));
+    // Filter toepassen (eigenaar + status)
+    const actieFilter = window[`actieFilter_${idx}_${oi}`] || {status:'alle', eigenaar:'alle'};
+    const rows = alleActiesOD.filter(a => {
+      if (actieFilter.status !== 'alle' && a.status !== actieFilter.status) return false;
+      if (actieFilter.eigenaar !== 'alle' && a.eigenaar !== actieFilter.eigenaar) return false;
+      if (!actieMatchtFilter(a)) return false;
+      return true;
+    }).map(a=>actieRow(idx,a.ai,p)).join('');
     return `<div style="margin-bottom:18px;">
-      <div style="background:var(--wico-teal-xlight);border-left:3px solid var(--wico-teal);padding:8px 14px;border-radius:0 6px 0 0;">
-        <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);">OD${oi+1} — ${esc(od.titel)}</span></div>
+      <div style="background:var(--wico-teal-xlight);border-left:3px solid var(--wico-teal);padding:8px 14px;border-radius:0 6px 0 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);">OD${oi+1} — ${esc(od.titel)}</span>
+        <div class="actie-filter-bar" style="padding:0;">
+          ${['alle','open','loopt','klaar'].map(s=>`<span class="actie-filter-chip ${(window['actieFilter_'+idx+'_'+oi]||{}).status===s||(!window['actieFilter_'+idx+'_'+oi]&&s==='alle')?'aan':''}"
+            onclick="window['actieFilter_${idx}_${oi}']={...(window['actieFilter_${idx}_${oi}']||{}),status:'${s}'};renderDetail(${idx});showSecTab(${idx},'acties',null)">
+            ${s==='alle'?'Alle':s.charAt(0).toUpperCase()+s.slice(1)}</span>`).join('')}
+        </div>
+      </div>
       <div style="overflow-x:auto;border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;">
         <table class="actions-table"><thead><tr>
-          <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
-          <th style="min-width:160px;">Eigenaar / Betrokkenen</th><th style="min-width:75px;">Status</th>
-          <th style="min-width:120px;">Koppelingen</th><th style="min-width:80px;">Document</th><th style="width:28px;"></th>
+          <th class="col-actie">Actie</th><th class="col-datum">Wanneer</th>
+          <th class="col-wie">Eigenaar / Betrokkenen</th><th class="col-status">Status</th>
+          <th class="col-koppel">Koppelingen</th><th class="col-doc">Document</th><th class="col-del"></th>
         </tr></thead><tbody>${rows}</tbody></table></div>
       <button class="add-btn" onclick="addActie(${idx},${oi})">+ Actie toevoegen aan OD${oi+1}</button></div>`;
   }).join('') + `<div style="margin-bottom:18px;">
@@ -1478,9 +1678,9 @@ function renderDetail(idx) {
       <span style="font-size:12px;font-weight:700;color:#5a3a2a;">Acties zonder OD-koppeling</span></div>
     <div style="overflow-x:auto;border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;">
       <table class="actions-table"><thead><tr>
-        <th style="min-width:200px;">Actie</th><th style="min-width:95px;">Wanneer</th>
-        <th style="min-width:160px;">Eigenaar / Betrokkenen</th><th style="min-width:75px;">Status</th>
-        <th style="min-width:120px;">Koppelingen</th><th style="min-width:80px;">Document</th><th style="width:28px;"></th>
+        <th class="col-actie">Actie</th><th class="col-datum">Wanneer</th>
+        <th class="col-wie">Eigenaar / Betrokkenen</th><th class="col-status">Status</th>
+        <th class="col-koppel">Koppelingen</th><th class="col-doc">Document</th><th class="col-del"></th>
       </tr></thead><tbody>${p.acties.map((a,ai)=>!(a.od||[]).length?actieRow(idx,ai,p):'').join('')}</tbody></table></div>
     <button class="add-btn" onclick="addActie(${idx},null)">+ Actie toevoegen (ontkoppeld)</button></div>`;
 
@@ -1518,6 +1718,35 @@ function renderDetail(idx) {
         </div></div></div>`;
   }).join('');
 
+  // Vergaderlog per OD
+  const vergaderHtml = p.operationeleDelen.map((od,oi) => {
+    const log = (od.vergaderlog||[]).slice().reverse(); // nieuwste eerst
+    const items = log.map((entry,ei) => {
+      const realEi = (od.vergaderlog||[]).length - 1 - ei;
+      return `<div class="vlog-item">
+        <div>
+          <div class="vlog-datum">${esc(entry.datum||'')}</div>
+          <div class="vlog-auteur">${esc(entry.auteur||'')}</div>
+        </div>
+        <div class="vlog-tekst">${esc(entry.tekst||'')}</div>
+        <span class="vlog-del" onclick="verwijderVlog(${idx},${oi},${realEi})" title="Verwijderen">✕</span>
+      </div>`;
+    }).join('') || '<p style="font-size:13px;color:var(--wico-muted);padding:8px 0;">Nog geen vergadernotities voor dit doel.</p>';
+
+    return `<div style="margin-bottom:22px;">
+      <div style="background:var(--wico-teal-xlight);border-left:3px solid var(--wico-teal);padding:8px 14px;border-radius:0 6px 0 0;">
+        <span style="font-size:12px;font-weight:700;color:var(--wico-petrol);">OD${oi+1} — ${esc(od.titel)}</span>
+      </div>
+      <div style="border:1px solid var(--wico-gray);border-top:none;border-radius:0 0 6px 6px;padding:14px;">
+        <div class="vlog-wrap">${items}</div>
+        <div class="vlog-nieuw-wrap">
+          <textarea id="vlog-input-${idx}-${oi}" placeholder="Noteer hier de bespreking, beslissing of opmerking van vandaag..."></textarea>
+          <button class="save-btn" style="align-self:flex-end;" onclick="voegVlogToe(${idx},${oi})">+ Toevoegen</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
   const verArr=Array.isArray(p.verantwoordelijke)?p.verantwoordelijke:(p.verantwoordelijke?[p.verantwoordelijke]:[]);
 
   container.innerHTML=`
@@ -1546,6 +1775,7 @@ function renderDetail(idx) {
         <div class="sec-tab" onclick="showSecTab(${idx},'acties',this)">Acties</div>
         <div class="sec-tab" onclick="showSecTab(${idx},'indicatoren',this)">Indicatoren</div>
         <div class="sec-tab" onclick="showSecTab(${idx},'evaluatie',this)">Evaluatiemomenten</div>
+        <div class="sec-tab" onclick="showSecTab(${idx},'vergader',this)">📓 Vergaderlog</div>
       </div>
       <div class="section-body" id="sectab-${idx}-doelen">
         ${odsHtml}
@@ -1554,6 +1784,7 @@ function renderDetail(idx) {
       <div class="section-body" id="sectab-${idx}-acties" style="display:none;">${actiesTabHtml}</div>
       <div class="section-body" id="sectab-${idx}-indicatoren" style="display:none;">${indicHtml}</div>
       <div class="section-body" id="sectab-${idx}-evaluatie" style="display:none;">${evalHtml}</div>
+      <div class="section-body" id="sectab-${idx}-vergader" style="display:none;">${vergaderHtml}</div>
     </div>`;
 
   makeEditable(document.getElementById('streefdoel-'+idx), ()=>data[idx].streefdoel, v=>{ data[idx].streefdoel=v; }, true);
@@ -2017,7 +2248,7 @@ function uitvoerenAfdruk() {
         if (odActies.length) {
           html += `<table><tr><th>Actie</th><th>Wanneer</th><th>Wie</th><th>Status</th></tr>`;
           odActies.forEach(a => {
-            const wie = Array.isArray(a.wie)?a.wie.join(', '):(a.wie||'—');
+            const wie = a.eigenaar || (Array.isArray(a.betrokkenen)&&a.betrokkenen.length?a.betrokkenen.join(', '):'—');
             html += `<tr><td>${esc(a.actie)}</td><td>${esc(a.wanneer||'—')}</td><td>${esc(wie)}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
           });
           html += `</table>`;
@@ -2030,7 +2261,7 @@ function uitvoerenAfdruk() {
     html += `<table><tr><th>Actie</th><th>Prioriteit</th><th>Operationeel doel</th><th>Wanneer</th><th>Wie</th><th>Status</th></tr>`;
     data.forEach((p, pidx) => {
       p.acties.forEach(a => {
-        const wie = Array.isArray(a.wie)?a.wie.join(', '):(a.wie||'—');
+        const wie = a.eigenaar || (Array.isArray(a.betrokkenen)&&a.betrokkenen.length?a.betrokkenen.join(', '):'—');
         const kops = a.od||[];
         let odT = '—';
         if (kops.length) { const k=kops[0]; const kpidx=k.pidx!==undefined?k.pidx:pidx; const koi=k.oi!==undefined?k.oi:k; if(data[kpidx]&&data[kpidx].operationeleDelen[koi]) odT=data[kpidx].operationeleDelen[koi].titel; }
@@ -2055,7 +2286,7 @@ function uitvoerenAfdruk() {
       if (odActies.length) {
         html += `<table><tr><th>Actie</th><th>Wanneer</th><th>Wie</th><th>Status</th></tr>`;
         odActies.forEach(a => {
-          const wie = Array.isArray(a.wie)?a.wie.join(', '):(a.wie||'—');
+          const wie = a.eigenaar || (Array.isArray(a.betrokkenen)&&a.betrokkenen.length?a.betrokkenen.join(', '):'—');
           html += `<tr><td>${esc(a.actie)}</td><td>${esc(a.wanneer||'—')}</td><td>${esc(wie)}</td><td class="status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</td></tr>`;
         });
         html += `</table>`;
@@ -2150,7 +2381,7 @@ function uitvoerenAfdruk() {
 
 /* ── tabs & view switching ── */
 function showSecTab(idx,tab,el) {
-  ['doelen','acties','indicatoren','evaluatie'].forEach(t=>{
+  ['doelen','acties','indicatoren','evaluatie','vergader'].forEach(t=>{
     const e=document.getElementById('sectab-'+idx+'-'+t); if(e) e.style.display='none';
   });
   const tgt=document.getElementById('sectab-'+idx+'-'+tab); if(tgt) tgt.style.display='block';
@@ -2351,7 +2582,7 @@ window.saveAll = async function() {
     await ghSla({ data, teamleden });
     localStorage.setItem('prioriteitenplan', JSON.stringify(data));
     localStorage.setItem('wico_team', JSON.stringify(teamleden));
-    ghStatus('🟢 Opgeslagen', '#2a9a5a');
+    ghStatus('🟢 Opgeslagen', '#2a9a5a'); updateVersieBadge();
     const bar = document.getElementById('save-bar-msg');
     if (bar) {
       bar.textContent = '✅ Opgeslagen om ' + new Date().toLocaleTimeString('nl-BE');
@@ -2392,7 +2623,7 @@ async function ghLaadEnVerbind() {
       localStorage.setItem('prioriteitenplan', JSON.stringify(data));
       localStorage.setItem('wico_team', JSON.stringify(teamleden));
     }
-    ghStatus('🟢 Verbonden', '#2a9a5a');
+    ghStatus('🟢 Verbonden', '#2a9a5a'); updateVersieBadge();
     const bar = document.getElementById('save-bar-msg');
     if (bar) bar.textContent = remote ? '🔄 Geladen van GitHub' : '✨ Klaar om te starten';
   } catch (err) {
