@@ -491,7 +491,13 @@
       "streefdoel": "De school versterkt het eigenaarschap van leerlingen door hen inzicht te geven in hun leerproces, zodat zij doelgericht kunnen werken aan hun eigen vooruitgang.",
       "operationeleDelen": [
         {
-          "vergaderlog": [],
+          "vergaderlog": [
+            {
+              "tekst": "test @Richard",
+              "datum": "21 mrt 2026",
+              "auteur": "Richard"
+            }
+          ],
           "titel": "OD1 — Effectieve feedback in het leerproces",
           "omschrijving": "Het lerarenteam past effectieve feedback toe in het leerproces van de leerling.",
           "effecten": "Op het einde van schooljaar 25/26 weten alle leerkrachten waarom effectieve feedback belangrijk is. Leerkrachten begrijpen het verschil tussen feedback, feedup en feedforward en passen dit gericht toe vanaf januari 2027."
