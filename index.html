@@ -1483,8 +1483,11 @@ function updateVersieBadge() {
 // Parses @naam tags in tekst naar HTML spans
 function renderMentions(tekst) {
   if (!tekst) return '';
-  return esc(tekst).replace(/@([^\s@<]+)/g, (match, naam) => {
-    const gevonden = teamleden.find(t => t.toLowerCase() === naam.toLowerCase());
+  return esc(tekst).replace(/@([^\s@<]+)/g, (match, getypt) => {
+    const gevonden = teamleden.find(t =>
+      t.toLowerCase() === getypt.toLowerCase() ||
+      t.toLowerCase().split(' ')[0] === getypt.toLowerCase()
+    );
     if (gevonden) return `<span class="mention-tag">@${esc(gevonden)}</span>`;
     return match;
   });
@@ -1519,7 +1522,11 @@ function handleMentionInput(ta, dd) {
   if (at === -1) { dd.style.display='none'; return; }
 
   const zoek = val.substring(at+1, cur).toLowerCase();
-  const matches = teamleden.filter(n => n.toLowerCase().startsWith(zoek));
+  // Match op volledige naam of voornaam
+  const matches = teamleden.filter(n =>
+    n.toLowerCase().startsWith(zoek) ||
+    n.toLowerCase().split(' ')[0].startsWith(zoek)
+  );
 
   if (!matches.length) { dd.style.display='none'; return; }
 
@@ -1598,27 +1605,33 @@ function slaaMeldingenOp(meldingen) {
 
 // Extraheer @mentions uit tekst en maak meldingen aan
 function verwerkMentions(tekst, context) {
-  if (!tekst || !ghGebruiker) return;
+  if (!tekst) return;
   const gevonden = new Set();
   const regex = /@([^\s@]+)/g;
   let match;
   while ((match = regex.exec(tekst)) !== null) {
-    const naam = teamleden.find(t => t.toLowerCase() === match[1].toLowerCase());
-    if (naam && naam !== ghGebruiker) gevonden.add(naam);
+    const getypt = match[1].toLowerCase();
+    // Zoek exact of op voornaam (eerste woord)
+    const naam = teamleden.find(t =>
+      t.toLowerCase() === getypt ||
+      t.toLowerCase().split(' ')[0] === getypt
+    );
+    if (naam) gevonden.add(naam);
   }
   gevonden.forEach(naam => {
-    // Sla melding op voor die persoon
     const sleutel = 'wico_meldingen_' + naam;
     const bestaand = JSON.parse(localStorage.getItem(sleutel) || '[]');
     bestaand.push({
       id: Date.now() + Math.random(),
-      van: ghGebruiker,
-      tekst: tekst.substring(0, 100) + (tekst.length>100?'...':''),
+      van: ghGebruiker || 'iemand',
+      tekst: tekst.substring(0, 100) + (tekst.length > 100 ? '...' : ''),
       context,
-      datum: new Date().toLocaleString('nl-BE',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),
+      datum: new Date().toLocaleString('nl-BE', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),
       gelezen: false
     });
     localStorage.setItem(sleutel, JSON.stringify(bestaand));
+    // Als dit de huidige gebruiker is: meteen badge updaten
+    if (naam === ghGebruiker) updateMeldingBadge();
   });
 }
 
