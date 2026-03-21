@@ -386,6 +386,8 @@
   /* ── Versie in header ── */
   .versie-badge { font-size:10px; color:rgba(255,255,255,0.5); padding:3px 8px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); cursor:pointer; white-space:nowrap; }
   .versie-badge:hover { color:rgba(255,255,255,0.9); border-color:rgba(255,255,255,0.4); }
+  #gh-conn { transition: background 0.3s, transform 0.15s; }
+  #gh-conn:hover { transform: scale(1.4) !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.3) !important; }
 
 
   /* ── @ mention dropdown ── */
@@ -527,7 +529,7 @@
 
     <!-- Weergaven dropdown -->
     <div class="hdr-menu-wrap" id="menu-weergaven">
-      <button class="print-btn hdr-menu-btn" onclick="toggleHdrMenu('menu-weergaven')">
+      <button class="print-btn hdr-menu-btn" onclick="toggleHdrMenu('menu-weergaven',event)">
         📊 Weergaven <span class="chevron">▾</span>
       </button>
       <div class="hdr-dropdown" id="dd-weergaven">
@@ -560,7 +562,7 @@
 
     <!-- Beheer dropdown -->
     <div class="hdr-menu-wrap" id="menu-beheer">
-      <button class="print-btn hdr-menu-btn" onclick="toggleHdrMenu('menu-beheer')" title="Instellingen">
+      <button class="print-btn hdr-menu-btn" onclick="toggleHdrMenu('menu-beheer',event)" title="Instellingen">
         ⚙️ <span class="chevron">▾</span>
       </button>
       <div class="hdr-dropdown" id="dd-beheer">
@@ -578,7 +580,9 @@
     </div>
 
     <!-- Status -->
-    <span id="gh-conn" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:#5a7a80;color:#fff;white-space:nowrap;cursor:default;" title="GitHub opslag status">⏳ Laden...</span>
+    <span id="gh-conn"
+      style="width:12px;height:12px;border-radius:50%;background:#5a7a80;display:inline-block;cursor:default;flex-shrink:0;transition:background 0.3s;box-shadow:0 0 0 2px rgba(255,255,255,0.2);"
+      title="⏳ Laden..."></span>
 
   </div>
 </div>
@@ -2854,7 +2858,8 @@ document.addEventListener('scroll', () => {
 }, true);
 
 /* ── Header dropdown menus ── */
-function toggleHdrMenu(id) {
+function toggleHdrMenu(id, event) {
+  if (event) event.stopPropagation(); // voorkom dat document click het menu meteen sluit
   const wrap = document.getElementById(id);
   const wasOpen = wrap.classList.contains('open');
   sluitHdrMenus();
@@ -2864,7 +2869,7 @@ function toggleHdrMenu(id) {
     const btn  = wrap.querySelector('.hdr-menu-btn');
     const dd   = wrap.querySelector('.hdr-dropdown');
     const rect = btn.getBoundingClientRect();
-    dd.style.top  = (rect.bottom + 4) + 'px';
+    dd.style.top   = (rect.bottom + 4) + 'px';
     dd.style.right = (window.innerWidth - rect.right) + 'px';
     dd.style.left  = 'auto';
   }
@@ -2910,7 +2915,13 @@ let ghGebruiker = localStorage.getItem('wico_gebruiker') || '';
 /* ── Status indicator ── */
 function ghStatus(tekst, kleur) {
   const el = document.getElementById('gh-conn');
-  if (el) { el.textContent = tekst; el.style.background = kleur; }
+  if (el) {
+    el.style.background = kleur;
+    el.title = tekst; // hover toont de tekst
+    // Kleine puls animatie bij statuswijziging
+    el.style.transform = 'scale(1.3)';
+    setTimeout(() => el.style.transform = '', 300);
+  }
 }
 
 /* ── Naam label ── */
