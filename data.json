@@ -485,7 +485,9 @@
       "id": 3,
       "tag": "Eigenaarschap leerlingen",
       "tagClass": "tag-eigenaarschap",
-      "verantwoordelijke": [],
+      "verantwoordelijke": [
+        "Richard"
+      ],
       "streefdoel": "De school versterkt het eigenaarschap van leerlingen door hen inzicht te geven in hun leerproces, zodat zij doelgericht kunnen werken aan hun eigen vooruitgang.",
       "operationeleDelen": [
         {
