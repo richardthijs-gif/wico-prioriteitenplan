@@ -413,6 +413,22 @@
   .melding-meta { font-size:10px; color:var(--wico-muted); margin-top:2px; }
   .melding-ftr { padding:12px 20px; border-top:1px solid var(--wico-gray); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
 
+
+  /* ── Header dropdown menus ── */
+  .hdr-menu-wrap { position:relative; display:inline-block; }
+  .hdr-menu-btn  { display:flex; align-items:center; gap:5px; }
+  .hdr-menu-btn .chevron { font-size:9px; opacity:0.7; transition:transform 0.15s; }
+  .hdr-menu-wrap.open .chevron { transform:rotate(180deg); }
+  .hdr-dropdown  { display:none; position:fixed; background:var(--wico-white); border:1px solid var(--wico-gray);
+    border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.18); z-index:9999; min-width:200px; padding:6px; }
+  .hdr-menu-wrap.open .hdr-dropdown { display:block; }
+  .hdr-dd-item   { display:flex; align-items:center; gap:10px; padding:9px 14px; border-radius:6px;
+    font-size:13px; font-weight:500; color:var(--wico-text); cursor:pointer; transition:background 0.1s; white-space:nowrap; }
+  .hdr-dd-item:hover { background:var(--wico-teal-xlight); color:var(--wico-petrol); }
+  .hdr-dd-item.actief { background:var(--wico-petrol); color:white; }
+  .hdr-dd-item .dd-icoon { font-size:16px; width:24px; text-align:center; flex-shrink:0; }
+  .hdr-dd-scheiding { height:1px; background:var(--wico-gray); margin:4px 6px; }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -508,15 +524,62 @@
     </div>
   </div>
   <div class="header-right">
-    <button onclick="showView('kalender', this)" id="header-kal-btn" class="print-btn" style="margin-right:6px;">📅 Kalender</button>
-    <button onclick="showView('sjaar', this)" id="header-sjaar-btn" class="print-btn" style="margin-right:6px;">📊 Schooljaar</button>
-    <button onclick="showView('directie', this)" id="header-dir-btn" class="print-btn" style="margin-right:6px;">🎯 Directie</button>
-    <button onclick="showView('team', this)" id="header-team-btn" class="print-btn" style="margin-right:6px;">👥 Teamopvolging</button>
-    <button onclick="toggleMijnActies()" id="header-mijn-btn" class="print-btn" style="margin-right:6px;">👤 Mijn acties</button>
-    <button onclick="openMeldingen()" id="header-meld-btn" class="print-btn" style="margin-right:6px;">🔔<span id="melding-count" style="display:none;" class="melding-badge">0</span></button>
-    <button onclick="openTeamManager()" class="print-btn" style="margin-right:6px;">⚙️ Team beheren</button>
-    <button onclick="openPrintMenu()" class="print-btn" style="margin-right:6px;">🖨️ Afdrukken</button>
+
+    <!-- Weergaven dropdown -->
+    <div class="hdr-menu-wrap" id="menu-weergaven">
+      <button class="print-btn hdr-menu-btn" onclick="toggleHdrMenu('menu-weergaven')">
+        📊 Weergaven <span class="chevron">▾</span>
+      </button>
+      <div class="hdr-dropdown" id="dd-weergaven">
+        <div class="hdr-dd-item" id="dd-kalender" onclick="showView('kalender',null);sluitHdrMenus()">
+          <span class="dd-icoon">📅</span> Kalender
+        </div>
+        <div class="hdr-dd-item" id="dd-sjaar" onclick="showView('sjaar',null);sluitHdrMenus()">
+          <span class="dd-icoon">📊</span> Schooljaarweergave
+        </div>
+        <div class="hdr-dd-item" id="dd-directie" onclick="showView('directie',null);sluitHdrMenus()">
+          <span class="dd-icoon">🎯</span> Directieoverzicht
+        </div>
+        <div class="hdr-dd-item" id="dd-team" onclick="showView('team',null);sluitHdrMenus()">
+          <span class="dd-icoon">👥</span> Teamopvolging
+        </div>
+        <div class="hdr-dd-item" id="dd-overview" onclick="showView('overview',null);sluitHdrMenus()">
+          <span class="dd-icoon">🏠</span> Overzicht
+        </div>
+      </div>
+    </div>
+
+    <!-- Mijn acties -->
+    <button onclick="toggleMijnActies()" id="header-mijn-btn" class="print-btn"
+      title="Toon alleen acties waarvan jij eigenaar of betrokkene bent">👤 Mijn acties</button>
+
+    <!-- Meldingen -->
+    <button onclick="openMeldingen()" id="header-meld-btn" class="print-btn" title="Meldingen">
+      🔔<span id="melding-count" style="display:none;" class="melding-badge">0</span>
+    </button>
+
+    <!-- Beheer dropdown -->
+    <div class="hdr-menu-wrap" id="menu-beheer">
+      <button class="print-btn hdr-menu-btn" onclick="toggleHdrMenu('menu-beheer')" title="Instellingen">
+        ⚙️ <span class="chevron">▾</span>
+      </button>
+      <div class="hdr-dropdown" id="dd-beheer">
+        <div class="hdr-dd-item" onclick="openTeamManager();sluitHdrMenus()">
+          <span class="dd-icoon">👥</span> Team beheren
+        </div>
+        <div class="hdr-dd-item" onclick="openPrintMenu();sluitHdrMenus()">
+          <span class="dd-icoon">🖨️</span> Afdrukken
+        </div>
+        <div class="hdr-dd-scheiding"></div>
+        <div class="hdr-dd-item" onclick="wisselGebruiker();sluitHdrMenus()">
+          <span class="dd-icoon">✏️</span> <span id="dd-gebruiker-naam">Naam / token wijzigen</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status -->
     <span id="gh-conn" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:#5a7a80;color:#fff;white-space:nowrap;cursor:default;" title="GitHub opslag status">⏳ Laden...</span>
+
   </div>
 </div>
 
@@ -1113,6 +1176,15 @@ function toggleMijnActies() {
     btn.style.background = mijnActiesActief ? 'rgba(255,255,255,0.35)' : '';
     btn.style.fontWeight = mijnActiesActief ? '800' : '';
     btn.textContent = mijnActiesActief ? `👤 ${ghGebruiker||'Mijn'} acties ✕` : '👤 Mijn acties';
+    btn.title = mijnActiesActief
+      ? `Filter actief: toont alleen acties van ${ghGebruiker||'jou'}. Klik om uit te zetten.`
+      : 'Toon alleen acties waarvan jij eigenaar of betrokkene bent';
+  }
+  // Toon uitleg in save-balk
+  const bar = document.getElementById('save-bar-msg');
+  if (bar && mijnActiesActief) {
+    bar.textContent = `🔍 Filter actief — toont alleen acties van ${ghGebruiker||'jou'}. Klik nogmaals op "Mijn acties" om alle acties te zien.`;
+    setTimeout(() => { if (mijnActiesActief) return; bar.textContent = 'Automatisch opgeslagen op GitHub.'; }, 5000);
   }
   // Als we al in een detail-view zijn, herrender
   const activeDetail = document.querySelector('[id^="view-detail-"]:not([style*="none"])');
@@ -1543,7 +1615,23 @@ function handleMentionInput(ta, dd) {
       ${esc(naam)}
     </div>`;
   }).join('');
-  dd.style.display='block';
+
+  // Positioneer dropdown via fixed positioning (ontsnapt overflow:hidden)
+  const rect = ta.getBoundingClientRect();
+  dd.style.position = 'fixed';
+  dd.style.zIndex   = '9999';
+  dd.style.width    = Math.max(200, rect.width) + 'px';
+  const spaceBelow  = window.innerHeight - rect.bottom;
+  if (spaceBelow > 160) {
+    dd.style.top    = (rect.bottom + 2) + 'px';
+    dd.style.bottom = '';
+  } else {
+    dd.style.bottom = (window.innerHeight - rect.top + 2) + 'px';
+    dd.style.top    = '';
+  }
+  dd.style.left   = rect.left + 'px';
+  dd.style.right  = '';
+  dd.style.display = 'block';
 }
 
 function handleMentionKey(e, ta, dd) {
@@ -1588,6 +1676,11 @@ const _origOpenNotities = window.openNotities || function(){};
 function setupMentionListeners() {
   // Notitie input
   initMentionTA('notitie-input', 'mention-dd-notitie');
+  // Alle vlog-inputs die op dit moment in de DOM staan
+  document.querySelectorAll('[id^="vlog-input-"]').forEach(ta => {
+    const ddId = 'mention-dd-' + ta.id;
+    initMentionTA(ta.id, ddId);
+  });
 }
 
 /* ══════════════════════════════════════════════════════
@@ -2682,11 +2775,14 @@ function showSecTab(idx,tab,el) {
   });
   const tgt=document.getElementById('sectab-'+idx+'-'+tab); if(tgt) tgt.style.display='block';
   if(el){ el.closest('.section-tabs').querySelectorAll('.sec-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+  // Init mention listeners voor vlog-inputs als vergader-tab actief
+  if (tab === 'vergader') setTimeout(setupMentionListeners, 50);
 }
 function showView(viewId, tabEl) {
   document.querySelectorAll('[id^="view-"]').forEach(el => el.style.display='none');
   const tgt = document.getElementById('view-'+viewId);
   if (tgt) tgt.style.display = 'block';
+  updateHdrWeergaveActief(viewId);
 
   if      (viewId === 'overview')  renderOverview();
   else if (viewId === 'team')      renderTeamView();
@@ -2698,15 +2794,7 @@ function showView(viewId, tabEl) {
   const tabs = document.querySelectorAll('.nav-tab');
   tabs.forEach(t => t.classList.remove('active'));
 
-  // Header knop highlights
-  const hBtns = {
-    'header-team-btn': 'team', 'header-kal-btn': 'kalender',
-    'header-dir-btn': 'directie', 'header-sjaar-btn': 'sjaar'
-  };
-  Object.entries(hBtns).forEach(([id, view]) => {
-    const btn = document.getElementById(id);
-    if (btn) btn.style.background = viewId === view ? 'rgba(255,255,255,0.25)' : '';
-  });
+  // Header dropdown actieve staat wordt bijgewerkt via updateHdrWeergaveActief()
 
   if (tabEl && tabEl.classList.contains('nav-tab')) {
     tabEl.classList.add('active');
@@ -2765,6 +2853,48 @@ document.addEventListener('scroll', () => {
   document.querySelectorAll('.person-dropdown.open').forEach(d => d.classList.remove('open'));
 }, true);
 
+/* ── Header dropdown menus ── */
+function toggleHdrMenu(id) {
+  const wrap = document.getElementById(id);
+  const wasOpen = wrap.classList.contains('open');
+  sluitHdrMenus();
+  if (!wasOpen) {
+    wrap.classList.add('open');
+    // Positioneer dropdown
+    const btn  = wrap.querySelector('.hdr-menu-btn');
+    const dd   = wrap.querySelector('.hdr-dropdown');
+    const rect = btn.getBoundingClientRect();
+    dd.style.top  = (rect.bottom + 4) + 'px';
+    dd.style.right = (window.innerWidth - rect.right) + 'px';
+    dd.style.left  = 'auto';
+  }
+}
+
+function sluitHdrMenus() {
+  document.querySelectorAll('.hdr-menu-wrap.open').forEach(w => w.classList.remove('open'));
+}
+
+// Sluit bij klik buiten
+document.addEventListener('click', e => {
+  if (!e.target.closest('.hdr-menu-wrap')) sluitHdrMenus();
+});
+
+// Update actieve weergave in dropdown
+function updateHdrWeergaveActief(viewId) {
+  document.querySelectorAll('#dd-weergaven .hdr-dd-item').forEach(el => el.classList.remove('actief'));
+  const map = { kalender:'dd-kalender', sjaar:'dd-sjaar', directie:'dd-directie', team:'dd-team', overview:'dd-overview' };
+  if (map[viewId]) {
+    const el = document.getElementById(map[viewId]);
+    if (el) el.classList.add('actief');
+  }
+}
+
+// Update gebruikersnaam in beheer-dropdown
+function updateHdrGebruiker() {
+  const el = document.getElementById('dd-gebruiker-naam');
+  if (el && ghGebruiker) el.textContent = '✏️ ' + ghGebruiker;
+}
+
 <script>
 /* ── WICO GitHub opslag ── */
 const GH = {
@@ -2787,6 +2917,7 @@ function ghStatus(tekst, kleur) {
 function updateNaamLabel() {
   const el = document.getElementById('save-gebruiker');
   if (el) el.textContent = ghGebruiker ? '👤 ' + ghGebruiker : '';
+  updateHdrGebruiker();
 }
 
 /* ── Setup modal tonen/verbergen ── */
