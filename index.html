@@ -2852,6 +2852,7 @@ document.addEventListener('keydown', e => {
 });
 </script>
 
+<script>
 // Sluit dropdowns bij scrollen zodat ze niet zweven
 document.addEventListener('scroll', () => {
   document.querySelectorAll('.person-dropdown.open').forEach(d => d.classList.remove('open'));
@@ -2899,6 +2900,7 @@ function updateHdrGebruiker() {
   const el = document.getElementById('dd-gebruiker-naam');
   if (el && ghGebruiker) el.textContent = '✏️ ' + ghGebruiker;
 }
+</script>
 
 <script>
 /* ── WICO GitHub opslag ── */
