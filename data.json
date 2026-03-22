@@ -150,7 +150,17 @@
           "bannen": "",
           "bijsturen": ""
         }
-      }
+      },
+      "inspiratie": [
+        {
+          "url": "https://open.spotify.com/episode/2uNEZC7RLHlATJb29lIH1M?si=7003247d67204848",
+          "titel": "Podcast Gert Verbrugghen",
+          "type": "overig",
+          "omschrijving": "",
+          "toegevoegd": "22 mrt 2026",
+          "auteur": "Richard"
+        }
+      ]
     },
     {
       "id": 2,
