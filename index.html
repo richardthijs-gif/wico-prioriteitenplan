@@ -565,15 +565,16 @@
   </div>
   <div class="header-right">
 
+    <!-- Kalender knop -->
+    <button onclick="showView('kalender',null)" id="header-kal-btn" class="print-btn">📅 Kalender</button>
+
     <!-- Weergaven dropdown -->
     <div class="hdr-menu-wrap" id="menu-weergaven">
       <button class="print-btn hdr-menu-btn" onclick="toggleHdrMenu('menu-weergaven',event)">
         📊 Weergaven <span class="chevron">▾</span>
       </button>
       <div class="hdr-dropdown" id="dd-weergaven">
-        <div class="hdr-dd-item" id="dd-kalender" onclick="showView('kalender',null);sluitHdrMenus()">
-          <span class="dd-icoon">📅</span> Kalender
-        </div>
+
         <div class="hdr-dd-item" id="dd-sjaar" onclick="showView('sjaar',null);sluitHdrMenus()">
           <span class="dd-icoon">📊</span> Schooljaarweergave
         </div>
@@ -583,9 +584,7 @@
         <div class="hdr-dd-item" id="dd-team" onclick="showView('team',null);sluitHdrMenus()">
           <span class="dd-icoon">👥</span> Teamopvolging
         </div>
-        <div class="hdr-dd-item" id="dd-overview" onclick="showView('overview',null);sluitHdrMenus()">
-          <span class="dd-icoon">🏠</span> Overzicht
-        </div>
+
       </div>
     </div>
 
@@ -3099,6 +3098,8 @@ function showView(viewId, tabEl) {
   tabs.forEach(t => t.classList.remove('active'));
 
   // Header dropdown actieve staat wordt bijgewerkt via updateHdrWeergaveActief()
+  const hKal = document.getElementById('header-kal-btn');
+  if (hKal) hKal.style.background = viewId === 'kalender' ? 'rgba(255,255,255,0.25)' : '';
 
   if (tabEl && tabEl.classList.contains('nav-tab')) {
     tabEl.classList.add('active');
@@ -3188,7 +3189,7 @@ document.addEventListener('click', e => {
 // Update actieve weergave in dropdown
 function updateHdrWeergaveActief(viewId) {
   document.querySelectorAll('#dd-weergaven .hdr-dd-item').forEach(el => el.classList.remove('actief'));
-  const map = { kalender:'dd-kalender', sjaar:'dd-sjaar', directie:'dd-directie', team:'dd-team', overview:'dd-overview' };
+  const map = { sjaar:'dd-sjaar', directie:'dd-directie', team:'dd-team' };
   if (map[viewId]) {
     const el = document.getElementById(map[viewId]);
     if (el) el.classList.add('actief');
@@ -3198,7 +3199,7 @@ function updateHdrWeergaveActief(viewId) {
 // Update gebruikersnaam in beheer-dropdown
 function updateHdrGebruiker() {
   const el = document.getElementById('dd-gebruiker-naam');
-  if (el && ghGebruiker) el.textContent = '✏️ ' + ghGebruiker;
+  if (el && ghGebruiker) el.textContent = ghGebruiker;
 }
 </script>
 
