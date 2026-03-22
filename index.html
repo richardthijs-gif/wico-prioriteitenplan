@@ -2085,6 +2085,60 @@ function kalKoppelBestaande(ai) {
   renderKalender();
 }
 
+/* ══════════════════════════════════════════════════════
+   INSPIRATIE TABBLAD
+   ══════════════════════════════════════════════════════ */
+
+function toggleInspForm(idx) {
+  const form = document.getElementById('insp-form-' + idx);
+  if (!form) return;
+  const open = form.style.display !== 'none';
+  form.style.display = open ? 'none' : 'block';
+  if (!open) setTimeout(() => document.getElementById('insp-url-' + idx)?.focus(), 50);
+}
+
+// Auto-detecteer type op basis van URL
+function inspAutoType(idx) {
+  const url = (document.getElementById('insp-url-' + idx)?.value || '').toLowerCase();
+  const typeSelect = document.getElementById('insp-type-' + idx);
+  if (!typeSelect) return;
+  if (url.includes('youtube') || url.includes('youtu.be') || url.includes('vimeo')) {
+    typeSelect.value = 'video';
+  } else if (url.endsWith('.pdf') || url.includes('/pdf/')) {
+    typeSelect.value = 'pdf';
+  } else if (url.includes('drive.google') || url.includes('sharepoint') || url.includes('docs.')) {
+    typeSelect.value = 'artikel';
+  }
+}
+
+function voegInspirateToe(idx) {
+  const url     = (document.getElementById('insp-url-'   + idx)?.value || '').trim();
+  const titel   = (document.getElementById('insp-titel-' + idx)?.value || '').trim();
+  const type    = document.getElementById('insp-type-'  + idx)?.value || 'website';
+  const omschr  = (document.getElementById('insp-omschr-'+ idx)?.value || '').trim();
+
+  if (!url) { document.getElementById('insp-url-' + idx)?.focus(); return; }
+
+  if (!Array.isArray(data[idx].inspiratie)) data[idx].inspiratie = [];
+  data[idx].inspiratie.push({
+    url, titel: titel || url, type, omschrijving: omschr,
+    toegevoegd: new Date().toLocaleDateString('nl-BE', {day:'numeric',month:'short',year:'numeric'}),
+    auteur: ghGebruiker || 'onbekend'
+  });
+
+  renderDetail(idx);
+  showSecTab(idx, 'inspiratie', null);
+  window.saveAll();
+}
+
+function verwijderInspiratie(idx, ii) {
+  if (!confirm('Inspiratiebron verwijderen?')) return;
+  data[idx].inspiratie.splice(ii, 1);
+  renderDetail(idx);
+  showSecTab(idx, 'inspiratie', null);
+  window.saveAll();
+}
+
 function renderOverview() {
   const grid = document.getElementById('priority-overview');
   grid.innerHTML = data.map(p => {
@@ -2430,6 +2484,76 @@ function renderDetail(idx) {
     </div>`;
   }).join('');
 
+  // Inspiratie per prioriteit
+  const _typeIcoon = { video:'🎬', artikel:'📄', pdf:'📋', website:'🌐', overig:'📌' };
+  const _inspiratie = p.inspiratie || [];
+  const _inspKaarten = _inspiratie.length
+    ? _inspiratie.map((item, ii) => {
+        const icoon = _typeIcoon[item.type||'overig'] || '📌';
+        const domein = (() => { try { return new URL(item.url).hostname.replace('www.',''); } catch { return item.url||''; } })();
+        return `<div class="insp-kaart">
+          <div class="insp-kaart-preview type-${esc(item.type||'overig')}"></div>
+          <div class="insp-kaart-body">
+            <div class="insp-kaart-type">${icoon} ${esc(item.type||'overig')}</div>
+            <div class="insp-kaart-titel">${esc(item.titel||'Zonder titel')}</div>
+            ${item.omschrijving ? `<div class="insp-kaart-omschr">${esc(item.omschrijving)}</div>` : ''}
+          </div>
+          <div class="insp-kaart-ftr">
+            <a href="${esc(item.url||'#')}" target="_blank" class="insp-kaart-link" title="${esc(item.url||'')}">
+              🔗 ${esc(domein)}
+            </a>
+            <span class="insp-kaart-del" onclick="verwijderInspiratie(${idx},${ii})" title="Verwijderen">✕</span>
+          </div>
+        </div>`;
+      }).join('')
+    : `<div class="insp-leeg">Nog geen inspiratiebronnen toegevoegd.<br>Voeg links toe naar artikels, video's, PDF's of websites.</div>`;
+
+  const inspiratieHtml = `
+    <div class="insp-nieuw-form" id="insp-form-${idx}" style="display:none;">
+      <h4>+ Inspiratiebron toevoegen</h4>
+      <div class="insp-form-rij">
+        <div class="insp-form-veld" style="grid-column:1/-1;">
+          <label>Link (URL)</label>
+          <input type="url" id="insp-url-${idx}" placeholder="https://..." oninput="inspAutoType(${idx})"/>
+        </div>
+      </div>
+      <div class="insp-form-rij">
+        <div class="insp-form-veld">
+          <label>Titel</label>
+          <input type="text" id="insp-titel-${idx}" placeholder="Naam van de bron..."/>
+        </div>
+        <div class="insp-form-veld">
+          <label>Type</label>
+          <select id="insp-type-${idx}">
+            <option value="website">🌐 Website</option>
+            <option value="artikel">📄 Artikel</option>
+            <option value="video">🎬 Video</option>
+            <option value="pdf">📋 PDF</option>
+            <option value="overig">📌 Overig</option>
+          </select>
+        </div>
+      </div>
+      <div class="insp-form-rij">
+        <div class="insp-form-veld" style="grid-column:1/-1;">
+          <label>Omschrijving (optioneel)</label>
+          <textarea id="insp-omschr-${idx}" rows="2" placeholder="Korte beschrijving of notitie..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">
+        <button onclick="document.getElementById('insp-form-${idx}').style.display='none'" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--wico-muted);">Annuleren</button>
+        <button onclick="voegInspirateToe(${idx})" class="save-btn">Toevoegen</button>
+      </div>
+    </div>
+    <div style="border:1px solid var(--wico-gray);border-radius:8px;overflow:hidden;margin-bottom:16px;">
+      <div class="insp-sectie-hdr">
+        <span>💡 Inspiratiebronnen voor ${esc(p.tag)}</span>
+        <button class="insp-toggle-form" onclick="toggleInspForm(${idx})">+ Bron toevoegen</button>
+      </div>
+      <div style="padding:14px;">
+        <div class="insp-grid">${_inspKaarten}</div>
+      </div>
+    </div>`;
+
   const verArr=Array.isArray(p.verantwoordelijke)?p.verantwoordelijke:(p.verantwoordelijke?[p.verantwoordelijke]:[]);
 
   container.innerHTML=`
@@ -2459,6 +2583,7 @@ function renderDetail(idx) {
         <div class="sec-tab" onclick="showSecTab(${idx},'indicatoren',this)">Indicatoren</div>
         <div class="sec-tab" onclick="showSecTab(${idx},'evaluatie',this)">Evaluatiemomenten</div>
         <div class="sec-tab" onclick="showSecTab(${idx},'vergader',this)">📓 Vergaderlog</div>
+        <div class="sec-tab" onclick="showSecTab(${idx},'inspiratie',this)">💡 Inspiratie</div>
       </div>
       <div class="section-body" id="sectab-${idx}-doelen">
         ${odsHtml}
@@ -2468,6 +2593,7 @@ function renderDetail(idx) {
       <div class="section-body" id="sectab-${idx}-indicatoren" style="display:none;">${indicHtml}</div>
       <div class="section-body" id="sectab-${idx}-evaluatie" style="display:none;">${evalHtml}</div>
       <div class="section-body" id="sectab-${idx}-vergader" style="display:none;">${vergaderHtml}</div>
+      <div class="section-body" id="sectab-${idx}-inspiratie" style="display:none;">${inspiratieHtml}</div>
     </div>`;
 
   makeEditable(document.getElementById('streefdoel-'+idx), ()=>data[idx].streefdoel, v=>{ data[idx].streefdoel=v; }, true);
@@ -3073,7 +3199,7 @@ function uitvoerenAfdruk() {
 
 /* ── tabs & view switching ── */
 function showSecTab(idx,tab,el) {
-  ['doelen','acties','indicatoren','evaluatie','vergader'].forEach(t=>{
+  ['doelen','acties','indicatoren','evaluatie','vergader','inspiratie'].forEach(t=>{
     const e=document.getElementById('sectab-'+idx+'-'+t); if(e) e.style.display='none';
   });
   const tgt=document.getElementById('sectab-'+idx+'-'+tab); if(tgt) tgt.style.display='block';
