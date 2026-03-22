@@ -431,6 +431,44 @@
   .hdr-dd-item .dd-icoon { font-size:16px; width:24px; text-align:center; flex-shrink:0; }
   .hdr-dd-scheiding { height:1px; background:var(--wico-gray); margin:4px 6px; }
 
+
+  /* ── Kalender nieuwe actie popup ── */
+  .kal-nieuw-overlay { display:none; position:fixed; inset:0; background:rgba(20,40,44,0.65); z-index:2000; align-items:center; justify-content:center; }
+  .kal-nieuw-overlay.open { display:flex; }
+  .kal-nieuw-modal { background:var(--wico-white); border-radius:14px; width:520px; max-width:96vw; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 12px 48px rgba(0,0,0,0.28); }
+  .kal-nieuw-hdr { background:var(--wico-petrol); padding:16px 22px; flex-shrink:0; }
+  .kal-nieuw-hdr h3 { font-size:15px; font-weight:700; color:white; margin-bottom:2px; }
+  .kal-nieuw-hdr .datum-lbl { font-size:12px; color:rgba(255,255,255,0.65); }
+  .kal-nieuw-stap-balk { display:flex; gap:0; background:rgba(0,0,0,0.15); margin:12px 0 0; border-radius:6px; overflow:hidden; }
+  .kal-nieuw-stap { flex:1; text-align:center; padding:6px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.5); border-right:1px solid rgba(255,255,255,0.1); }
+  .kal-nieuw-stap:last-child { border-right:none; }
+  .kal-nieuw-stap.actief { background:rgba(255,255,255,0.2); color:white; }
+  .kal-nieuw-stap.klaar  { color:rgba(255,255,255,0.8); }
+  .kal-nieuw-stap.klaar::before { content:'✓ '; }
+  .kal-nieuw-body { flex:1; overflow-y:auto; padding:20px 22px; }
+  .kal-nieuw-ftr  { padding:14px 22px; border-top:1px solid var(--wico-gray); display:flex; justify-content:space-between; gap:10px; flex-shrink:0; }
+  .kal-keuze-grid { display:grid; grid-template-columns:1fr; gap:8px; }
+  .kal-keuze-item { display:flex; align-items:flex-start; gap:12px; padding:12px 14px; border:1.5px solid var(--wico-gray); border-radius:8px; cursor:pointer; transition:all 0.12s; }
+  .kal-keuze-item:hover  { border-color:var(--wico-teal); background:var(--wico-teal-xlight); }
+  .kal-keuze-item.gekozen { border-color:var(--wico-teal); background:var(--wico-teal-xlight); border-width:2px; }
+  .kal-keuze-item .kal-keuze-tag { font-size:10px; font-weight:700; padding:2px 7px; border-radius:3px; white-space:nowrap; flex-shrink:0; margin-top:1px; }
+  .kal-keuze-item .kal-keuze-titel { font-size:13px; font-weight:600; color:var(--wico-petrol); line-height:1.4; }
+  .kal-keuze-item .kal-keuze-sub { font-size:11px; color:var(--wico-muted); margin-top:2px; line-height:1.4; }
+  .kal-actie-sectie { margin-bottom:16px; }
+  .kal-actie-sectie h4 { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--wico-muted); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+  .kal-actie-sectie h4::after { content:''; flex:1; height:1px; background:var(--wico-gray); }
+  .kal-bestaande-actie { display:flex; align-items:center; gap:10px; padding:8px 12px; border:1px solid var(--wico-gray); border-radius:6px; cursor:pointer; font-size:13px; margin-bottom:6px; transition:all 0.1s; }
+  .kal-bestaande-actie:hover { border-color:var(--wico-teal); background:var(--wico-teal-xlight); }
+  .kal-bestaande-actie .kal-ba-status { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .kal-ba-deadline { font-size:10px; color:var(--wico-muted); margin-left:auto; white-space:nowrap; }
+  .kal-nieuw-input { width:100%; border:1.5px solid var(--wico-gray); border-radius:8px; padding:10px 14px; font-size:13px; font-family:inherit; background:var(--wico-teal-xlight); transition:border 0.15s; }
+  .kal-nieuw-input:focus { outline:none; border-color:var(--wico-teal); background:white; }
+  .kal-dag:not(.ander-maand) { cursor:pointer; }
+  .kal-dag:not(.ander-maand):hover { background:var(--wico-teal-xlight); }
+  .kal-dag:not(.ander-maand) .kal-dag-nr { }
+  .kal-dag-add { font-size:14px; color:var(--wico-teal); opacity:0; position:absolute; right:4px; top:4px; }
+  .kal-dag:not(.ander-maand):hover .kal-dag-add { opacity:1; }
+
   @media (max-width: 600px) {
     .evaluatie-grid { grid-template-columns: 1fr; }
     .eval-meta { grid-template-columns: 1fr; }
@@ -760,6 +798,34 @@
     <div class="melding-ftr">
       <button onclick="markeerAllesGelezen()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;color:var(--wico-muted);">Alles als gelezen markeren</button>
       <button onclick="sluitMeldingen()" class="save-btn">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Kalender nieuwe actie popup -->
+<div class="kal-nieuw-overlay" id="kal-nieuw-overlay" onclick="if(event.target===this)sluitKalNieuw()">
+  <div class="kal-nieuw-modal">
+    <div class="kal-nieuw-hdr">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <h3 id="kal-nieuw-titel">Actie toevoegen</h3>
+          <div class="datum-lbl" id="kal-nieuw-datum-lbl"></div>
+        </div>
+        <button onclick="sluitKalNieuw()" style="background:none;border:none;color:white;font-size:22px;cursor:pointer;line-height:1;padding:0;">×</button>
+      </div>
+      <div class="kal-nieuw-stap-balk">
+        <div class="kal-nieuw-stap actief" id="kal-stap-1">1 · Strategisch doel</div>
+        <div class="kal-nieuw-stap" id="kal-stap-2">2 · Operationeel doel</div>
+        <div class="kal-nieuw-stap" id="kal-stap-3">3 · Actie</div>
+      </div>
+    </div>
+    <div class="kal-nieuw-body" id="kal-nieuw-body"></div>
+    <div class="kal-nieuw-ftr">
+      <button id="kal-terug-btn" onclick="kalNieuwTerug()" style="display:none;background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:8px 18px;font-size:13px;cursor:pointer;color:var(--wico-muted);">‹ Terug</button>
+      <div style="flex:1;"></div>
+      <button onclick="sluitKalNieuw()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:8px 18px;font-size:13px;cursor:pointer;color:var(--wico-muted);">Annuleren</button>
+      <button id="kal-verder-btn" onclick="kalNieuwVerder()" class="save-btn" disabled style="opacity:0.4;">Verder ›</button>
     </div>
   </div>
 </div>
@@ -1795,6 +1861,231 @@ function sluitMeldingen() {
 }
 
 
+/* ══════════════════════════════════════════════════════
+   KALENDER — NIEUWE ACTIE POPUP
+   ══════════════════════════════════════════════════════ */
+let _kalNieuwDatum = '';
+let _kalNieuwStap  = 1;
+let _kalNieuwPidx  = null;
+let _kalNieuwOi    = null;
+
+function openKalNieuw(isoDate, event) {
+  if (event) event.stopPropagation();
+  _kalNieuwDatum = isoDate;
+  _kalNieuwStap  = 1;
+  _kalNieuwPidx  = null;
+  _kalNieuwOi    = null;
+
+  // Header datum label
+  const d = new Date(isoDate + 'T12:00:00');
+  document.getElementById('kal-nieuw-datum-lbl').textContent =
+    '📅 ' + d.toLocaleDateString('nl-BE', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  kalNieuwRenderStap();
+  document.getElementById('kal-nieuw-overlay').classList.add('open');
+}
+
+function sluitKalNieuw() {
+  document.getElementById('kal-nieuw-overlay').classList.remove('open');
+}
+
+function kalNieuwStapBalk() {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('kal-stap-' + i);
+    if (!el) return;
+    el.className = 'kal-nieuw-stap' +
+      (i === _kalNieuwStap ? ' actief' :
+       i <  _kalNieuwStap ? ' klaar'  : '');
+  });
+  // Terug-knop
+  const terug  = document.getElementById('kal-terug-btn');
+  const verder = document.getElementById('kal-verder-btn');
+  if (terug)  terug.style.display = _kalNieuwStap > 1 ? '' : 'none';
+  if (verder) {
+    if (_kalNieuwStap === 3) {
+      verder.textContent = '✓ Actie opslaan';
+      verder.style.opacity = '1';
+      verder.disabled = false;
+    } else {
+      verder.textContent = 'Verder ›';
+    }
+  }
+}
+
+function kalNieuwRenderStap() {
+  kalNieuwStapBalk();
+  const body   = document.getElementById('kal-nieuw-body');
+  const verder = document.getElementById('kal-verder-btn');
+
+  if (_kalNieuwStap === 1) {
+    // Stap 1: kies strategisch doel
+    body.innerHTML = `
+      <p style="font-size:13px;color:var(--wico-muted);margin-bottom:14px;">
+        Kies het strategische doel waaraan je de actie wil koppelen:
+      </p>
+      <div class="kal-keuze-grid">
+        ${data.map((p, pidx) => `
+          <div class="kal-keuze-item ${_kalNieuwPidx===pidx?'gekozen':''}"
+               onclick="kalKiesPrio(${pidx})">
+            <span class="kal-keuze-tag ${p.tagClass}">${esc(p.tag)}</span>
+            <div>
+              <div class="kal-keuze-titel">${esc(p.streefdoel.substring(0,80))}${p.streefdoel.length>80?'…':''}</div>
+              <div class="kal-keuze-sub">${p.acties.filter(a=>a.status!=='klaar').length} open acties</div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    verder.disabled = (_kalNieuwPidx === null);
+    verder.style.opacity = _kalNieuwPidx !== null ? '1' : '0.4';
+
+  } else if (_kalNieuwStap === 2) {
+    // Stap 2: kies operationeel doel
+    const p = data[_kalNieuwPidx];
+    body.innerHTML = `
+      <p style="font-size:13px;color:var(--wico-muted);margin-bottom:14px;">
+        Kies het operationeel doel binnen <strong>${esc(p.tag)}</strong>:
+      </p>
+      <div class="kal-keuze-grid">
+        ${p.operationeleDelen.map((od, oi) => `
+          <div class="kal-keuze-item ${_kalNieuwOi===oi?'gekozen':''}"
+               onclick="kalKiesOD(${oi})">
+            <span class="kal-keuze-tag" style="background:var(--wico-teal-light);color:var(--wico-petrol);">OD${oi+1}</span>
+            <div>
+              <div class="kal-keuze-titel">${esc(od.titel)}</div>
+              ${od.omschrijving ? `<div class="kal-keuze-sub">${esc(od.omschrijving.substring(0,80))}${od.omschrijving.length>80?'…':''}</div>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>`;
+    verder.disabled = (_kalNieuwOi === null);
+    verder.style.opacity = _kalNieuwOi !== null ? '1' : '0.4';
+
+  } else if (_kalNieuwStap === 3) {
+    // Stap 3: nieuwe actie of bestaande koppelen
+    const p   = data[_kalNieuwPidx];
+    const od  = p.operationeleDelen[_kalNieuwOi];
+    // Bestaande acties van dit OD zonder deadline of met andere deadline
+    const bestaand = p.acties.filter(a =>
+      (a.od||[]).some(k => (k.pidx!==undefined?k.pidx:_kalNieuwPidx)===_kalNieuwPidx && (k.oi!==undefined?k.oi:k)===_kalNieuwOi)
+      && a.status !== 'klaar'
+    );
+
+    const statusKleur = { open:'var(--wico-gray)', loopt:'#e09a20', klaar:'#2a9a5a' };
+
+    body.innerHTML = `
+      <div style="background:var(--wico-teal-xlight);border-left:3px solid var(--wico-teal);border-radius:0 6px 6px 0;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--wico-petrol);">
+        <strong>${esc(p.tag)}</strong> › OD${_kalNieuwOi+1} — ${esc(od.titel)}
+      </div>
+
+      <div class="kal-actie-sectie">
+        <h4>Nieuwe actie toevoegen</h4>
+        <textarea id="kal-nieuw-actie-input" class="kal-nieuw-input" rows="2"
+          placeholder="Omschrijf de actie..."></textarea>
+        <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:140px;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--wico-muted);display:block;margin-bottom:4px;">Eigenaar</label>
+            <select id="kal-nieuw-eigenaar" class="kal-nieuw-input" style="padding:8px 10px;">
+              <option value="">— geen eigenaar —</option>
+              ${teamleden.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}
+            </select>
+          </div>
+          <div style="flex:1;min-width:140px;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--wico-muted);display:block;margin-bottom:4px;">Status</label>
+            <select id="kal-nieuw-status" class="kal-nieuw-input" style="padding:8px 10px;">
+              <option value="open">Open</option>
+              <option value="loopt">Loopt</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      ${bestaand.length ? `
+      <div class="kal-actie-sectie">
+        <h4>Of deadline instellen op bestaande actie</h4>
+        ${bestaand.map((a, i) => `
+          <div class="kal-bestaande-actie" onclick="kalKoppelBestaande(${p.acties.indexOf(a)})">
+            <span class="kal-ba-status" style="background:${statusKleur[a.status]||'#ccc'};"></span>
+            <span style="flex:1;">${esc(a.actie||'(leeg)')}</span>
+            <span class="kal-ba-deadline">${a.wanneer ? datumLeesbaar(a.wanneer) : 'geen datum'}</span>
+            <span style="color:var(--wico-teal);font-size:12px;margin-left:6px;">→ gebruik</span>
+          </div>`).join('')}
+      </div>` : ''}`;
+
+    setTimeout(() => document.getElementById('kal-nieuw-actie-input')?.focus(), 100);
+    verder.textContent = '✓ Actie opslaan';
+    verder.disabled = false;
+    verder.style.opacity = '1';
+  }
+}
+
+function kalKiesPrio(pidx) {
+  _kalNieuwPidx = pidx;
+  // Update visueel
+  document.querySelectorAll('#kal-nieuw-body .kal-keuze-item').forEach((el, i) => {
+    el.classList.toggle('gekozen', i === pidx);
+  });
+  const verder = document.getElementById('kal-verder-btn');
+  if (verder) { verder.disabled = false; verder.style.opacity = '1'; }
+}
+
+function kalKiesOD(oi) {
+  _kalNieuwOi = oi;
+  document.querySelectorAll('#kal-nieuw-body .kal-keuze-item').forEach((el, i) => {
+    el.classList.toggle('gekozen', i === oi);
+  });
+  const verder = document.getElementById('kal-verder-btn');
+  if (verder) { verder.disabled = false; verder.style.opacity = '1'; }
+}
+
+function kalNieuwVerder() {
+  if (_kalNieuwStap === 3) {
+    kalNieuwOpslaan();
+    return;
+  }
+  _kalNieuwStap++;
+  kalNieuwRenderStap();
+}
+
+function kalNieuwTerug() {
+  _kalNieuwStap = Math.max(1, _kalNieuwStap - 1);
+  if (_kalNieuwStap === 1) _kalNieuwOi = null;
+  kalNieuwRenderStap();
+}
+
+function kalNieuwOpslaan() {
+  const actietekst = (document.getElementById('kal-nieuw-actie-input')?.value || '').trim();
+  const eigenaar   = document.getElementById('kal-nieuw-eigenaar')?.value || '';
+  const status     = document.getElementById('kal-nieuw-status')?.value || 'open';
+
+  if (!actietekst) {
+    document.getElementById('kal-nieuw-actie-input')?.focus();
+    return;
+  }
+
+  data[_kalNieuwPidx].acties.push({
+    actie:       actietekst,
+    wanneer:     _kalNieuwDatum,
+    eigenaar:    eigenaar,
+    betrokkenen: [],
+    wie:         [],
+    status:      status,
+    od:          [{ pidx: _kalNieuwPidx, oi: _kalNieuwOi }],
+    doc:         '',
+    notities:    [],
+  });
+
+  sluitKalNieuw();
+  window.saveAll();
+  renderKalender(); // herrender kalender zodat nieuwe actie zichtbaar is
+}
+
+function kalKoppelBestaande(ai) {
+  // Stel deadline in op de gekozen datum voor een bestaande actie
+  if (!confirm(`Deadline van deze actie instellen op ${datumLeesbaar(_kalNieuwDatum)}?`)) return;
+  data[_kalNieuwPidx].acties[ai].wanneer = _kalNieuwDatum;
+  sluitKalNieuw();
+  window.saveAll();
+  renderKalender();
+}
+
 function renderOverview() {
   const grid = document.getElementById('priority-overview');
   grid.innerHTML = data.map(p => {
@@ -2443,10 +2734,14 @@ function renderKalender() {
           </div>
           <span class="kal-tl-tag">${esc(a.tag)}</span>
         </div>`).join('');
+      const isoMaand = `${jaar}-${String(parseInt(maand)+1).padStart(2,'0')}-15`;
       return `<div class="kal-maand-blok">
-        <div class="kal-maand-hdr">
-          <span class="kal-maand-naam">${MAANDEN[parseInt(maand)]} ${jaar}</span>
-          <span class="kal-maand-count">${items.length} actie${items.length!==1?'s':''}</span>
+        <div class="kal-maand-hdr" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <span class="kal-maand-naam">${MAANDEN[parseInt(maand)]} ${jaar}</span>
+            <span class="kal-maand-count">${items.length} actie${items.length!==1?'s':''}</span>
+          </div>
+          <button onclick="openKalNieuw('${isoMaand}',event)" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:5px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;">+ Actie</button>
         </div>
         <div class="kal-maand-body">${rows}</div>
       </div>`;
@@ -2519,7 +2814,12 @@ function renderKalender() {
         `<span class="kal-actie-chip ${a.status}" title="${esc(a.actie)}" onclick="navigeerNaarActie(${a.pidx},${a.odIdx>=0?a.odIdx:0})">${esc(a.actie||'(leeg)').substring(0,28)}</span>`
       ).join('');
       const meerSpan = meer > 0 ? `<span class="kal-meer">+${meer} meer</span>` : '';
-      dagCellen += `<div class="kal-dag${isVandaag?' vandaag':''}"><div class="kal-dag-nr">${dag}</div>${chips}${meerSpan}</div>`;
+      const isoDate = `${kalJaar}-${String(kalMaand+1).padStart(2,'0')}-${String(dag).padStart(2,'0')}`;
+      dagCellen += `<div class="kal-dag${isVandaag?' vandaag':''}" style="position:relative;" onclick="openKalNieuw('${isoDate}',event)">
+        <div class="kal-dag-nr">${dag}</div>
+        ${chips}${meerSpan}
+        <span class="kal-dag-add">+</span>
+      </div>`;
     }
     // Afsluitende lege cellen
     const totaalCellen = dagVdWeek + aantalDagen;
