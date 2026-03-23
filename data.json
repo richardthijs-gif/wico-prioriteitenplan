@@ -123,16 +123,21 @@
           "betrokkenen": []
         },
         {
-          "actie": "Spreker uitnodigen",
-          "wanneer": "2026-05-21",
-          "wie": [],
-          "status": "open",
           "od": [
             {
               "pidx": 1,
               "oi": 0
             }
-          ]
+          ],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
+          "actie": "Spreker uitnodigen",
+          "wanneer": "2026-05-21",
+          "wie": [],
+          "status": "open",
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -1362,6 +1367,7 @@
     "Vakcoördinatoren",
     "Richard",
     "Elke Boes",
-    "Ignace"
+    "Ignace",
+    "Ann"
   ]
 }
