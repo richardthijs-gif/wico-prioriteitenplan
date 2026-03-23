@@ -121,6 +121,18 @@
           "status": "open",
           "eigenaar": "",
           "betrokkenen": []
+        },
+        {
+          "actie": "Spreker uitnodigen",
+          "wanneer": "",
+          "wie": [],
+          "status": "open",
+          "od": [
+            {
+              "pidx": 1,
+              "oi": 0
+            }
+          ]
         }
       ],
       "indicatorenPerOD": {
