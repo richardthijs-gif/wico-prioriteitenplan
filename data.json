@@ -715,7 +715,9 @@
       "id": 4,
       "tag": "Taalvaardigheid",
       "tagClass": "tag-taal",
-      "verantwoordelijke": [],
+      "verantwoordelijke": [
+        "Elke Boes"
+      ],
       "streefdoel": "De school versterkt doelgericht de taalvaardigheid van alle leerlingen — van dagelijkse taal tot schooltaal en vaktaal — om hun leerprestaties te verbeteren en ongelijkheden te verkleinen.",
       "operationeleDelen": [
         {
