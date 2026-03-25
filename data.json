@@ -1316,7 +1316,11 @@
           "wanneer": "2026-05-20",
           "wie": [],
           "status": "open",
-          "od": []
+          "od": [],
+          "eigenaar": "Richard",
+          "betrokkenen": [
+            "Directie"
+          ]
         }
       ],
       "indicatorenPerOD": {
