@@ -1305,55 +1305,80 @@
           "betrokkenen": []
         },
         {
+          "od": [],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "actie": "Gouden weken - opstart schooljaar\n",
           "wanneer": "",
           "wie": [],
           "status": "open",
-          "od": []
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
+          "od": [],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "actie": "LVS aanvullen bij beginsituatie van leerling ter voorbereiding volgend schooljaar",
           "wanneer": "2026-05-20",
           "wie": [],
           "status": "open",
-          "od": [],
           "eigenaar": "Richard",
           "betrokkenen": [
             "Directie"
           ]
         },
         {
+          "od": [],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "actie": "APV- Beginsituatie klasbeeld aanmaken op basis beginsituatie einde vorig schooljaar (met KT)\n",
           "wanneer": "2026-08-27",
           "wie": [],
           "status": "open",
-          "od": [],
           "eigenaar": "Richard",
           "betrokkenen": [
             "Directie"
           ]
         },
         {
+          "od": [],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "actie": "Specifieke maatregelen toevoegen door llncoo vanuit 1ste graad, of nieuwe info nieuwe lln\n",
           "wanneer": "2026-08-25",
           "wie": [],
           "status": "open",
-          "od": [],
-          "eigenaar": "Coördinatoren"
+          "eigenaar": "Coördinatoren",
+          "betrokkenen": []
         },
         {
+          "od": [],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "actie": "Infomoment: klasbeeld up to date?",
           "wanneer": "2026-09-10",
           "wie": [],
           "status": "open",
-          "od": []
+          "eigenaar": "",
+          "betrokkenen": []
         },
         {
+          "od": [],
+          "doc": "",
+          "notities": [],
+          "vergaderlog": [],
           "actie": "Klassenraden: klasbeeld en welbevinden",
           "wanneer": "2026-10-29",
           "wie": [],
           "status": "open",
-          "od": []
+          "eigenaar": "",
+          "betrokkenen": []
         }
       ],
       "indicatorenPerOD": {
@@ -1421,6 +1446,7 @@
     "Ignace",
     "Ann",
     "Walter",
-    "X"
+    "X",
+    "Leerlingencoördinatie"
   ]
 }
