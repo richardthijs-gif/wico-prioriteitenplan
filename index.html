@@ -220,7 +220,7 @@
   .person-tag.light { background:var(--wico-teal-light); color:var(--wico-petrol); }
   .person-placeholder { font-size:12px; color:rgba(255,255,255,0.5); font-style:italic; }
   .person-placeholder.light { color:var(--wico-muted); }
-  .person-dropdown { display:none; position:fixed; background:white; border:1px solid var(--wico-gray); border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.15); z-index:9999; min-width:200px; max-height:260px; overflow-y:auto; padding:6px; }
+  .person-dropdown { display:none; position:fixed; background:white; border:1px solid var(--wico-gray); border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.15); z-index:9999; min-width:200px; max-height:260px; overflow-y:scroll; overflow-x:hidden; padding:6px; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
   .person-dropdown.open { display:block; }
   .person-opt { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:5px; cursor:pointer; font-size:13px; color:var(--wico-text); transition:background 0.1s; }
   .person-opt:hover { background:var(--wico-teal-xlight); }
@@ -391,7 +391,7 @@
 
 
   /* ── @ mention dropdown ── */
-  .mention-dropdown { position:absolute; background:var(--wico-white); border:1px solid var(--wico-gray); border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.15); z-index:2000; min-width:180px; max-height:200px; overflow-y:auto; padding:4px; }
+  .mention-dropdown { position:absolute; background:var(--wico-white); border:1px solid var(--wico-gray); border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.15); z-index:2000; min-width:180px; max-height:200px; overflow-y:scroll; overflow-x:hidden; padding:4px; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
   .mention-opt { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:5px; cursor:pointer; font-size:13px; color:var(--wico-text); transition:background 0.1s; }
   .mention-opt:hover, .mention-opt.actief { background:var(--wico-teal-xlight); }
   .mention-opt .mention-avatar { width:26px; height:26px; border-radius:50%; background:var(--wico-petrol); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -829,6 +829,49 @@
   </div>
 </div>
 
+
+<!-- Inspiratie popup -->
+<div class="notitie-popup" id="insp-popup" onclick="if(event.target===this)sluitInspPopup()">
+  <div class="notitie-modal" style="width:500px;">
+    <div class="notitie-modal-hdr">
+      <h3>💡 Inspiratiebron toevoegen</h3>
+      <button onclick="sluitInspPopup()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <div class="notitie-body" style="padding:20px 24px;">
+      <div class="insp-form-veld" style="margin-bottom:14px;">
+        <label>Link (URL) *</label>
+        <input type="url" id="insp-popup-url" class="kal-nieuw-input" placeholder="https://..."
+          oninput="inspPopupAutoType()" onkeydown="if(event.key==='Enter')document.getElementById('insp-popup-titel').focus()"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div class="insp-form-veld">
+          <label>Titel</label>
+          <input type="text" id="insp-popup-titel" class="kal-nieuw-input" placeholder="Naam van de bron..."/>
+        </div>
+        <div class="insp-form-veld">
+          <label>Type</label>
+          <select id="insp-popup-type" class="kal-nieuw-input" style="padding:9px 10px;">
+            <option value="website">🌐 Website</option>
+            <option value="artikel">📄 Artikel</option>
+            <option value="video">🎬 Video</option>
+            <option value="pdf">📋 PDF</option>
+            <option value="overig">📌 Overig</option>
+          </select>
+        </div>
+      </div>
+      <div class="insp-form-veld">
+        <label>Omschrijving (optioneel)</label>
+        <textarea id="insp-popup-omschr" class="kal-nieuw-input" rows="3"
+          placeholder="Korte beschrijving, waarom nuttig, ..."></textarea>
+      </div>
+    </div>
+    <div class="notitie-ftr">
+      <button onclick="sluitInspPopup()" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:8px 18px;font-size:13px;cursor:pointer;color:var(--wico-muted);">Annuleren</button>
+      <button onclick="voegInspirateToe()" class="save-btn">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="showView('overview', this)">Overzicht</div>
   <div class="nav-tab" onclick="showView('detail-0', this)">GOK & Taalbeleid</div>
@@ -1109,11 +1152,12 @@ function personSelectHTML(selectedArr, cbName, isLight, dropUp) {
     </div>`;
   }).join('');
   return `<div class="person-select-wrap" id="${id}">
-    <div class="person-select-btn ${isLight?'light':''}" onclick="togglePersonDD('${id}')">${tags}</div>
+    <div class="person-select-btn ${isLight?'light':''}" onclick="togglePersonDD('${id}',event)">${tags}</div>
     <div class="person-dropdown ${dropUp?'drop-up':''}" id="${id}_dd">${opts}</div>
   </div>`;
 }
-function togglePersonDD(id) {
+function togglePersonDD(id, event) {
+  if (event) event.stopPropagation();
   const dd  = document.getElementById(id+'_dd');
   const btn = document.querySelector('#'+id+' .person-select-btn');
   const open = dd.classList.contains('open');
@@ -1140,7 +1184,10 @@ function togglePersonDD(id) {
   }
 }
 document.addEventListener('click', e => {
-  if (!e.target.closest('.person-select-wrap')) document.querySelectorAll('.person-dropdown').forEach(d=>d.classList.remove('open'));
+  // Sluit person dropdowns bij klik buiten, maar niet bij klik op een optie erin
+  if (!e.target.closest('.person-select-wrap') && !e.target.closest('.person-dropdown')) {
+    document.querySelectorAll('.person-dropdown').forEach(d=>d.classList.remove('open'));
+  }
 });
 function togglePerson(wrapId, optEl, naam, cbName) {
   const chk = optEl.querySelector('input');
@@ -1220,7 +1267,7 @@ function eigenaarSelectHTML(geselecteerd, cbName) {
     </div>`;
   }).join('');
   return `<div class="person-select-wrap" id="${id}">
-    <div class="person-select-btn light" onclick="togglePersonDD('${id}')">${tag}</div>
+    <div class="person-select-btn light" onclick="togglePersonDD('${id}',event)">${tag}</div>
     <div class="person-dropdown" id="${id}_dd">${opts}</div>
   </div>`;
 }
@@ -2089,45 +2136,58 @@ function kalKoppelBestaande(ai) {
    INSPIRATIE TABBLAD
    ══════════════════════════════════════════════════════ */
 
-function toggleInspForm(idx) {
-  const form = document.getElementById('insp-form-' + idx);
-  if (!form) return;
-  const open = form.style.display !== 'none';
-  form.style.display = open ? 'none' : 'block';
-  if (!open) setTimeout(() => document.getElementById('insp-url-' + idx)?.focus(), 50);
+let _inspIdx = null;
+
+function openInspPopup(idx) {
+  _inspIdx = idx;
+  // Reset velden
+  document.getElementById('insp-popup-url').value   = '';
+  document.getElementById('insp-popup-titel').value  = '';
+  document.getElementById('insp-popup-type').value   = 'website';
+  document.getElementById('insp-popup-omschr').value = '';
+  document.getElementById('insp-popup').classList.add('open');
+  setTimeout(() => document.getElementById('insp-popup-url').focus(), 100);
 }
 
-// Auto-detecteer type op basis van URL
-function inspAutoType(idx) {
-  const url = (document.getElementById('insp-url-' + idx)?.value || '').toLowerCase();
-  const typeSelect = document.getElementById('insp-type-' + idx);
-  if (!typeSelect) return;
+function sluitInspPopup() {
+  document.getElementById('insp-popup').classList.remove('open');
+  _inspIdx = null;
+}
+
+function inspPopupAutoType() {
+  const url = (document.getElementById('insp-popup-url')?.value || '').toLowerCase();
+  const sel = document.getElementById('insp-popup-type');
+  if (!sel) return;
   if (url.includes('youtube') || url.includes('youtu.be') || url.includes('vimeo')) {
-    typeSelect.value = 'video';
+    sel.value = 'video';
   } else if (url.endsWith('.pdf') || url.includes('/pdf/')) {
-    typeSelect.value = 'pdf';
+    sel.value = 'pdf';
   } else if (url.includes('drive.google') || url.includes('sharepoint') || url.includes('docs.')) {
-    typeSelect.value = 'artikel';
+    sel.value = 'artikel';
+  } else if (url.startsWith('http')) {
+    sel.value = 'website';
   }
 }
 
-function voegInspirateToe(idx) {
-  const url     = (document.getElementById('insp-url-'   + idx)?.value || '').trim();
-  const titel   = (document.getElementById('insp-titel-' + idx)?.value || '').trim();
-  const type    = document.getElementById('insp-type-'  + idx)?.value || 'website';
-  const omschr  = (document.getElementById('insp-omschr-'+ idx)?.value || '').trim();
+function voegInspirateToe() {
+  if (_inspIdx === null) return;
+  const url    = (document.getElementById('insp-popup-url')?.value   || '').trim();
+  const titel  = (document.getElementById('insp-popup-titel')?.value || '').trim();
+  const type   =  document.getElementById('insp-popup-type')?.value  || 'website';
+  const omschr = (document.getElementById('insp-popup-omschr')?.value|| '').trim();
 
-  if (!url) { document.getElementById('insp-url-' + idx)?.focus(); return; }
+  if (!url) { document.getElementById('insp-popup-url').focus(); return; }
 
-  if (!Array.isArray(data[idx].inspiratie)) data[idx].inspiratie = [];
-  data[idx].inspiratie.push({
+  if (!Array.isArray(data[_inspIdx].inspiratie)) data[_inspIdx].inspiratie = [];
+  data[_inspIdx].inspiratie.push({
     url, titel: titel || url, type, omschrijving: omschr,
     toegevoegd: new Date().toLocaleDateString('nl-BE', {day:'numeric',month:'short',year:'numeric'}),
     auteur: ghGebruiker || 'onbekend'
   });
 
-  renderDetail(idx);
-  showSecTab(idx, 'inspiratie', null);
+  sluitInspPopup();
+  renderDetail(_inspIdx);
+  showSecTab(_inspIdx, 'inspiratie', null);
   window.saveAll();
 }
 
@@ -2509,45 +2569,10 @@ function renderDetail(idx) {
     : `<div class="insp-leeg">Nog geen inspiratiebronnen toegevoegd.<br>Voeg links toe naar artikels, video's, PDF's of websites.</div>`;
 
   const inspiratieHtml = `
-    <div class="insp-nieuw-form" id="insp-form-${idx}" style="display:none;">
-      <h4>+ Inspiratiebron toevoegen</h4>
-      <div class="insp-form-rij">
-        <div class="insp-form-veld" style="grid-column:1/-1;">
-          <label>Link (URL)</label>
-          <input type="url" id="insp-url-${idx}" placeholder="https://..." oninput="inspAutoType(${idx})"/>
-        </div>
-      </div>
-      <div class="insp-form-rij">
-        <div class="insp-form-veld">
-          <label>Titel</label>
-          <input type="text" id="insp-titel-${idx}" placeholder="Naam van de bron..."/>
-        </div>
-        <div class="insp-form-veld">
-          <label>Type</label>
-          <select id="insp-type-${idx}">
-            <option value="website">🌐 Website</option>
-            <option value="artikel">📄 Artikel</option>
-            <option value="video">🎬 Video</option>
-            <option value="pdf">📋 PDF</option>
-            <option value="overig">📌 Overig</option>
-          </select>
-        </div>
-      </div>
-      <div class="insp-form-rij">
-        <div class="insp-form-veld" style="grid-column:1/-1;">
-          <label>Omschrijving (optioneel)</label>
-          <textarea id="insp-omschr-${idx}" rows="2" placeholder="Korte beschrijving of notitie..."></textarea>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">
-        <button onclick="document.getElementById('insp-form-${idx}').style.display='none'" style="background:none;border:1px solid var(--wico-gray);border-radius:6px;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--wico-muted);">Annuleren</button>
-        <button onclick="voegInspirateToe(${idx})" class="save-btn">Toevoegen</button>
-      </div>
-    </div>
     <div style="border:1px solid var(--wico-gray);border-radius:8px;overflow:hidden;margin-bottom:16px;">
       <div class="insp-sectie-hdr">
         <span>💡 Inspiratiebronnen voor ${esc(p.tag)}</span>
-        <button class="insp-toggle-form" onclick="toggleInspForm(${idx})">+ Bron toevoegen</button>
+        <button class="insp-toggle-form" onclick="openInspPopup(${idx})">+ Bron toevoegen</button>
       </div>
       <div style="padding:14px;">
         <div class="insp-grid">${_inspKaarten}</div>
@@ -3280,8 +3305,10 @@ document.addEventListener('keydown', e => {
 </script>
 
 <script>
-// Sluit dropdowns bij scrollen zodat ze niet zweven
-document.addEventListener('scroll', () => {
+// Sluit dropdowns bij scrollen van de PAGINA, niet bij scroll binnen de dropdown zelf
+document.addEventListener('scroll', (e) => {
+  // Sluit niet als het scrollen binnen een dropdown zelf gebeurt
+  if (e.target.closest && e.target.closest('.person-dropdown')) return;
   document.querySelectorAll('.person-dropdown.open').forEach(d => d.classList.remove('open'));
 }, true);
 
