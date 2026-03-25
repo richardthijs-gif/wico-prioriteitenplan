@@ -1332,6 +1332,13 @@
           "betrokkenen": [
             "Directie"
           ]
+        },
+        {
+          "actie": "",
+          "wanneer": "",
+          "wie": [],
+          "status": "open",
+          "od": []
         }
       ],
       "indicatorenPerOD": {
