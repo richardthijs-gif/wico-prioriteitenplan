@@ -1327,7 +1327,11 @@
           "wanneer": "2026-08-27",
           "wie": [],
           "status": "open",
-          "od": []
+          "od": [],
+          "eigenaar": "Richard",
+          "betrokkenen": [
+            "Directie"
+          ]
         }
       ],
       "indicatorenPerOD": {
