@@ -1303,6 +1303,13 @@
           "status": "open",
           "eigenaar": "",
           "betrokkenen": []
+        },
+        {
+          "actie": "",
+          "wanneer": "",
+          "wie": [],
+          "status": "open",
+          "od": []
         }
       ],
       "indicatorenPerOD": {
